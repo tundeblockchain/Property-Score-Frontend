@@ -57,6 +57,55 @@ export interface FinancialModel {
   estimatedRoi?: number;
 }
 
+export type HmoUseCase = 'students' | 'workers' | 'social_care';
+
+export type HmoRoomType =
+  | 'single'
+  | 'double'
+  | 'ensuite'
+  | 'accessible'
+  | 'staff';
+
+export interface HmoLayoutRoom {
+  label: string;
+  type: HmoRoomType;
+  estimatedAreaSqM?: number;
+  notes?: string;
+}
+
+export interface HmoSchemeFinancials extends FinancialModel {
+  voidRateAssumed: number;
+  roomRentWeeklyAssumed: number;
+  occupiedRoomsAssumed: number;
+}
+
+export interface HmoLayoutScheme {
+  id: string;
+  useCase: HmoUseCase;
+  title: string;
+  summary: string;
+  lettingRooms: number;
+  rooms: HmoLayoutRoom[];
+  amenities: string[];
+  complianceNotes: string[];
+  layoutNotes: string[];
+  estimatedRefurbLowGbp: number;
+  estimatedRefurbHighGbp: number;
+  financials: HmoSchemeFinancials;
+  fitScore: number;
+  recommended: boolean;
+}
+
+export interface HmoPlannerResult {
+  source: 'listing_beds';
+  floorPlanCount: number;
+  asListedBedrooms: number;
+  asListedBathrooms: number;
+  schemes: HmoLayoutScheme[];
+  recommendedSchemeId: string;
+  disclaimer: string;
+}
+
 export interface EpcHistoryEntry {
   address?: string;
   currentRating?: string;
@@ -205,6 +254,7 @@ export interface DealSummary {
 export interface DealDetail extends DealSummary {
   financialModel?: FinancialModel;
   enrichment?: DealEnrichment;
+  hmoPlanner?: HmoPlannerResult;
   narrative?: string;
   actionPlan?: string[];
   errorMessage?: string;
