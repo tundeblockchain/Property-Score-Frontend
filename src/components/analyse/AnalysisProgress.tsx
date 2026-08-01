@@ -6,6 +6,7 @@ import {
   LoadingState,
 } from '@/components/common/Feedback';
 import { DealStatusChip } from '@/components/deals/DealStatusChip';
+import { ListingSummary } from '@/components/deals/ListingSummary';
 import { ScoreBreakdownBars } from '@/components/deals/ScoreBreakdownBars';
 import { useAnalysisJob } from '@/hooks/useAnalysisJob';
 
@@ -16,7 +17,6 @@ interface AnalysisProgressProps {
 
 export function AnalysisProgress({ jobId, onReset }: AnalysisProgressProps) {
   const { data, isLoading, isError, error } = useAnalysisJob(jobId);
-
 
   if (isLoading && !data) {
     return <LoadingState label="Connecting to analysis…" />;
@@ -47,9 +47,12 @@ export function AnalysisProgress({ jobId, onReset }: AnalysisProgressProps) {
 
   if (data.status === 'COMPLETED') {
     return (
-      <Stack spacing={2}>
+      <Stack spacing={2.5}>
         <DealStatusChip status="COMPLETED" />
         <Typography variant="h6">Analysis complete</Typography>
+        {data.listing ? (
+          <ListingSummary listing={data.listing} compact />
+        ) : null}
         {data.scores ? <ScoreBreakdownBars scores={data.scores} /> : null}
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
           <Button
@@ -66,9 +69,12 @@ export function AnalysisProgress({ jobId, onReset }: AnalysisProgressProps) {
   }
 
   return (
-    <Stack spacing={2}>
+    <Stack spacing={2.5}>
       <DealStatusChip status="PROCESSING" />
       <Typography variant="h6">Analysing listing…</Typography>
+      {data.listing ? (
+        <ListingSummary listing={data.listing} compact />
+      ) : null}
       <Typography color="text.secondary">
         This usually takes 15–40 seconds. You can leave this page open.
       </Typography>
