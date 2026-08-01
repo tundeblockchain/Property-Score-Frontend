@@ -70,6 +70,7 @@ export interface HmoLayoutRoom {
   label: string;
   type: HmoRoomType;
   estimatedAreaSqM?: number;
+  meetsSpaceStandard?: boolean;
   notes?: string;
 }
 
@@ -96,11 +97,56 @@ export interface HmoLayoutScheme {
   recommended: boolean;
 }
 
+export type FloorPlanRoomKind =
+  | 'bedroom'
+  | 'bathroom'
+  | 'kitchen'
+  | 'living'
+  | 'dining'
+  | 'hallway'
+  | 'storage'
+  | 'garage'
+  | 'utility'
+  | 'other';
+
+export interface FloorPlanDetectedRoom {
+  label: string;
+  kind: FloorPlanRoomKind;
+  floor?: string;
+  widthM?: number;
+  lengthM?: number;
+  areaSqM?: number;
+  ensuite?: boolean;
+  notes?: string;
+}
+
+export interface FloorPlanExtensionPotential {
+  loft: boolean;
+  rear: boolean;
+  garage: boolean;
+}
+
+export interface FloorPlanAnalysis {
+  currentBedrooms: number;
+  currentBathrooms: number;
+  rooms: FloorPlanDetectedRoom[];
+  potentialExtraBedrooms: number;
+  convertibleRooms: string[];
+  extensionPotential: FloorPlanExtensionPotential;
+  fireEscapeNotes?: string;
+  layoutEfficiencyScore?: number;
+  notes: string[];
+  analysedFloorPlanUrls: string[];
+  model: string;
+  stub?: boolean;
+}
+
 export interface HmoPlannerResult {
-  source: 'listing_beds';
+  source: 'listing_beds' | 'floor_plan_vision';
   floorPlanCount: number;
   asListedBedrooms: number;
   asListedBathrooms: number;
+  floorPlanAnalysis?: FloorPlanAnalysis;
   schemes: HmoLayoutScheme[];
   recommendedSchemeId: string;
   disclaimer: string;
