@@ -9,7 +9,9 @@ import {
 import { useState } from 'react';
 import { formatCurrency, formatPercent } from '@/lib/format';
 import type {
+  ConversionAction,
   FloorPlanAnalysis,
+  GeometryConversionPlan,
   HmoLayoutScheme,
   HmoLicensingPath,
   HmoPlannerResult,
@@ -42,10 +44,89 @@ function Fact({ label, value }: { label: string; value: string }) {
   );
 }
 
+function conversionActionLabel(action: ConversionAction): string {
+  switch (action) {
+    case 'keep_bedroom':
+      return 'Keep bedroom';
+    case 'convert_to_bedroom':
+      return 'Convert to bedroom';
+    case 'add_ensuite':
+      return 'Add ensuite';
+    case 'keep_communal':
+      return 'Keep communal';
+    case 'staff_room':
+      return 'Staff room';
+  }
+}
+
 function sourceLabel(source: HmoPlannerResult['source']): string {
   return source === 'floor_plan_vision'
     ? 'Floor-plan vision'
     : 'Listed beds (indicative)';
+}
+
+function ConversionPlanSummary({ plan }: { plan: GeometryConversionPlan }) {
+  const activeSteps = plan.steps.filter(
+    (step) =>
+      step.action === 'convert_to_bedroom' ||
+      step.action === 'add_ensuite' ||
+      step.action === 'staff_room' ||
+      step.action === 'keep_communal',
+  );
+
+  return (
+    <Stack spacing={1.5}>
+      <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap>
+        <Typography variant="subtitle2" color="primary.dark">
+          Conversion plan
+        </Typography>
+        <Chip
+          size="small"
+          color="primary"
+          label={`As built ${plan.asBuiltBedrooms} → ${plan.proposedLettingRooms} letting rooms`}
+        />
+      </Stack>
+
+      <Stack spacing={1}>
+        {activeSteps.map((step) => (
+          <Box
+            key={`${step.sourceLabel}-${step.action}`}
+            sx={{
+              borderLeft: 3,
+              borderColor:
+                step.action === 'convert_to_bedroom' || step.action === 'add_ensuite'
+                  ? 'secondary.main'
+                  : 'divider',
+              pl: 1.5,
+              py: 0.5,
+            }}
+          >
+            <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap>
+              <Typography fontWeight={600} color="primary.dark">
+                {step.sourceLabel}
+              </Typography>
+              <Chip size="small" label={conversionActionLabel(step.action)} />
+              {step.estimatedAreaSqM != null ? (
+                <Typography variant="body2" color="primary.main">
+                  ~{step.estimatedAreaSqM} m²
+                </Typography>
+              ) : null}
+            </Stack>
+            <Typography variant="caption" color="text.secondary">
+              {step.rationale}
+              {step.estimatedCostGbpHigh > 0
+                ? ` · est. £${step.estimatedCostGbpLow.toLocaleString()}–£${step.estimatedCostGbpHigh.toLocaleString()}`
+                : ''}
+            </Typography>
+          </Box>
+        ))}
+      </Stack>
+
+      {plan.blocked.length > 0 ? (
+        <NoteList title="Blocked conversions" items={plan.blocked} />
+      ) : null}
+    </Stack>
+  );
 }
 
 function licensingStatusLabel(status: LicensingRequirementStatus): string {
@@ -285,6 +366,9 @@ function SchemeBody({ scheme }: { scheme: HmoLayoutScheme }) {
 
       <NoteList title="Amenities" items={scheme.amenities} />
       <NoteList title="Layout notes" items={scheme.layoutNotes} />
+      {scheme.conversionPlan ? (
+        <ConversionPlanSummary plan={scheme.conversionPlan} />
+      ) : null}
       <LicensingPathSummary licensing={scheme.licensing} />
       <NoteList title="Compliance checks" items={scheme.complianceNotes} />
     </Stack>
