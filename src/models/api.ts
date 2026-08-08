@@ -93,8 +93,38 @@ export interface HmoLayoutScheme {
   estimatedRefurbLowGbp: number;
   estimatedRefurbHighGbp: number;
   financials: HmoSchemeFinancials;
+  licensing: HmoLicensingPath;
   fitScore: number;
   recommended: boolean;
+}
+
+export type LicensingRequirementStatus =
+  | 'likely_required'
+  | 'likely_not_required'
+  | 'check_with_la'
+  | 'not_applicable';
+
+export type HmoUseClass = 'C3' | 'C4' | 'sui_generis' | 'unclear';
+
+export type HmoOccupancyBand = 'small_hmo' | 'large_hmo' | 'non_hmo' | 'care_model';
+
+export type LicensingConfidence = 'high' | 'medium' | 'low';
+
+export interface LicensingCheck {
+  status: LicensingRequirementStatus;
+  reason: string;
+}
+
+export interface HmoLicensingPath {
+  useClass: HmoUseClass;
+  occupancyBand: HmoOccupancyBand;
+  estimatedOccupants: number;
+  planningPermission: LicensingCheck;
+  mandatoryLicence: LicensingCheck;
+  additionalLicence: LicensingCheck;
+  actionItems: string[];
+  confidence: LicensingConfidence;
+  disclaimer: string;
 }
 
 export type FloorPlanRoomKind =

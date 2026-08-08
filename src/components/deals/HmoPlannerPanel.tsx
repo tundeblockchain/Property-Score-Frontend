@@ -11,8 +11,10 @@ import { formatCurrency, formatPercent } from '@/lib/format';
 import type {
   FloorPlanAnalysis,
   HmoLayoutScheme,
+  HmoLicensingPath,
   HmoPlannerResult,
   HmoUseCase,
+  LicensingRequirementStatus,
 } from '@/models';
 
 interface HmoPlannerPanelProps {
@@ -44,6 +46,95 @@ function sourceLabel(source: HmoPlannerResult['source']): string {
   return source === 'floor_plan_vision'
     ? 'Floor-plan vision'
     : 'Listed beds (indicative)';
+}
+
+function licensingStatusLabel(status: LicensingRequirementStatus): string {
+  switch (status) {
+    case 'likely_required':
+      return 'Likely required';
+    case 'likely_not_required':
+      return 'Likely not required';
+    case 'check_with_la':
+      return 'Check with local authority';
+    case 'not_applicable':
+      return 'Not applicable';
+  }
+}
+
+function licensingChipColor(
+  status: LicensingRequirementStatus,
+): 'default' | 'success' | 'warning' | 'error' {
+  switch (status) {
+    case 'likely_required':
+      return 'error';
+    case 'likely_not_required':
+      return 'success';
+    case 'check_with_la':
+      return 'warning';
+    case 'not_applicable':
+      return 'default';
+  }
+}
+
+function LicensingPathSummary({ licensing }: { licensing: HmoLicensingPath }) {
+  return (
+    <Stack spacing={1.5}>
+      <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap>
+        <Typography variant="subtitle2" color="primary.dark">
+          Licensing path
+        </Typography>
+        <Chip label={`Use class ${licensing.useClass}`} size="small" color="primary" />
+        <Chip
+          label={`${licensing.confidence} confidence`}
+          size="small"
+          variant="outlined"
+        />
+      </Stack>
+
+      <Stack direction="row" spacing={3} flexWrap="wrap" useFlexGap>
+        <Fact label="Occupancy band" value={licensing.occupancyBand.replaceAll('_', ' ')} />
+        <Fact label="Est. occupants" value={String(licensing.estimatedOccupants)} />
+        <Stack spacing={0.5} sx={{ minWidth: 160 }}>
+          <Typography variant="caption" color="primary.main">
+            Planning
+          </Typography>
+          <Chip
+            size="small"
+            color={licensingChipColor(licensing.planningPermission.status)}
+            label={licensingStatusLabel(licensing.planningPermission.status)}
+          />
+        </Stack>
+        <Stack spacing={0.5} sx={{ minWidth: 160 }}>
+          <Typography variant="caption" color="primary.main">
+            Mandatory licence
+          </Typography>
+          <Chip
+            size="small"
+            color={licensingChipColor(licensing.mandatoryLicence.status)}
+            label={licensingStatusLabel(licensing.mandatoryLicence.status)}
+          />
+        </Stack>
+        <Stack spacing={0.5} sx={{ minWidth: 160 }}>
+          <Typography variant="caption" color="primary.main">
+            Additional / selective
+          </Typography>
+          <Chip
+            size="small"
+            color={licensingChipColor(licensing.additionalLicence.status)}
+            label={licensingStatusLabel(licensing.additionalLicence.status)}
+          />
+        </Stack>
+      </Stack>
+
+      <Typography variant="body2" color="text.secondary">
+        {licensing.planningPermission.reason}
+      </Typography>
+      <NoteList title="Licensing actions" items={licensing.actionItems} />
+      <Typography variant="caption" color="text.secondary">
+        {licensing.disclaimer}
+      </Typography>
+    </Stack>
+  );
 }
 
 function VisionSummary({ analysis }: { analysis: FloorPlanAnalysis }) {
@@ -194,6 +285,7 @@ function SchemeBody({ scheme }: { scheme: HmoLayoutScheme }) {
 
       <NoteList title="Amenities" items={scheme.amenities} />
       <NoteList title="Layout notes" items={scheme.layoutNotes} />
+      <LicensingPathSummary licensing={scheme.licensing} />
       <NoteList title="Compliance checks" items={scheme.complianceNotes} />
     </Stack>
   );
