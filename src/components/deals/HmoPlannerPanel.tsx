@@ -55,7 +55,7 @@ function licensingStatusLabel(status: LicensingRequirementStatus): string {
     case 'likely_not_required':
       return 'Likely not required';
     case 'check_with_la':
-      return 'Check with LA';
+      return 'Check with local authority';
     case 'not_applicable':
       return 'Not applicable';
   }
