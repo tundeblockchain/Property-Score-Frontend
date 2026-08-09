@@ -4,6 +4,7 @@ import type { HmoLayoutScheme } from '@/models';
 import { ConversionPlanSection } from './ConversionPlanSection';
 import { FireEscapeSection } from './FireEscapeSection';
 import { LicensingPathSection } from './LicensingPathSection';
+import { RefurbBoqSection } from './RefurbBoqSection';
 import { SchemeNotesSection } from './SchemeNotesSection';
 import { SchemeOverviewSection } from './SchemeOverviewSection';
 
@@ -21,6 +22,12 @@ export function SchemeAccordion({ scheme }: SchemeAccordionProps) {
       {scheme.conversionPlan ? (
         <ReportSection title="Conversion plan">
           <ConversionPlanSection plan={scheme.conversionPlan} />
+        </ReportSection>
+      ) : null}
+
+      {scheme.refurbBoq ? (
+        <ReportSection title="Refurb BoQ">
+          <RefurbBoqSection boq={scheme.refurbBoq} />
         </ReportSection>
       ) : null}
 

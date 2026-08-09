@@ -92,7 +92,7 @@ export function ReportSection({
           {title}
         </Typography>
       </AccordionSummary>
-      <AccordionDetails sx={{ px: 3, pt: 0, pb: 3 }}>{children}</AccordionDetails>
+      <AccordionDetails sx={{ px: 3, pt: 2, pb: 3 }}>{children}</AccordionDetails>
     </Accordion>
   );
 }
