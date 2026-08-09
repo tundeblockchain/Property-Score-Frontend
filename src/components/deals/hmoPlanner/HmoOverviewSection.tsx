@@ -1,6 +1,7 @@
 import { Chip, Stack, Typography } from '@mui/material';
 import type { FloorPlanAnalysis, HmoPlannerResult } from '@/models';
 import { Fact } from './Fact';
+import { MoneyComparisonSection } from './MoneyComparisonSection';
 import { sourceLabel } from './labels';
 
 interface HmoOverviewSectionProps {
@@ -69,6 +70,10 @@ export function HmoOverviewSection({ planner }: HmoOverviewSectionProps) {
         />
         <Fact label="Layout source" value={sourceLabel(planner.source)} />
       </Stack>
+
+      {planner.moneyComparison ? (
+        <MoneyComparisonSection comparison={planner.moneyComparison} />
+      ) : null}
 
       {planner.floorPlanAnalysis ? (
         <VisionSummary analysis={planner.floorPlanAnalysis} />
