@@ -13,7 +13,7 @@ import { DealStatusChip } from '@/components/deals/DealStatusChip';
 import { EpcPanel } from '@/components/deals/EpcPanel';
 import { FinancialModelPanel } from '@/components/deals/FinancialModelPanel';
 import { FloorPlans } from '@/components/deals/FloorPlans';
-import { HmoPlannerPanel } from '@/components/deals/HmoPlannerPanel';
+import { HmoPlannerPanel } from '@/components/deals/hmoPlanner';
 import { ListingDescription } from '@/components/deals/ListingDescription';
 import { ListingSummary } from '@/components/deals/ListingSummary';
 import { OverallScoreBadge } from '@/components/deals/OverallScoreBadge';
@@ -130,11 +130,7 @@ export function DealDetailPage() {
           </ReportSection>
         ) : null}
 
-        {data.hmoPlanner ? (
-          <ReportSection title="HMO planner" defaultExpanded sx={fullWidth}>
-            <HmoPlannerPanel planner={data.hmoPlanner} />
-          </ReportSection>
-        ) : null}
+        {data.hmoPlanner ? <HmoPlannerPanel planner={data.hmoPlanner} /> : null}
 
         {data.narrative ? (
           <ReportSection title="Narrative" defaultExpanded sx={fullWidth}>
