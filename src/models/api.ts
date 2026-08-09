@@ -200,6 +200,34 @@ export interface FloorPlanAnalysis {
   stub?: boolean;
 }
 
+export interface HmoMoneySnapshot {
+  label: string;
+  askingPrice?: number;
+  estimatedRentMonthly?: number;
+  grossYield?: number;
+  netCashFlowAnnual?: number;
+  estimatedRoi?: number;
+  voidRateAssumed: number;
+  occupancyBasis: string;
+}
+
+export interface HmoMoneyDelta {
+  monthlyRentGbp: number;
+  grossYieldPts: number;
+  netCashFlowAnnualGbp: number;
+  estimatedRoiPts: number;
+}
+
+export interface HmoMoneyComparison {
+  asListedFamily: HmoMoneySnapshot;
+  bestHmo: HmoMoneySnapshot & {
+    schemeId: string;
+    schemeTitle: string;
+  };
+  delta: HmoMoneyDelta;
+  notes: string[];
+}
+
 export interface HmoPlannerResult {
   source: 'listing_beds' | 'floor_plan_vision';
   floorPlanCount: number;
@@ -208,6 +236,7 @@ export interface HmoPlannerResult {
   floorPlanAnalysis?: FloorPlanAnalysis;
   schemes: HmoLayoutScheme[];
   recommendedSchemeId: string;
+  moneyComparison?: HmoMoneyComparison;
   disclaimer: string;
 }
 
