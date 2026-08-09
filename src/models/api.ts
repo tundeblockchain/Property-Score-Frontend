@@ -80,24 +80,6 @@ export interface HmoSchemeFinancials extends FinancialModel {
   occupiedRoomsAssumed: number;
 }
 
-export interface HmoLayoutScheme {
-  id: string;
-  useCase: HmoUseCase;
-  title: string;
-  summary: string;
-  lettingRooms: number;
-  rooms: HmoLayoutRoom[];
-  amenities: string[];
-  complianceNotes: string[];
-  layoutNotes: string[];
-  estimatedRefurbLowGbp: number;
-  estimatedRefurbHighGbp: number;
-  financials: HmoSchemeFinancials;
-  licensing: HmoLicensingPath;
-  fitScore: number;
-  recommended: boolean;
-}
-
 export type LicensingRequirementStatus =
   | 'likely_required'
   | 'likely_not_required'
@@ -138,6 +120,53 @@ export type FloorPlanRoomKind =
   | 'garage'
   | 'utility'
   | 'other';
+
+export type ConversionAction =
+  | 'keep_bedroom'
+  | 'convert_to_bedroom'
+  | 'add_ensuite'
+  | 'keep_communal'
+  | 'staff_room';
+
+export interface ConversionStep {
+  sourceLabel: string;
+  sourceKind: FloorPlanRoomKind;
+  action: ConversionAction;
+  targetType: HmoRoomType;
+  estimatedAreaSqM?: number;
+  meetsSpaceStandard?: boolean;
+  rationale: string;
+  estimatedCostGbpLow: number;
+  estimatedCostGbpHigh: number;
+}
+
+export interface GeometryConversionPlan {
+  useCase: HmoUseCase;
+  asBuiltBedrooms: number;
+  proposedLettingRooms: number;
+  steps: ConversionStep[];
+  retainedCommunal: string[];
+  blocked: string[];
+}
+
+export interface HmoLayoutScheme {
+  id: string;
+  useCase: HmoUseCase;
+  title: string;
+  summary: string;
+  lettingRooms: number;
+  rooms: HmoLayoutRoom[];
+  amenities: string[];
+  complianceNotes: string[];
+  layoutNotes: string[];
+  estimatedRefurbLowGbp: number;
+  estimatedRefurbHighGbp: number;
+  financials: HmoSchemeFinancials;
+  licensing: HmoLicensingPath;
+  conversionPlan?: GeometryConversionPlan;
+  fitScore: number;
+  recommended: boolean;
+}
 
 export interface FloorPlanDetectedRoom {
   label: string;
