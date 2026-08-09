@@ -1,4 +1,4 @@
-import { Chip, Stack, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import type { FloorPlanAnalysis, HmoPlannerResult } from '@/models';
 import { Fact } from './Fact';
 import { MoneyComparisonSection } from './MoneyComparisonSection';
@@ -17,12 +17,9 @@ function VisionSummary({ analysis }: { analysis: FloorPlanAnalysis }) {
 
   return (
     <Stack spacing={1.5}>
-      <Stack direction="row" spacing={1} alignItems="center">
-        <Typography variant="subtitle2" color="primary.dark">
-          Floor-plan vision
-        </Typography>
-        <Chip label={analysis.model} size="small" variant="outlined" />
-      </Stack>
+      <Typography variant="subtitle2" color="primary.dark">
+        Floor-plan vision
+      </Typography>
       <Stack direction="row" spacing={3} flexWrap="wrap" useFlexGap>
         <Fact
           label="Detected beds / baths"

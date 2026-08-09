@@ -2,6 +2,7 @@ import { Stack } from '@mui/material';
 import { ReportSection } from '@/components/deals/ReportSection';
 import type { HmoLayoutScheme } from '@/models';
 import { ConversionPlanSection } from './ConversionPlanSection';
+import { FireEscapeSection } from './FireEscapeSection';
 import { LicensingPathSection } from './LicensingPathSection';
 import { SchemeNotesSection } from './SchemeNotesSection';
 import { SchemeOverviewSection } from './SchemeOverviewSection';
@@ -26,6 +27,12 @@ export function SchemeAccordion({ scheme }: SchemeAccordionProps) {
       <ReportSection title="Licensing path">
         <LicensingPathSection licensing={scheme.licensing} />
       </ReportSection>
+
+      {scheme.fireEscape ? (
+        <ReportSection title="Fire / escape">
+          <FireEscapeSection fireEscape={scheme.fireEscape} />
+        </ReportSection>
+      ) : null}
 
       <ReportSection title="Notes & compliance">
         <SchemeNotesSection scheme={scheme} />

@@ -1,5 +1,7 @@
 import type {
   ConversionAction,
+  FireCheckStatus,
+  FireRiskBand,
   HmoPlannerResult,
   LicensingRequirementStatus,
 } from '@/models';
@@ -50,5 +52,44 @@ export function licensingChipColor(
       return 'warning';
     case 'not_applicable':
       return 'default';
+  }
+}
+
+export function fireCheckStatusLabel(status: FireCheckStatus): string {
+  switch (status) {
+    case 'likely_ok':
+      return 'Likely OK';
+    case 'likely_required':
+      return 'Likely required';
+    case 'check_on_site':
+      return 'Check on site';
+    case 'not_assessed':
+      return 'Not assessed';
+  }
+}
+
+export function fireCheckChipColor(
+  status: FireCheckStatus,
+): 'default' | 'success' | 'warning' | 'error' {
+  switch (status) {
+    case 'likely_ok':
+      return 'success';
+    case 'likely_required':
+      return 'error';
+    case 'check_on_site':
+      return 'warning';
+    case 'not_assessed':
+      return 'default';
+  }
+}
+
+export function fireRiskLabel(band: FireRiskBand): string {
+  switch (band) {
+    case 'lower':
+      return 'Lower';
+    case 'medium':
+      return 'Medium';
+    case 'higher':
+      return 'Higher';
   }
 }
