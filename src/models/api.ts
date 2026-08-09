@@ -163,9 +163,43 @@ export interface HmoLayoutScheme {
   estimatedRefurbHighGbp: number;
   financials: HmoSchemeFinancials;
   licensing: HmoLicensingPath;
+  fireEscape?: HmoFireEscapeAssessment;
   conversionPlan?: GeometryConversionPlan;
   fitScore: number;
   recommended: boolean;
+}
+
+export type FireCheckStatus =
+  | 'likely_ok'
+  | 'likely_required'
+  | 'check_on_site'
+  | 'not_assessed';
+
+export type FireRiskBand = 'lower' | 'medium' | 'higher';
+
+export type FireAssessmentConfidence = 'high' | 'medium' | 'low';
+
+export type FireStoreySource =
+  | 'floor_plan_rooms'
+  | 'listing_heuristic'
+  | 'loft_adjusted';
+
+export interface FireChecklistItem {
+  id: string;
+  title: string;
+  status: FireCheckStatus;
+  detail: string;
+}
+
+export interface HmoFireEscapeAssessment {
+  estimatedStoreys: number;
+  storeySource: FireStoreySource;
+  riskBand: FireRiskBand;
+  items: FireChecklistItem[];
+  actionItems: string[];
+  visionNotes?: string;
+  confidence: FireAssessmentConfidence;
+  disclaimer: string;
 }
 
 export interface FloorPlanDetectedRoom {
