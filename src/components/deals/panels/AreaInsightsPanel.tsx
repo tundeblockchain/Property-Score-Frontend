@@ -1,5 +1,5 @@
 import { Chip, Stack, Typography } from '@mui/material';
-import { Fact } from '@/components/deals/Fact';
+import { Fact } from '@/components/deals/common/Fact';
 import { formatCurrency } from '@/lib/format';
 import type {
   BroadbandEnrichment,

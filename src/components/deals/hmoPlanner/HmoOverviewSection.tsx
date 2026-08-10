@@ -1,6 +1,6 @@
 import { Stack, Typography } from '@mui/material';
 import type { FloorPlanAnalysis, HmoPlannerResult } from '@/models';
-import { Fact } from '@/components/deals/Fact';
+import { Fact } from '@/components/deals/common/Fact';
 import { MoneyComparisonSection } from './MoneyComparisonSection';
 import { sourceLabel } from './labels';
 

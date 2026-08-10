@@ -1,7 +1,7 @@
 import { Box, Chip, Stack, Typography } from '@mui/material';
 import { formatCurrency } from '@/lib/format';
 import type { HmoRefurbBoq, RefurbBoqLineItem } from '@/models';
-import { Fact } from '@/components/deals/Fact';
+import { Fact } from '@/components/deals/common/Fact';
 import { NoteList } from './NoteList';
 import { refurbCategoryLabel } from './labels';
 

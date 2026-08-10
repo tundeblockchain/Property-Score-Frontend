@@ -1,5 +1,5 @@
 import { Stack } from '@mui/material';
-import { DealListItem } from '@/components/deals/DealListItem';
+import { DealListItem } from '@/components/deals/list/DealListItem';
 import { EmptyState } from '@/components/common/Feedback';
 import type { DealSummary } from '@/models';
 

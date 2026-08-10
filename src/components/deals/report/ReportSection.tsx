@@ -12,7 +12,17 @@ import type { ReactNode } from 'react';
 interface ReportSectionProps {
   title: string;
   children: ReactNode;
+  /** Anchor target, so the section can be deep-linked and jumped to. */
+  id?: string;
+  /** Shown beside the title, for status such as a recommended HMO scheme. */
+  badge?: ReactNode;
+  /** Nested sections pass 'h3' to keep the document outline in order. */
+  headingLevel?: 'h2' | 'h3';
+  /** Used only while uncontrolled; ignored when `expanded` is supplied. */
   defaultExpanded?: boolean;
+  /** Supply with `onExpandedChange` to let the page drive expansion. */
+  expanded?: boolean;
+  onExpandedChange?: (expanded: boolean) => void;
   sx?: SxProps<Theme>;
 }
 
@@ -36,18 +46,30 @@ function ExpandIcon() {
 export function ReportSection({
   title,
   children,
+  id,
+  badge,
+  headingLevel = 'h2',
   defaultExpanded = false,
+  expanded,
+  onExpandedChange,
   sx,
 }: ReportSectionProps) {
   const slug = title.toLowerCase().replace(/\s+/g, '-');
+  const isControlled = expanded !== undefined;
 
   return (
     <Accordion
-      defaultExpanded={defaultExpanded}
+      id={id}
+      {...(isControlled
+        ? { expanded, onChange: (_, next) => onExpandedChange?.(next) }
+        : { defaultExpanded })}
+      slotProps={{ heading: { component: headingLevel } }}
       disableGutters
       elevation={0}
       sx={[
         {
+          // Clears the sticky app bar when jumped to via an anchor link.
+          scrollMarginTop: { xs: '72px', md: '88px' },
           border: '1px solid',
           borderColor: 'primary.light',
           borderRadius: 1,
@@ -81,16 +103,21 @@ export function ReportSection({
           },
           '& .MuiAccordionSummary-content': {
             my: 1.5,
+            alignItems: 'center',
+            gap: 1.5,
+            minWidth: 0,
           },
         }}
       >
+        {/* The Accordion heading slot already supplies the heading element. */}
         <Typography
           variant="h6"
-          component="h3"
+          component="span"
           sx={{ textTransform: 'capitalize', color: 'info.dark' }}
         >
           {title}
         </Typography>
+        {badge}
       </AccordionSummary>
       <AccordionDetails
         sx={{
