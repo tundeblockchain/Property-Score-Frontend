@@ -9,6 +9,13 @@ export interface PlanOption {
   highlight?: boolean;
 }
 
+export const FREE_PLAN_SUMMARY: Omit<PlanOption, 'product' | 'highlight'> = {
+  title: 'Free',
+  priceLabel: 'No card required',
+  creditsLabel: '5 credits to start',
+  description: 'Score your first listings and see the full report format.',
+};
+
 export const PLAN_OPTIONS: PlanOption[] = [
   {
     product: 'starter_subscription',
