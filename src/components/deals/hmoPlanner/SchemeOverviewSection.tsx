@@ -1,7 +1,7 @@
 import { Box, Chip, Stack, Typography } from '@mui/material';
 import { formatCurrency, formatPercent } from '@/lib/format';
 import type { HmoLayoutScheme } from '@/models';
-import { Fact } from '@/components/deals/Fact';
+import { Fact } from '@/components/deals/common/Fact';
 
 interface SchemeOverviewSectionProps {
   scheme: HmoLayoutScheme;

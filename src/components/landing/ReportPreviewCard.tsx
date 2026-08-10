@@ -7,7 +7,7 @@ import {
   Typography,
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
-import { ScoreBreakdownBars } from '@/components/deals/ScoreBreakdownBars';
+import { ScoreBreakdownBars } from '@/components/deals/common/ScoreBreakdownBars';
 import { formatCurrency, formatPercent } from '@/lib/format';
 import type { ScoreBreakdown } from '@/models';
 

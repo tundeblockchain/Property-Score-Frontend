@@ -1,7 +1,7 @@
 import { Box, CardActionArea, Stack, Typography } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
-import { DealStatusChip } from '@/components/deals/DealStatusChip';
-import { OverallScoreBadge } from '@/components/deals/OverallScoreBadge';
+import { DealStatusChip } from '@/components/deals/common/DealStatusChip';
+import { OverallScoreBadge } from '@/components/deals/common/OverallScoreBadge';
 import { formatCurrency, formatDate } from '@/lib/format';
 import type { DealSummary } from '@/models';
 

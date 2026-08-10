@@ -5,9 +5,9 @@ import {
   FailedAnalysisAlert,
   LoadingState,
 } from '@/components/common/Feedback';
-import { DealStatusChip } from '@/components/deals/DealStatusChip';
-import { ListingSummary } from '@/components/deals/ListingSummary';
-import { ScoreBreakdownBars } from '@/components/deals/ScoreBreakdownBars';
+import { DealStatusChip } from '@/components/deals/common/DealStatusChip';
+import { ListingSummary } from '@/components/deals/common/ListingSummary';
+import { ScoreBreakdownBars } from '@/components/deals/common/ScoreBreakdownBars';
 import { useAnalysisJob } from '@/hooks/useAnalysisJob';
 
 interface AnalysisProgressProps {

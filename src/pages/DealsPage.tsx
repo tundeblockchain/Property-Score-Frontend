@@ -4,7 +4,7 @@ import {
   LoadingState,
   PageHeader,
 } from '@/components/common/Feedback';
-import { DealList } from '@/components/deals/DealList';
+import { DealList } from '@/components/deals/list/DealList';
 import { useDeals } from '@/hooks/useDeals';
 
 export function DealsPage() {

@@ -7,12 +7,15 @@ interface ListingSummaryProps {
   listingUrl?: string;
   /** Tighter layout for the analysis progress screen. */
   compact?: boolean;
+  /** Off where the surrounding page already shows the address as a heading. */
+  showAddress?: boolean;
 }
 
 export function ListingSummary({
   listing,
   listingUrl,
   compact = false,
+  showAddress = true,
 }: ListingSummaryProps) {
   const details = [
     listing.propertyType,
@@ -50,14 +53,16 @@ export function ListingSummary({
       ) : null}
 
       <Stack spacing={compact ? 1 : 1.5} sx={{ minWidth: 0, flex: 1 }}>
-        <Typography
-          variant={compact ? 'subtitle1' : 'h5'}
-          component={compact ? 'p' : 'h2'}
-          fontWeight={700}
-          color="primary.dark"
-        >
-          {listing.address ?? listing.postcode ?? 'Listing'}
-        </Typography>
+        {showAddress ? (
+          <Typography
+            variant={compact ? 'subtitle1' : 'h5'}
+            component={compact ? 'p' : 'h2'}
+            fontWeight={700}
+            color="primary.dark"
+          >
+            {listing.address ?? listing.postcode ?? 'Listing'}
+          </Typography>
+        ) : null}
         <Typography
           variant={compact ? 'body1' : 'h6'}
           fontWeight={600}

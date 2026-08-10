@@ -1,0 +1,245 @@
+import ArchitectureOutlinedIcon from '@mui/icons-material/ArchitectureOutlined';
+import BoltOutlinedIcon from '@mui/icons-material/BoltOutlined';
+import ChecklistOutlinedIcon from '@mui/icons-material/ChecklistOutlined';
+import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
+import DirectionsTransitOutlinedIcon from '@mui/icons-material/DirectionsTransitOutlined';
+import HomeWorkOutlinedIcon from '@mui/icons-material/HomeWorkOutlined';
+import InsightsOutlinedIcon from '@mui/icons-material/InsightsOutlined';
+import LayersOutlinedIcon from '@mui/icons-material/LayersOutlined';
+import NotesOutlinedIcon from '@mui/icons-material/NotesOutlined';
+import PaymentsOutlinedIcon from '@mui/icons-material/PaymentsOutlined';
+import PhotoLibraryOutlinedIcon from '@mui/icons-material/PhotoLibraryOutlined';
+import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
+import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
+import SellOutlinedIcon from '@mui/icons-material/SellOutlined';
+import { Chip, Typography, type SvgIconProps } from '@mui/material';
+import type { ComponentType, ReactNode } from 'react';
+import { ScoreBreakdownBars } from '@/components/deals/common/ScoreBreakdownBars';
+import {
+  HmoOverviewSection,
+  SchemeAccordion,
+  orderedHmoSchemes,
+} from '@/components/deals/hmoPlanner';
+import { ActionPlanList } from '@/components/deals/panels/ActionPlanList';
+import { AreaInsightsPanel } from '@/components/deals/panels/AreaInsightsPanel';
+import { ComparablesPanel } from '@/components/deals/panels/ComparablesPanel';
+import { EpcPanel } from '@/components/deals/panels/EpcPanel';
+import { FinancialModelPanel } from '@/components/deals/panels/FinancialModelPanel';
+import { FloorPlans } from '@/components/deals/panels/FloorPlans';
+import { ListingDescription } from '@/components/deals/panels/ListingDescription';
+import { PropertyImages } from '@/components/deals/panels/PropertyImages';
+import { SchoolsPanel } from '@/components/deals/panels/SchoolsPanel';
+import { TransportPanel } from '@/components/deals/panels/TransportPanel';
+import type { DealDetail } from '@/models';
+
+/** Wide, narrative content goes in `main`; small fact panels in `aside`. */
+export type ReportColumn = 'main' | 'aside';
+
+export interface ReportSectionSpec {
+  /** Anchor id, also used as the React key and the nav target. */
+  readonly id: string;
+  readonly title: string;
+  readonly column: ReportColumn;
+  readonly defaultExpanded: boolean;
+  readonly icon: ComponentType<SvgIconProps>;
+  readonly badge?: ReactNode;
+  /** Deferred so a collapsed section does not build its subtree. */
+  readonly render: () => ReactNode;
+}
+
+export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
+  const { listing, scores, financialModel, hmoPlanner, narrative, actionPlan } =
+    deal;
+  const enrichment = deal.enrichment;
+  const sections: ReportSectionSpec[] = [];
+
+  if (listing?.imageUrls && listing.imageUrls.length > 0) {
+    const imageUrls = listing.imageUrls;
+    sections.push({
+      id: 'property-images',
+      title: 'Property images',
+      column: 'main',
+      defaultExpanded: false,
+      icon: PhotoLibraryOutlinedIcon,
+      render: () => <PropertyImages imageUrls={imageUrls} />,
+    });
+  }
+
+  if (listing?.floorPlanUrls && listing.floorPlanUrls.length > 0) {
+    const floorPlanUrls = listing.floorPlanUrls;
+    sections.push({
+      id: 'floor-plans',
+      title: 'Floor plans',
+      column: 'main',
+      defaultExpanded: false,
+      icon: ArchitectureOutlinedIcon,
+      render: () => <FloorPlans floorPlanUrls={floorPlanUrls} />,
+    });
+  }
+
+  if (listing?.description) {
+    const description = listing.description;
+    sections.push({
+      id: 'listing-description',
+      title: 'Listing description',
+      column: 'main',
+      defaultExpanded: false,
+      icon: DescriptionOutlinedIcon,
+      render: () => <ListingDescription description={description} />,
+    });
+  }
+
+  if (scores) {
+    sections.push({
+      id: 'score-breakdown',
+      title: 'Score breakdown',
+      column: 'main',
+      defaultExpanded: true,
+      icon: InsightsOutlinedIcon,
+      render: () => <ScoreBreakdownBars scores={scores} />,
+    });
+  }
+
+  if (financialModel) {
+    sections.push({
+      id: 'financial-model',
+      title: 'Financial model',
+      column: 'main',
+      defaultExpanded: true,
+      icon: PaymentsOutlinedIcon,
+      render: () => <FinancialModelPanel model={financialModel} />,
+    });
+  }
+
+  if (hmoPlanner) {
+    const schemes = orderedHmoSchemes(hmoPlanner);
+
+    if (schemes.length > 0) {
+      sections.push({
+        id: 'hmo-overview',
+        title: 'HMO overview',
+        column: 'main',
+        defaultExpanded: true,
+        icon: HomeWorkOutlinedIcon,
+        render: () => <HmoOverviewSection planner={hmoPlanner} />,
+      });
+
+      for (const scheme of schemes) {
+        sections.push({
+          id: `hmo-scheme-${scheme.id}`,
+          title: scheme.title,
+          column: 'main',
+          defaultExpanded: scheme.recommended,
+          icon: LayersOutlinedIcon,
+          badge: scheme.recommended ? (
+            <Chip label="Recommended" color="success" size="small" />
+          ) : undefined,
+          render: () => <SchemeAccordion scheme={scheme} />,
+        });
+      }
+    }
+  }
+
+  const hasAreaInsights = Boolean(
+    enrichment?.broadband ||
+      enrichment?.planning ||
+      enrichment?.market ||
+      enrichment?.crime ||
+      enrichment?.demographics,
+  );
+
+  if (hasAreaInsights && enrichment) {
+    sections.push({
+      id: 'area-insights',
+      title: 'Area insights',
+      column: 'main',
+      defaultExpanded: false,
+      icon: PlaceOutlinedIcon,
+      render: () => (
+        <AreaInsightsPanel
+          broadband={enrichment.broadband}
+          planning={enrichment.planning}
+          market={enrichment.market}
+          crime={enrichment.crime}
+          demographics={enrichment.demographics}
+        />
+      ),
+    });
+  }
+
+  if (narrative) {
+    sections.push({
+      id: 'narrative',
+      title: 'Narrative',
+      column: 'main',
+      defaultExpanded: true,
+      icon: NotesOutlinedIcon,
+      render: () => (
+        <Typography color="primary.dark" whiteSpace="pre-wrap">
+          {narrative}
+        </Typography>
+      ),
+    });
+  }
+
+  if (actionPlan && actionPlan.length > 0) {
+    sections.push({
+      id: 'action-plan',
+      title: 'Action plan',
+      column: 'main',
+      defaultExpanded: true,
+      icon: ChecklistOutlinedIcon,
+      render: () => <ActionPlanList items={actionPlan} />,
+    });
+  }
+
+  if (enrichment?.epc) {
+    const epc = enrichment.epc;
+    sections.push({
+      id: 'epc',
+      title: 'EPC',
+      column: 'aside',
+      defaultExpanded: false,
+      icon: BoltOutlinedIcon,
+      render: () => <EpcPanel epc={epc} />,
+    });
+  }
+
+  if (enrichment?.soldPrices) {
+    const soldPrices = enrichment.soldPrices;
+    sections.push({
+      id: 'sold-comparables',
+      title: 'Sold comparables',
+      column: 'aside',
+      defaultExpanded: false,
+      icon: SellOutlinedIcon,
+      render: () => <ComparablesPanel soldPrices={soldPrices} />,
+    });
+  }
+
+  if (enrichment?.transport) {
+    const transport = enrichment.transport;
+    sections.push({
+      id: 'transport',
+      title: 'Transport',
+      column: 'aside',
+      defaultExpanded: false,
+      icon: DirectionsTransitOutlinedIcon,
+      render: () => <TransportPanel transport={transport} />,
+    });
+  }
+
+  if (enrichment?.schools) {
+    const schools = enrichment.schools;
+    sections.push({
+      id: 'schools',
+      title: 'Schools',
+      column: 'aside',
+      defaultExpanded: false,
+      icon: SchoolOutlinedIcon,
+      render: () => <SchoolsPanel schools={schools} />,
+    });
+  }
+
+  return sections;
+}

@@ -1,0 +1,112 @@
+import UnfoldLessOutlinedIcon from '@mui/icons-material/UnfoldLessOutlined';
+import UnfoldMoreOutlinedIcon from '@mui/icons-material/UnfoldMoreOutlined';
+import { Box, Button, Stack } from '@mui/material';
+import { useState } from 'react';
+import { ReportNav } from '@/components/deals/report/ReportNav';
+import { ReportSection } from '@/components/deals/report/ReportSection';
+import {
+  buildReportSections,
+  type ReportSectionSpec,
+} from '@/components/deals/report/reportSections';
+import { useSectionInView } from '@/hooks/useSectionInView';
+import type { DealDetail } from '@/models';
+
+interface DealReportProps {
+  deal: DealDetail;
+}
+
+export function DealReport({ deal }: DealReportProps) {
+  const sections = buildReportSections(deal);
+  /**
+   * Only the sections the reader has touched are recorded, so a section that
+   * arrives later still opens according to its own default.
+   */
+  const [expandedOverrides, setExpandedOverrides] = useState<
+    Record<string, boolean>
+  >({});
+
+  const activeId = useSectionInView(sections.map((section) => section.id));
+
+  const isExpanded = (section: ReportSectionSpec) =>
+    expandedOverrides[section.id] ?? section.defaultExpanded;
+
+  const allExpanded = sections.length > 0 && sections.every(isExpanded);
+
+  function handleExpandedChange(id: string, expanded: boolean) {
+    setExpandedOverrides((previous) => ({ ...previous, [id]: expanded }));
+  }
+
+  function handleToggleAll() {
+    const expanded = !allExpanded;
+    setExpandedOverrides(
+      Object.fromEntries(sections.map((section) => [section.id, expanded])),
+    );
+  }
+
+  function handleNavSelect(id: string) {
+    setExpandedOverrides((previous) => ({ ...previous, [id]: true }));
+  }
+
+  if (sections.length === 0) {
+    return null;
+  }
+
+  const renderColumn = (column: ReportSectionSpec['column']) => (
+    <Stack spacing={2} sx={{ minWidth: 0 }}>
+      {sections
+        .filter((section) => section.column === column)
+        .map((section) => (
+          <ReportSection
+            key={section.id}
+            id={section.id}
+            title={section.title}
+            badge={section.badge}
+            expanded={isExpanded(section)}
+            onExpandedChange={(expanded) =>
+              handleExpandedChange(section.id, expanded)
+            }
+          >
+            {section.render()}
+          </ReportSection>
+        ))}
+    </Stack>
+  );
+
+  return (
+    <Stack spacing={2}>
+      <Button
+        onClick={handleToggleAll}
+        size="small"
+        color="inherit"
+        startIcon={
+          allExpanded ? <UnfoldLessOutlinedIcon /> : <UnfoldMoreOutlinedIcon />
+        }
+        sx={{ alignSelf: 'flex-end' }}
+      >
+        {allExpanded ? 'Collapse all' : 'Expand all'}
+      </Button>
+
+      <Box
+        sx={{
+          display: 'grid',
+          gap: 3,
+          alignItems: 'start',
+          gridTemplateColumns: {
+            xs: 'minmax(0, 1fr)',
+            md: 'minmax(0, 1fr) 300px',
+            lg: '180px minmax(0, 1fr) 300px',
+          },
+        }}
+      >
+        <ReportNav
+          sections={sections}
+          activeId={activeId}
+          onSelect={handleNavSelect}
+          sx={{ display: { xs: 'none', lg: 'block' } }}
+        />
+        {renderColumn('main')}
+        {renderColumn('aside')}
+      </Box>
+    </Stack>
+  );
+}

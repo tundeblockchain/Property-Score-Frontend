@@ -1,6 +1,6 @@
 import { Chip, Link, Stack, Typography } from '@mui/material';
 import type { HmoLicensingPath } from '@/models';
-import { Fact } from '@/components/deals/Fact';
+import { Fact } from '@/components/deals/common/Fact';
 import { NoteList } from './NoteList';
 import { licensingChipColor, licensingStatusLabel } from './labels';
 

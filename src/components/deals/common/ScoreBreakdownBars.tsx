@@ -1,5 +1,6 @@
 import { Box, LinearProgress, Stack, Typography } from '@mui/material';
 import { alpha } from '@mui/material/styles';
+import { clampScore, scoreTone } from '@/lib/scores';
 import type { ScoreBreakdown } from '@/models';
 
 const SCORE_LABELS: Array<{ key: keyof ScoreBreakdown; label: string }> = [
@@ -10,16 +11,6 @@ const SCORE_LABELS: Array<{ key: keyof ScoreBreakdown; label: string }> = [
   { key: 'location', label: 'Location' },
   { key: 'refurb', label: 'Refurb' },
 ];
-
-type ScoreTone = 'error' | 'warning' | 'info' | 'success';
-
-/** Traffic-light style bands for 0–100 scores. */
-function scoreTone(score: number): ScoreTone {
-  if (score < 50) return 'error';
-  if (score < 65) return 'warning';
-  if (score < 80) return 'info';
-  return 'success';
-}
 
 interface ScoreBreakdownBarsProps {
   scores: ScoreBreakdown;
@@ -37,7 +28,7 @@ export function ScoreBreakdownBars({
   return (
     <Stack spacing={1.5}>
       {entries.map(({ key, label }) => {
-        const value = Math.min(100, Math.max(0, scores[key]));
+        const value = clampScore(scores[key]);
         const tone = scoreTone(value);
 
         return (
