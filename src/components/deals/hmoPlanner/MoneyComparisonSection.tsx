@@ -1,7 +1,7 @@
 import { Box, Stack, Typography } from '@mui/material';
 import { formatCurrency, formatPercent } from '@/lib/format';
 import type { HmoMoneyComparison, HmoMoneySnapshot } from '@/models';
-import { Fact } from './Fact';
+import { Fact } from '@/components/deals/Fact';
 
 interface MoneyComparisonSectionProps {
   comparison: HmoMoneyComparison;

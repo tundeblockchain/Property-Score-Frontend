@@ -70,14 +70,14 @@ export function ReportSection({
         sx={{
           px: 3,
           py: 0.5,
-          bgcolor: 'background.paper',
-          color: 'primary.dark',
+          bgcolor: (theme) => alpha(theme.palette.info.main, 0.08),
+          color: 'info.dark',
           '&.Mui-expanded': {
             borderBottom: '1px solid',
-            borderBottomColor: (theme) => alpha(theme.palette.primary.main, 0.18),
+            borderBottomColor: (theme) => alpha(theme.palette.info.main, 0.22),
           },
           '& .MuiAccordionSummary-expandIconWrapper': {
-            color: 'primary.main',
+            color: 'info.main',
           },
           '& .MuiAccordionSummary-content': {
             my: 1.5,
@@ -87,12 +87,28 @@ export function ReportSection({
         <Typography
           variant="h6"
           component="h3"
-          sx={{ textTransform: 'capitalize', color: 'primary.dark' }}
+          sx={{ textTransform: 'capitalize', color: 'info.dark' }}
         >
           {title}
         </Typography>
       </AccordionSummary>
-      <AccordionDetails sx={{ px: 3, pt: 2, pb: 3 }}>{children}</AccordionDetails>
+      <AccordionDetails
+        sx={{
+          px: 3,
+          pt: 2,
+          pb: 3,
+          fontSize: '1.0625rem',
+          '& .MuiTypography-body1': { fontSize: '1.0625rem' },
+          '& .MuiTypography-body2': { fontSize: '1rem' },
+          '& .MuiTypography-caption': { fontSize: '0.9rem' },
+          '& .MuiTypography-subtitle2': { fontSize: '1.0625rem' },
+          '& .MuiTableCell-root': { fontSize: '1rem' },
+          '& .MuiListItemText-primary': { fontSize: '1.0625rem' },
+          '& .MuiChip-label': { fontSize: '0.85rem' },
+        }}
+      >
+        {children}
+      </AccordionDetails>
     </Accordion>
   );
 }

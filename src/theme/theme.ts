@@ -13,6 +13,12 @@ export const theme = createTheme({
       main: '#1E293B',
       contrastText: '#F8FAFC',
     },
+    info: {
+      main: '#0369A1',
+      dark: '#0C4A6E',
+      light: '#38BDF8',
+      contrastText: '#F8FAFC',
+    },
     background: {
       default: '#F1F5F9',
       paper: '#FFFFFF',

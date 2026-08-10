@@ -34,7 +34,7 @@ export function DealDetailPage() {
   const enrichment = data?.enrichment;
 
   if (isLoading) {
-    return <LoadingState label="Loading deal…" />;
+    return <LoadingState label="Loading property…" />;
   }
 
   if (isError) {
@@ -42,13 +42,13 @@ export function DealDetailPage() {
   }
 
   if (!data || !dealId) {
-    return <Alert severity="warning">Deal not found.</Alert>;
+    return <Alert severity="warning">Property not found.</Alert>;
   }
 
   return (
     <Stack spacing={3}>
       <PageHeader
-        title="Deal report"
+        title="Property report"
         subtitle={`Updated ${formatDate(data.updatedAt)}`}
         action={
           data.status === 'COMPLETED' ? (

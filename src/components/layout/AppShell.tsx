@@ -13,7 +13,7 @@ import { BrandMark, CreditsBadge } from '@/components/layout/BrandAndCredits';
 
 const NAV_LINKS = [
   { to: '/', label: 'Analyse' },
-  { to: '/deals', label: 'Deals' },
+  { to: '/deals', label: 'Properties' },
   { to: '/billing', label: 'Billing' },
 ] as const;
 

@@ -83,7 +83,14 @@ export function ComparablesPanel({ soldPrices }: ComparablesPanelProps) {
                 <TableCell sx={{ color: 'primary.dark' }}>
                   {sale.address ?? soldPrices.postcode}
                 </TableCell>
-                <TableCell align="right" sx={{ color: 'primary.dark' }}>
+                <TableCell
+                  align="right"
+                  sx={{
+                    color: 'info.dark',
+                    fontWeight: 800,
+                    fontSize: '1.125rem',
+                  }}
+                >
                   {formatCurrency(sale.pricePaid)}
                 </TableCell>
                 <TableCell sx={{ color: 'primary.dark' }}>
