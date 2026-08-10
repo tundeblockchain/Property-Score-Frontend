@@ -15,15 +15,18 @@ const SCORE_LABELS: Array<{ key: keyof ScoreBreakdown; label: string }> = [
 interface ScoreBreakdownBarsProps {
   scores: ScoreBreakdown;
   compact?: boolean;
+  /** Turn off where the overall score is already shown, such as the report. */
+  includeOverall?: boolean;
 }
 
 export function ScoreBreakdownBars({
   scores,
   compact = false,
+  includeOverall = true,
 }: ScoreBreakdownBarsProps) {
   const entries = compact
     ? SCORE_LABELS.filter((item) => item.key === 'overall')
-    : SCORE_LABELS;
+    : SCORE_LABELS.filter((item) => includeOverall || item.key !== 'overall');
 
   return (
     <Stack spacing={1.5}>

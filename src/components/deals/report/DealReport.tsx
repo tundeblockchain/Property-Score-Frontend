@@ -1,14 +1,13 @@
 import UnfoldLessOutlinedIcon from '@mui/icons-material/UnfoldLessOutlined';
 import UnfoldMoreOutlinedIcon from '@mui/icons-material/UnfoldMoreOutlined';
 import { Box, Button, Stack } from '@mui/material';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ReportNav } from '@/components/deals/report/ReportNav';
 import { ReportSection } from '@/components/deals/report/ReportSection';
 import {
   buildReportSections,
   type ReportSectionSpec,
 } from '@/components/deals/report/reportSections';
-import { useSectionInView } from '@/hooks/useSectionInView';
 import type { DealDetail } from '@/models';
 
 interface DealReportProps {
@@ -16,7 +15,7 @@ interface DealReportProps {
 }
 
 export function DealReport({ deal }: DealReportProps) {
-  const sections = buildReportSections(deal);
+  const sections = useMemo(() => buildReportSections(deal), [deal]);
   /**
    * Only the sections the reader has touched are recorded, so a section that
    * arrives later still opens according to its own default.
@@ -24,8 +23,6 @@ export function DealReport({ deal }: DealReportProps) {
   const [expandedOverrides, setExpandedOverrides] = useState<
     Record<string, boolean>
   >({});
-
-  const activeId = useSectionInView(sections.map((section) => section.id));
 
   const isExpanded = (section: ReportSectionSpec) =>
     expandedOverrides[section.id] ?? section.defaultExpanded;
@@ -51,27 +48,6 @@ export function DealReport({ deal }: DealReportProps) {
     return null;
   }
 
-  const renderColumn = (column: ReportSectionSpec['column']) => (
-    <Stack spacing={2} sx={{ minWidth: 0 }}>
-      {sections
-        .filter((section) => section.column === column)
-        .map((section) => (
-          <ReportSection
-            key={section.id}
-            id={section.id}
-            title={section.title}
-            badge={section.badge}
-            expanded={isExpanded(section)}
-            onExpandedChange={(expanded) =>
-              handleExpandedChange(section.id, expanded)
-            }
-          >
-            {section.render()}
-          </ReportSection>
-        ))}
-    </Stack>
-  );
-
   return (
     <Stack spacing={2}>
       <Button
@@ -93,19 +69,33 @@ export function DealReport({ deal }: DealReportProps) {
           alignItems: 'start',
           gridTemplateColumns: {
             xs: 'minmax(0, 1fr)',
-            md: 'minmax(0, 1fr) 300px',
-            lg: '180px minmax(0, 1fr) 300px',
+            lg: '180px minmax(0, 1fr)',
           },
         }}
       >
         <ReportNav
           sections={sections}
-          activeId={activeId}
           onSelect={handleNavSelect}
           sx={{ display: { xs: 'none', lg: 'block' } }}
         />
-        {renderColumn('main')}
-        {renderColumn('aside')}
+
+        <Stack spacing={2} sx={{ minWidth: 0 }}>
+          {sections.map((section) => (
+            <ReportSection
+              key={section.id}
+              id={section.id}
+              title={section.title}
+              icon={<section.icon fontSize="small" />}
+              badge={section.badge}
+              expanded={isExpanded(section)}
+              onExpandedChange={(next) =>
+                handleExpandedChange(section.id, next)
+              }
+            >
+              {section.render()}
+            </ReportSection>
+          ))}
+        </Stack>
       </Box>
     </Stack>
   );

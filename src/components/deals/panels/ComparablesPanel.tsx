@@ -1,5 +1,4 @@
 import {
-  Chip,
   Stack,
   Table,
   TableBody,
@@ -8,6 +7,8 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
+import { DataQualityChip } from '@/components/deals/common/DataQualityChip';
+import { Fact } from '@/components/deals/common/Fact';
 import { formatCurrency, formatDateOnly } from '@/lib/format';
 import type { SoldPricesEnrichment } from '@/models';
 
@@ -15,31 +16,12 @@ interface ComparablesPanelProps {
   soldPrices: SoldPricesEnrichment;
 }
 
-function Fact({ label, value }: { label: string; value: string }) {
-  return (
-    <Stack spacing={0.25} sx={{ minWidth: 140 }}>
-      <Typography variant="caption" color="primary.main">
-        {label}
-      </Typography>
-      <Typography fontWeight={600} color="primary.dark">
-        {value}
-      </Typography>
-    </Stack>
-  );
-}
-
 export function ComparablesPanel({ soldPrices }: ComparablesPanelProps) {
   const comparables = soldPrices.comparables ?? [];
 
   return (
     <Stack spacing={2}>
-      {soldPrices.stub ? (
-        <Chip
-          label="Limited data"
-          size="small"
-          sx={{ alignSelf: 'flex-start' }}
-        />
-      ) : null}
+      {soldPrices.stub ? <DataQualityChip quality="limited" /> : null}
 
       <Stack direction="row" spacing={3} flexWrap="wrap" useFlexGap>
         <Fact
@@ -61,16 +43,16 @@ export function ComparablesPanel({ soldPrices }: ComparablesPanelProps) {
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ color: 'primary.main', fontWeight: 600 }}>
+              <TableCell sx={{ color: 'text.secondary', fontWeight: 600 }}>
                 Address
               </TableCell>
               <TableCell
                 align="right"
-                sx={{ color: 'primary.main', fontWeight: 600 }}
+                sx={{ color: 'text.secondary', fontWeight: 600 }}
               >
                 Price
               </TableCell>
-              <TableCell sx={{ color: 'primary.main', fontWeight: 600 }}>
+              <TableCell sx={{ color: 'text.secondary', fontWeight: 600 }}>
                 Date
               </TableCell>
             </TableRow>
@@ -80,22 +62,18 @@ export function ComparablesPanel({ soldPrices }: ComparablesPanelProps) {
               <TableRow
                 key={`${sale.address ?? 'sale'}-${sale.transactionDate ?? index}-${sale.pricePaid ?? 0}`}
               >
-                <TableCell sx={{ color: 'primary.dark' }}>
-                  {sale.address ?? soldPrices.postcode}
-                </TableCell>
+                <TableCell>{sale.address ?? soldPrices.postcode}</TableCell>
                 <TableCell
                   align="right"
                   sx={{
-                    color: 'info.dark',
-                    fontWeight: 800,
+                    fontWeight: 700,
                     fontSize: '1.125rem',
+                    fontVariantNumeric: 'tabular-nums',
                   }}
                 >
                   {formatCurrency(sale.pricePaid)}
                 </TableCell>
-                <TableCell sx={{ color: 'primary.dark' }}>
-                  {formatDateOnly(sale.transactionDate)}
-                </TableCell>
+                <TableCell>{formatDateOnly(sale.transactionDate)}</TableCell>
               </TableRow>
             ))}
           </TableBody>

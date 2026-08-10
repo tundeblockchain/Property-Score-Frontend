@@ -10,16 +10,8 @@ interface SchemeOverviewSectionProps {
 export function SchemeOverviewSection({ scheme }: SchemeOverviewSectionProps) {
   return (
     <Stack spacing={2}>
-      {scheme.recommended ? (
-        <Chip
-          label="Recommended"
-          color="primary"
-          size="small"
-          sx={{ alignSelf: 'flex-start' }}
-        />
-      ) : null}
-
-      <Typography color="primary.dark">{scheme.summary}</Typography>
+      {/* The section header carries the recommended badge for this scheme. */}
+      <Typography>{scheme.summary}</Typography>
 
       <Stack direction="row" spacing={3} flexWrap="wrap" useFlexGap>
         <Fact
@@ -65,9 +57,7 @@ export function SchemeOverviewSection({ scheme }: SchemeOverviewSectionProps) {
       </Stack>
 
       <Stack spacing={1}>
-        <Typography variant="subtitle2" color="primary.dark">
-          Indicative room schedule
-        </Typography>
+        <Typography variant="subtitle2">Indicative room schedule</Typography>
         <Box
           sx={{
             display: 'grid',
@@ -84,9 +74,7 @@ export function SchemeOverviewSection({ scheme }: SchemeOverviewSectionProps) {
               sx={{
                 borderLeft: 3,
                 borderColor:
-                  room.meetsSpaceStandard === false
-                    ? 'warning.main'
-                    : 'primary.main',
+                  room.meetsSpaceStandard === false ? 'warning.main' : 'divider',
                 pl: 1.5,
                 py: 0.5,
               }}
@@ -98,12 +86,12 @@ export function SchemeOverviewSection({ scheme }: SchemeOverviewSectionProps) {
                 flexWrap="wrap"
                 useFlexGap
               >
-                <Typography fontWeight={600} color="primary.dark">
+                <Typography fontWeight={600}>
                   {room.label}{' '}
                   <Typography
                     component="span"
                     variant="body2"
-                    color="primary.main"
+                    color="text.secondary"
                   >
                     ({room.type}
                     {room.estimatedAreaSqM != null

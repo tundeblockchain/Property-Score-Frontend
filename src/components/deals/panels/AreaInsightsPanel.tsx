@@ -1,4 +1,5 @@
-import { Chip, Stack, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
+import { DataQualityChip } from '@/components/deals/common/DataQualityChip';
 import { Fact } from '@/components/deals/common/Fact';
 import { formatCurrency } from '@/lib/format';
 import type {
@@ -40,10 +41,10 @@ export function AreaInsightsPanel({
       {market ? (
         <Stack spacing={1.5}>
           <Stack direction="row" spacing={1} alignItems="center">
-            <Typography variant="subtitle2" color="primary.dark">
+            <Typography variant="subtitle2">
               Room rents
             </Typography>
-            {market.stub ? <Chip label="Estimated" size="small" /> : null}
+            {market.stub ? <DataQualityChip quality="estimated" /> : null}
           </Stack>
           <Stack direction="row" spacing={3} flexWrap="wrap" useFlexGap>
             <Fact
@@ -81,10 +82,10 @@ export function AreaInsightsPanel({
       {broadband ? (
         <Stack spacing={1.5}>
           <Stack direction="row" spacing={1} alignItems="center">
-            <Typography variant="subtitle2" color="primary.dark">
+            <Typography variant="subtitle2">
               Broadband
             </Typography>
-            {broadband.stub ? <Chip label="Estimated" size="small" /> : null}
+            {broadband.stub ? <DataQualityChip quality="estimated" /> : null}
           </Stack>
           <Stack direction="row" spacing={3} flexWrap="wrap" useFlexGap>
             <Fact
@@ -113,7 +114,7 @@ export function AreaInsightsPanel({
 
       {planning ? (
         <Stack spacing={1.5}>
-          <Typography variant="subtitle2" color="primary.dark">
+          <Typography variant="subtitle2">
             Planning
           </Typography>
           <Stack direction="row" spacing={3} flexWrap="wrap" useFlexGap>
@@ -165,7 +166,7 @@ export function AreaInsightsPanel({
 
       {crime ? (
         <Stack spacing={1.5}>
-          <Typography variant="subtitle2" color="primary.dark">
+          <Typography variant="subtitle2">
             Crime
           </Typography>
           <Stack direction="row" spacing={3} flexWrap="wrap" useFlexGap>
@@ -200,10 +201,12 @@ export function AreaInsightsPanel({
       {demographics ? (
         <Stack spacing={1.5}>
           <Stack direction="row" spacing={1} alignItems="center">
-            <Typography variant="subtitle2" color="primary.dark">
+            <Typography variant="subtitle2">
               Demographics
             </Typography>
-            {demographics.stub ? <Chip label="Estimated" size="small" /> : null}
+            {demographics.stub ? (
+              <DataQualityChip quality="estimated" />
+            ) : null}
           </Stack>
           <Stack direction="row" spacing={3} flexWrap="wrap" useFlexGap>
             <Fact

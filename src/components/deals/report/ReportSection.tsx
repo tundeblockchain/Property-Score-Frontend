@@ -1,7 +1,9 @@
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Box,
   Typography,
   type SxProps,
   type Theme,
@@ -14,6 +16,8 @@ interface ReportSectionProps {
   children: ReactNode;
   /** Anchor target, so the section can be deep-linked and jumped to. */
   id?: string;
+  /** Decorative glyph shown before the title; hidden from assistive tech. */
+  icon?: ReactNode;
   /** Shown beside the title, for status such as a recommended HMO scheme. */
   badge?: ReactNode;
   /** Nested sections pass 'h3' to keep the document outline in order. */
@@ -26,27 +30,11 @@ interface ReportSectionProps {
   sx?: SxProps<Theme>;
 }
 
-function ExpandIcon() {
-  return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path
-        fill="currentColor"
-        d="M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z"
-      />
-    </svg>
-  );
-}
-
 export function ReportSection({
   title,
   children,
   id,
+  icon,
   badge,
   headingLevel = 'h2',
   defaultExpanded = false,
@@ -63,7 +51,15 @@ export function ReportSection({
       {...(isControlled
         ? { expanded, onChange: (_, next) => onExpandedChange?.(next) }
         : { defaultExpanded })}
-      slotProps={{ heading: { component: headingLevel } }}
+      slotProps={{
+        heading: { component: headingLevel },
+        /**
+         * A closed section keeps only its header in the DOM. Report sections
+         * are heavy (tables, image grids, nested scheme accordions), so
+         * mounting every one up front is what makes the page feel sluggish.
+         */
+        transition: { unmountOnExit: true, timeout: 180 },
+      }}
       disableGutters
       elevation={0}
       sx={[
@@ -71,35 +67,30 @@ export function ReportSection({
           // Clears the sticky app bar when jumped to via an anchor link.
           scrollMarginTop: { xs: '72px', md: '88px' },
           border: '1px solid',
-          borderColor: 'primary.light',
+          borderColor: 'divider',
           borderRadius: 1,
-          borderLeft: '3px solid',
-          borderLeftColor: 'primary.main',
           '&:before': { display: 'none' },
           overflow: 'hidden',
           bgcolor: 'background.paper',
-          '&.Mui-expanded': {
-            borderColor: 'primary.main',
-          },
         },
         ...(Array.isArray(sx) ? sx : sx ? [sx] : []),
       ]}
     >
       <AccordionSummary
-        expandIcon={<ExpandIcon />}
+        expandIcon={<ExpandMoreIcon />}
         aria-controls={`${slug}-content`}
         id={`${slug}-header`}
         sx={{
           px: 3,
           py: 0.5,
-          bgcolor: (theme) => alpha(theme.palette.info.main, 0.08),
-          color: 'info.dark',
+          bgcolor: (theme) => alpha(theme.palette.secondary.main, 0.04),
+          color: 'text.primary',
           '&.Mui-expanded': {
             borderBottom: '1px solid',
-            borderBottomColor: (theme) => alpha(theme.palette.info.main, 0.22),
+            borderBottomColor: 'divider',
           },
           '& .MuiAccordionSummary-expandIconWrapper': {
-            color: 'info.main',
+            color: 'text.secondary',
           },
           '& .MuiAccordionSummary-content': {
             my: 1.5,
@@ -109,31 +100,21 @@ export function ReportSection({
           },
         }}
       >
+        {icon ? (
+          <Box
+            aria-hidden
+            sx={{ display: 'flex', color: 'text.secondary', flexShrink: 0 }}
+          >
+            {icon}
+          </Box>
+        ) : null}
         {/* The Accordion heading slot already supplies the heading element. */}
-        <Typography
-          variant="h6"
-          component="span"
-          sx={{ textTransform: 'capitalize', color: 'info.dark' }}
-        >
+        <Typography variant="h6" component="span">
           {title}
         </Typography>
         {badge}
       </AccordionSummary>
-      <AccordionDetails
-        sx={{
-          px: 3,
-          pt: 2,
-          pb: 3,
-          fontSize: '1.0625rem',
-          '& .MuiTypography-body1': { fontSize: '1.0625rem' },
-          '& .MuiTypography-body2': { fontSize: '1rem' },
-          '& .MuiTypography-caption': { fontSize: '0.9rem' },
-          '& .MuiTypography-subtitle2': { fontSize: '1.0625rem' },
-          '& .MuiTableCell-root': { fontSize: '1rem' },
-          '& .MuiListItemText-primary': { fontSize: '1.0625rem' },
-          '& .MuiChip-label': { fontSize: '0.85rem' },
-        }}
-      >
+      <AccordionDetails sx={{ px: 3, pt: 2, pb: 3 }}>
         {children}
       </AccordionDetails>
     </Accordion>

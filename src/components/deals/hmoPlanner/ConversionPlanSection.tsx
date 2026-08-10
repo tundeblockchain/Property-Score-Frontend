@@ -20,7 +20,7 @@ export function ConversionPlanSection({ plan }: ConversionPlanSectionProps) {
     <Stack spacing={1.5}>
       <Chip
         size="small"
-        color="primary"
+        variant="outlined"
         sx={{ alignSelf: 'flex-start' }}
         label={`As built ${plan.asBuiltBedrooms} → ${plan.proposedLettingRooms} letting rooms`}
       />
@@ -47,12 +47,10 @@ export function ConversionPlanSection({ plan }: ConversionPlanSectionProps) {
               flexWrap="wrap"
               useFlexGap
             >
-              <Typography fontWeight={600} color="primary.dark">
-                {step.sourceLabel}
-              </Typography>
+              <Typography fontWeight={600}>{step.sourceLabel}</Typography>
               <Chip size="small" label={conversionActionLabel(step.action)} />
               {step.estimatedAreaSqM != null ? (
-                <Typography variant="body2" color="primary.main">
+                <Typography variant="body2" color="text.secondary">
                   ~{step.estimatedAreaSqM} m²
                 </Typography>
               ) : null}

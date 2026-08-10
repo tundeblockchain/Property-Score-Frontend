@@ -1,5 +1,4 @@
 import {
-  Chip,
   Stack,
   Table,
   TableBody,
@@ -8,6 +7,8 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
+import { DataQualityChip } from '@/components/deals/common/DataQualityChip';
+import { Fact } from '@/components/deals/common/Fact';
 import { formatDateOnly } from '@/lib/format';
 import type { EpcEnrichment } from '@/models';
 
@@ -38,35 +39,6 @@ function epcRatingColor(rating: string | undefined): string {
   }
 }
 
-function Fact({
-  label,
-  value,
-  valueColor,
-  emphasize,
-}: {
-  label: string;
-  value: string;
-  valueColor?: string;
-  emphasize?: boolean;
-}) {
-  return (
-    <Stack spacing={0.25} sx={{ minWidth: 120 }}>
-      <Typography variant="caption" color="primary.main">
-        {label}
-      </Typography>
-      <Typography
-        fontWeight={emphasize ? 800 : 600}
-        fontSize={emphasize ? '1.5rem' : undefined}
-        lineHeight={emphasize ? 1.2 : undefined}
-        color={valueColor ? undefined : 'info.dark'}
-        sx={valueColor ? { color: valueColor } : undefined}
-      >
-        {value}
-      </Typography>
-    </Stack>
-  );
-}
-
 export function EpcPanel({ epc }: EpcPanelProps) {
   const history = epc.history ?? [];
   const currentRating = epc.currentRating ?? '—';
@@ -74,22 +46,20 @@ export function EpcPanel({ epc }: EpcPanelProps) {
 
   return (
     <Stack spacing={2}>
-      {epc.stub ? (
-        <Chip label="Estimated" size="small" sx={{ alignSelf: 'flex-start' }} />
-      ) : null}
+      {epc.stub ? <DataQualityChip quality="estimated" /> : null}
 
       <Stack direction="row" spacing={3} flexWrap="wrap" useFlexGap>
         <Fact
           label="Current rating"
           value={currentRating}
           valueColor={epcRatingColor(epc.currentRating)}
-          emphasize
+          emphasis="strong"
         />
         <Fact
           label="Potential rating"
           value={potentialRating}
           valueColor={epcRatingColor(epc.potentialRating)}
-          emphasize
+          emphasis="strong"
         />
         <Fact
           label="Current score"
@@ -111,19 +81,17 @@ export function EpcPanel({ epc }: EpcPanelProps) {
 
       {history.length > 0 ? (
         <Stack spacing={1}>
-          <Typography variant="subtitle2" color="primary.dark">
-            Nearby certificate history
-          </Typography>
+          <Typography variant="subtitle2">Nearby certificate history</Typography>
           <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell sx={{ color: 'primary.main', fontWeight: 600 }}>
+                <TableCell sx={{ color: 'text.secondary', fontWeight: 600 }}>
                   Address
                 </TableCell>
-                <TableCell sx={{ color: 'primary.main', fontWeight: 600 }}>
+                <TableCell sx={{ color: 'text.secondary', fontWeight: 600 }}>
                   Rating
                 </TableCell>
-                <TableCell sx={{ color: 'primary.main', fontWeight: 600 }}>
+                <TableCell sx={{ color: 'text.secondary', fontWeight: 600 }}>
                   Lodged
                 </TableCell>
               </TableRow>
@@ -136,21 +104,17 @@ export function EpcPanel({ epc }: EpcPanelProps) {
                     `${entry.address ?? 'epc'}-${entry.lodgementDate ?? index}`
                   }
                 >
-                  <TableCell sx={{ color: 'primary.dark' }}>
-                    {entry.address ?? '—'}
-                  </TableCell>
+                  <TableCell>{entry.address ?? '—'}</TableCell>
                   <TableCell
                     sx={{
                       color: epcRatingColor(entry.currentRating),
-                      fontWeight: 800,
+                      fontWeight: 700,
                       fontSize: '1.125rem',
                     }}
                   >
                     {entry.currentRating ?? '—'}
                   </TableCell>
-                  <TableCell sx={{ color: 'info.dark' }}>
-                    {formatDateOnly(entry.lodgementDate)}
-                  </TableCell>
+                  <TableCell>{formatDateOnly(entry.lodgementDate)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

@@ -44,14 +44,12 @@ function SnapshotColumn({
         flex: 1,
         minWidth: 200,
         borderLeft: 3,
-        borderColor: emphasize ? 'primary.main' : 'divider',
+        borderColor: emphasize ? 'success.main' : 'divider',
         pl: 1.5,
         py: 0.5,
       }}
     >
-      <Typography variant="subtitle2" color="primary.dark">
-        {title}
-      </Typography>
+      <Typography variant="subtitle2">{title}</Typography>
       <Typography variant="body2" color="text.secondary">
         {snapshot.occupancyBasis}
         {snapshot.label !== title ? ` · ${snapshot.label}` : ''}
@@ -83,7 +81,7 @@ export function MoneyComparisonSection({
 
   return (
     <Stack spacing={2}>
-      <Typography variant="subtitle2" color="primary.dark">
+      <Typography variant="subtitle2">
         Money: family let vs recommended HMO
       </Typography>
 
@@ -107,7 +105,7 @@ export function MoneyComparisonSection({
           pt: 1.5,
         }}
       >
-        <Typography variant="subtitle2" color="primary.dark" sx={{ mb: 1 }}>
+        <Typography variant="subtitle2" sx={{ mb: 1 }}>
           Uplift (HMO − family)
         </Typography>
         <Stack direction="row" spacing={3} flexWrap="wrap" useFlexGap>
