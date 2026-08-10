@@ -8,21 +8,22 @@ import {
   type Theme,
 } from '@mui/material';
 import type { ReportSectionSpec } from '@/components/deals/report/reportSections';
+import { useSectionInView } from '@/hooks/useSectionInView';
 
 interface ReportNavProps {
   sections: readonly ReportSectionSpec[];
-  activeId: string | null;
   /** Called before the anchor jump, so a collapsed target can be opened. */
   onSelect: (id: string) => void;
   sx?: SxProps<Theme>;
 }
 
-export function ReportNav({
-  sections,
-  activeId,
-  onSelect,
-  sx,
-}: ReportNavProps) {
+export function ReportNav({ sections, onSelect, sx }: ReportNavProps) {
+  /**
+   * Tracked here rather than by the report, so scrolling only re-renders this
+   * list instead of every open section.
+   */
+  const activeId = useSectionInView(sections.map((section) => section.id));
+
   if (sections.length === 0) {
     return null;
   }

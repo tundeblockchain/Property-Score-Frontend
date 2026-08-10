@@ -45,6 +45,18 @@ describe('DealReport', () => {
     );
   });
 
+  it('keeps a closed section out of the DOM until it is opened', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<DealReport deal={deal} />);
+
+    expect(screen.getByText('Asking price')).toBeInTheDocument();
+    expect(screen.queryByText('Current rating')).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'EPC' }));
+
+    expect(await screen.findByText('Current rating')).toBeInTheDocument();
+  });
+
   it('opens a section when the reader clicks its header', async () => {
     const user = userEvent.setup();
     renderWithProviders(<DealReport deal={deal} />);

@@ -32,7 +32,7 @@ describe('buildReportSections', () => {
     ]);
   });
 
-  it('orders the report from evidence through to conclusions', () => {
+  it('leads with the analysis and puts the raw listing material last', () => {
     const sections = buildReportSections(
       buildDealDetail({
         listing: buildListing({
@@ -48,17 +48,17 @@ describe('buildReportSections', () => {
     );
 
     expect(sections.map((section) => section.id)).toEqual([
-      'property-images',
-      'floor-plans',
-      'listing-description',
       'score-breakdown',
       'financial-model',
       'narrative',
       'action-plan',
+      'property-images',
+      'floor-plans',
+      'listing-description',
     ]);
   });
 
-  it('puts the small fact panels in the aside column', () => {
+  it('places the supporting evidence panels after the analysis', () => {
     const sections = buildReportSections(
       buildDealDetail({
         scores: buildScoreBreakdown(),
@@ -71,14 +71,13 @@ describe('buildReportSections', () => {
       }),
     );
 
-    const asideIds = sections
-      .filter((section) => section.column === 'aside')
-      .map((section) => section.id);
-
-    expect(asideIds).toEqual(['epc', 'sold-comparables', 'transport', 'schools']);
-    expect(
-      sections.find((section) => section.id === 'score-breakdown')?.column,
-    ).toBe('main');
+    expect(sections.map((section) => section.id)).toEqual([
+      'score-breakdown',
+      'epc',
+      'sold-comparables',
+      'transport',
+      'schools',
+    ]);
   });
 
   it('expands the sections that answer the investment question by default', () => {

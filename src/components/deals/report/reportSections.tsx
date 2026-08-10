@@ -32,71 +32,37 @@ import { SchoolsPanel } from '@/components/deals/panels/SchoolsPanel';
 import { TransportPanel } from '@/components/deals/panels/TransportPanel';
 import type { DealDetail } from '@/models';
 
-/** Wide, narrative content goes in `main`; small fact panels in `aside`. */
-export type ReportColumn = 'main' | 'aside';
-
 export interface ReportSectionSpec {
   /** Anchor id, also used as the React key and the nav target. */
   readonly id: string;
   readonly title: string;
-  readonly column: ReportColumn;
   readonly defaultExpanded: boolean;
   readonly icon: ComponentType<SvgIconProps>;
   readonly badge?: ReactNode;
-  /** Deferred so a collapsed section does not build its subtree. */
+  /** Called only once the section is open, so a closed one costs nothing. */
   readonly render: () => ReactNode;
 }
 
+/**
+ * Builds the report as a single ordered column: the analysis and its
+ * conclusions first and open, then the supporting evidence and the raw listing
+ * material, both closed.
+ */
 export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
   const { listing, scores, financialModel, hmoPlanner, narrative, actionPlan } =
     deal;
   const enrichment = deal.enrichment;
   const sections: ReportSectionSpec[] = [];
 
-  if (listing?.imageUrls && listing.imageUrls.length > 0) {
-    const imageUrls = listing.imageUrls;
-    sections.push({
-      id: 'property-images',
-      title: 'Property images',
-      column: 'main',
-      defaultExpanded: false,
-      icon: PhotoLibraryOutlinedIcon,
-      render: () => <PropertyImages imageUrls={imageUrls} />,
-    });
-  }
-
-  if (listing?.floorPlanUrls && listing.floorPlanUrls.length > 0) {
-    const floorPlanUrls = listing.floorPlanUrls;
-    sections.push({
-      id: 'floor-plans',
-      title: 'Floor plans',
-      column: 'main',
-      defaultExpanded: false,
-      icon: ArchitectureOutlinedIcon,
-      render: () => <FloorPlans floorPlanUrls={floorPlanUrls} />,
-    });
-  }
-
-  if (listing?.description) {
-    const description = listing.description;
-    sections.push({
-      id: 'listing-description',
-      title: 'Listing description',
-      column: 'main',
-      defaultExpanded: false,
-      icon: DescriptionOutlinedIcon,
-      render: () => <ListingDescription description={description} />,
-    });
-  }
-
   if (scores) {
     sections.push({
       id: 'score-breakdown',
       title: 'Score breakdown',
-      column: 'main',
       defaultExpanded: true,
       icon: InsightsOutlinedIcon,
-      render: () => <ScoreBreakdownBars scores={scores} />,
+      render: () => (
+        <ScoreBreakdownBars scores={scores} includeOverall={false} />
+      ),
     });
   }
 
@@ -104,7 +70,6 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
     sections.push({
       id: 'financial-model',
       title: 'Financial model',
-      column: 'main',
       defaultExpanded: true,
       icon: PaymentsOutlinedIcon,
       render: () => <FinancialModelPanel model={financialModel} />,
@@ -118,7 +83,6 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
       sections.push({
         id: 'hmo-overview',
         title: 'HMO overview',
-        column: 'main',
         defaultExpanded: true,
         icon: HomeWorkOutlinedIcon,
         render: () => <HmoOverviewSection planner={hmoPlanner} />,
@@ -128,7 +92,6 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
         sections.push({
           id: `hmo-scheme-${scheme.id}`,
           title: scheme.title,
-          column: 'main',
           defaultExpanded: scheme.recommended,
           icon: LayersOutlinedIcon,
           badge: scheme.recommended ? (
@@ -138,6 +101,30 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
         });
       }
     }
+  }
+
+  if (narrative) {
+    sections.push({
+      id: 'narrative',
+      title: 'Narrative',
+      defaultExpanded: true,
+      icon: NotesOutlinedIcon,
+      render: () => (
+        <Typography color="text.primary" whiteSpace="pre-wrap">
+          {narrative}
+        </Typography>
+      ),
+    });
+  }
+
+  if (actionPlan && actionPlan.length > 0) {
+    sections.push({
+      id: 'action-plan',
+      title: 'Action plan',
+      defaultExpanded: true,
+      icon: ChecklistOutlinedIcon,
+      render: () => <ActionPlanList items={actionPlan} />,
+    });
   }
 
   const hasAreaInsights = Boolean(
@@ -152,7 +139,6 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
     sections.push({
       id: 'area-insights',
       title: 'Area insights',
-      column: 'main',
       defaultExpanded: false,
       icon: PlaceOutlinedIcon,
       render: () => (
@@ -167,38 +153,11 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
     });
   }
 
-  if (narrative) {
-    sections.push({
-      id: 'narrative',
-      title: 'Narrative',
-      column: 'main',
-      defaultExpanded: true,
-      icon: NotesOutlinedIcon,
-      render: () => (
-        <Typography color="primary.dark" whiteSpace="pre-wrap">
-          {narrative}
-        </Typography>
-      ),
-    });
-  }
-
-  if (actionPlan && actionPlan.length > 0) {
-    sections.push({
-      id: 'action-plan',
-      title: 'Action plan',
-      column: 'main',
-      defaultExpanded: true,
-      icon: ChecklistOutlinedIcon,
-      render: () => <ActionPlanList items={actionPlan} />,
-    });
-  }
-
   if (enrichment?.epc) {
     const epc = enrichment.epc;
     sections.push({
       id: 'epc',
       title: 'EPC',
-      column: 'aside',
       defaultExpanded: false,
       icon: BoltOutlinedIcon,
       render: () => <EpcPanel epc={epc} />,
@@ -210,7 +169,6 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
     sections.push({
       id: 'sold-comparables',
       title: 'Sold comparables',
-      column: 'aside',
       defaultExpanded: false,
       icon: SellOutlinedIcon,
       render: () => <ComparablesPanel soldPrices={soldPrices} />,
@@ -222,7 +180,6 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
     sections.push({
       id: 'transport',
       title: 'Transport',
-      column: 'aside',
       defaultExpanded: false,
       icon: DirectionsTransitOutlinedIcon,
       render: () => <TransportPanel transport={transport} />,
@@ -234,10 +191,42 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
     sections.push({
       id: 'schools',
       title: 'Schools',
-      column: 'aside',
       defaultExpanded: false,
       icon: SchoolOutlinedIcon,
       render: () => <SchoolsPanel schools={schools} />,
+    });
+  }
+
+  if (listing?.imageUrls && listing.imageUrls.length > 0) {
+    const imageUrls = listing.imageUrls;
+    sections.push({
+      id: 'property-images',
+      title: 'Property images',
+      defaultExpanded: false,
+      icon: PhotoLibraryOutlinedIcon,
+      render: () => <PropertyImages imageUrls={imageUrls} />,
+    });
+  }
+
+  if (listing?.floorPlanUrls && listing.floorPlanUrls.length > 0) {
+    const floorPlanUrls = listing.floorPlanUrls;
+    sections.push({
+      id: 'floor-plans',
+      title: 'Floor plans',
+      defaultExpanded: false,
+      icon: ArchitectureOutlinedIcon,
+      render: () => <FloorPlans floorPlanUrls={floorPlanUrls} />,
+    });
+  }
+
+  if (listing?.description) {
+    const description = listing.description;
+    sections.push({
+      id: 'listing-description',
+      title: 'Listing description',
+      defaultExpanded: false,
+      icon: DescriptionOutlinedIcon,
+      render: () => <ListingDescription description={description} />,
     });
   }
 
