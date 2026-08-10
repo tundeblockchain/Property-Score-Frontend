@@ -1,7 +1,51 @@
 import { Button, Stack, Typography } from '@mui/material';
+import type { ReactNode } from 'react';
 import { ErrorAlert } from '@/components/common/Feedback';
 import type { PlanOption } from '@/lib/plans';
 import type { CheckoutProduct } from '@/models';
+
+interface PlanCardShellProps {
+  title: string;
+  priceLabel: string;
+  creditsLabel: string;
+  description: string;
+  highlight?: boolean;
+  /** Call to action rendered at the bottom of the card. */
+  action: ReactNode;
+}
+
+export function PlanCardShell({
+  title,
+  priceLabel,
+  creditsLabel,
+  description,
+  highlight = false,
+  action,
+}: PlanCardShellProps) {
+  return (
+    <Stack
+      spacing={1.5}
+      sx={{
+        p: 2.5,
+        border: '1px solid',
+        borderColor: highlight ? 'primary.main' : 'divider',
+        borderRadius: 2,
+        bgcolor: 'background.paper',
+        height: '100%',
+      }}
+    >
+      <Typography variant="h6">{title}</Typography>
+      <Typography variant="body2" color="text.secondary">
+        {priceLabel}
+      </Typography>
+      <Typography fontWeight={600}>{creditsLabel}</Typography>
+      <Typography variant="body2" color="text.secondary" flex={1}>
+        {description}
+      </Typography>
+      {action}
+    </Stack>
+  );
+}
 
 interface PlanCardProps {
   plan: PlanOption;
@@ -13,33 +57,22 @@ export function PlanCard({ plan, loadingProduct, onSelect }: PlanCardProps) {
   const isLoading = loadingProduct === plan.product;
 
   return (
-    <Stack
-      spacing={1.5}
-      sx={{
-        p: 2.5,
-        border: '1px solid',
-        borderColor: plan.highlight ? 'primary.main' : 'divider',
-        borderRadius: 2,
-        bgcolor: 'background.paper',
-        height: '100%',
-      }}
-    >
-      <Typography variant="h6">{plan.title}</Typography>
-      <Typography variant="body2" color="text.secondary">
-        {plan.priceLabel}
-      </Typography>
-      <Typography fontWeight={600}>{plan.creditsLabel}</Typography>
-      <Typography variant="body2" color="text.secondary" flex={1}>
-        {plan.description}
-      </Typography>
-      <Button
-        variant={plan.highlight ? 'contained' : 'outlined'}
-        disabled={Boolean(loadingProduct)}
-        onClick={() => onSelect(plan.product)}
-      >
-        {isLoading ? 'Redirecting…' : 'Choose'}
-      </Button>
-    </Stack>
+    <PlanCardShell
+      title={plan.title}
+      priceLabel={plan.priceLabel}
+      creditsLabel={plan.creditsLabel}
+      description={plan.description}
+      highlight={plan.highlight}
+      action={
+        <Button
+          variant={plan.highlight ? 'contained' : 'outlined'}
+          disabled={Boolean(loadingProduct)}
+          onClick={() => onSelect(plan.product)}
+        >
+          {isLoading ? 'Redirecting…' : 'Choose'}
+        </Button>
+      }
+    />
   );
 }
 
@@ -48,6 +81,8 @@ interface PlanCardsProps {
   loadingProduct: CheckoutProduct | null;
   error: unknown;
   onSelect: (product: CheckoutProduct) => void;
+  /** Extra card rendered before the paid plans, e.g. the free tier. */
+  leadingCard?: ReactNode;
 }
 
 export function PlanCards({
@@ -55,6 +90,7 @@ export function PlanCards({
   loadingProduct,
   error,
   onSelect,
+  leadingCard,
 }: PlanCardsProps) {
   return (
     <Stack spacing={2}>
@@ -63,6 +99,7 @@ export function PlanCards({
         spacing={2}
         alignItems="stretch"
       >
+        {leadingCard ? <Stack flex={1}>{leadingCard}</Stack> : null}
         {plans.map((plan) => (
           <Stack key={plan.product} flex={1}>
             <PlanCard

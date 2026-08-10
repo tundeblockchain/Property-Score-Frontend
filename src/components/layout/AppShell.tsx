@@ -6,19 +6,36 @@ import {
   Stack,
   Toolbar,
 } from '@mui/material';
-import type { ReactNode } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { useState, type ReactNode } from 'react';
+import { Link as RouterLink, NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '@/auth/AuthContext';
+import { AuthDialog } from '@/components/auth/AuthDialog';
 import { BrandMark, CreditsBadge } from '@/components/layout/BrandAndCredits';
 
 const NAV_LINKS = [
-  { to: '/', label: 'Analyse' },
+  { to: '/analyse', label: 'Analyse' },
   { to: '/deals', label: 'Properties' },
   { to: '/billing', label: 'Billing' },
 ] as const;
 
+/** Marketing pages need more horizontal room than the app forms. */
+const WIDE_ROUTES = [/^\/$/, /^\/pricing$/, /^\/deals\/[^/]+$/];
+
+const navButtonSx = {
+  fontSize: '1rem',
+  px: 1.5,
+  '&.active': {
+    color: 'primary.main',
+    fontWeight: 700,
+  },
+} as const;
+
 export function AppHeader() {
   const { user, signOut } = useAuth();
+  const { pathname } = useLocation();
+  const [authDialogOpen, setAuthDialogOpen] = useState(false);
+
+  const showPublicNav = !user && pathname !== '/login';
 
   return (
     <AppBar
@@ -28,7 +45,7 @@ export function AppHeader() {
       sx={{ borderBottom: '1px solid', borderColor: 'divider' }}
     >
       <Toolbar>
-        <BrandMark />
+        <BrandMark to={user ? '/analyse' : '/'} />
         <Box flex={1} />
         {user ? (
           <Stack direction="row" spacing={1.5} alignItems="center">
@@ -38,14 +55,7 @@ export function AppHeader() {
                 component={NavLink}
                 to={link.to}
                 color="inherit"
-                sx={{
-                  fontSize: '1rem',
-                  px: 1.5,
-                  '&.active': {
-                    color: 'primary.main',
-                    fontWeight: 700,
-                  },
-                }}
+                sx={navButtonSx}
               >
                 {link.label}
               </Button>
@@ -60,7 +70,36 @@ export function AppHeader() {
             </Button>
           </Stack>
         ) : null}
+        {showPublicNav ? (
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Button
+              component={NavLink}
+              to="/pricing"
+              color="inherit"
+              sx={navButtonSx}
+            >
+              Pricing
+            </Button>
+            <Button
+              component={RouterLink}
+              to="/#faq"
+              color="inherit"
+              sx={navButtonSx}
+            >
+              FAQ
+            </Button>
+            <Button variant="contained" onClick={() => setAuthDialogOpen(true)}>
+              Sign in
+            </Button>
+          </Stack>
+        ) : null}
       </Toolbar>
+      <AuthDialog
+        open={authDialogOpen}
+        onClose={() => setAuthDialogOpen(false)}
+        onAuthenticated={() => setAuthDialogOpen(false)}
+        initialMode="signIn"
+      />
     </AppBar>
   );
 }
@@ -71,7 +110,7 @@ interface AppShellProps {
 
 export function AppShell({ children }: AppShellProps) {
   const { pathname } = useLocation();
-  const isDealReport = /^\/deals\/[^/]+$/.test(pathname);
+  const isWide = WIDE_ROUTES.some((pattern) => pattern.test(pathname));
 
   return (
     <Box
@@ -82,10 +121,7 @@ export function AppShell({ children }: AppShellProps) {
       }}
     >
       <AppHeader />
-      <Container
-        maxWidth={isDealReport ? 'lg' : 'md'}
-        sx={{ py: { xs: 3, md: 5 } }}
-      >
+      <Container maxWidth={isWide ? 'lg' : 'md'} sx={{ py: { xs: 3, md: 5 } }}>
         {children}
       </Container>
     </Box>

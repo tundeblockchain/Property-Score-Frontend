@@ -56,7 +56,7 @@ export function BillingSuccessPage() {
         </Typography>
       ) : null}
       <Stack direction="row" spacing={1}>
-        <Button component={RouterLink} to="/" variant="contained">
+        <Button component={RouterLink} to="/analyse" variant="contained">
           Analyse a listing
         </Button>
         <Button component={RouterLink} to="/billing" variant="outlined">

@@ -64,9 +64,13 @@ export function InsufficientCreditsBanner({
   );
 }
 
-export function BrandMark() {
+interface BrandMarkProps {
+  to?: string;
+}
+
+export function BrandMark({ to = '/' }: BrandMarkProps) {
   return (
-    <Stack direction="row" spacing={1} alignItems="center" component={RouterLink} to="/" sx={{ textDecoration: 'none', color: 'inherit' }}>
+    <Stack direction="row" spacing={1} alignItems="center" component={RouterLink} to={to} sx={{ textDecoration: 'none', color: 'inherit' }}>
       <Box
         sx={{
           width: 28,

@@ -10,7 +10,7 @@ export function LoginPage() {
   const location = useLocation();
   const [mode, setMode] = useState<'signIn' | 'signUp'>('signIn');
   const from =
-    (location.state as { from?: string } | null)?.from ?? '/';
+    (location.state as { from?: string } | null)?.from ?? '/analyse';
 
   if (loading) {
     return <LoadingState />;

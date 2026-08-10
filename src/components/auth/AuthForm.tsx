@@ -15,6 +15,11 @@ interface AuthFormProps {
   onSubmit: (email: string, password: string) => Promise<void>;
   onGoogleSignIn: () => Promise<void>;
   onToggleMode: () => void;
+  /** Replaces the default supporting copy, e.g. to explain why sign-in is needed. */
+  description?: string;
+  /** Lets the heading title a dialog instead of the page. */
+  headingComponent?: 'h1' | 'h2';
+  headingId?: string;
 }
 
 export function AuthForm({
@@ -22,6 +27,9 @@ export function AuthForm({
   onSubmit,
   onGoogleSignIn,
   onToggleMode,
+  description,
+  headingComponent = 'h1',
+  headingId,
 }: AuthFormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -61,13 +69,14 @@ export function AuthForm({
   return (
     <Stack spacing={2}>
       <Stack spacing={0.5}>
-        <Typography variant="h4" component="h1">
+        <Typography variant="h4" component={headingComponent} id={headingId}>
           {isSignIn ? 'Sign in' : 'Create account'}
         </Typography>
         <Typography color="text.secondary">
-          {isSignIn
-            ? 'Use Google or your Property Score account to continue.'
-            : 'New accounts start on the Free plan with 5 credits.'}
+          {description ??
+            (isSignIn
+              ? 'Use Google or your Property Score account to continue.'
+              : 'New accounts start on the Free plan with 5 credits.')}
         </Typography>
       </Stack>
 
