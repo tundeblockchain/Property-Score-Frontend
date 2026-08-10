@@ -3,9 +3,9 @@ import { useParams } from 'react-router-dom';
 import {
   ErrorAlert,
   FailedAnalysisAlert,
-  LoadingState,
 } from '@/components/common/Feedback';
 import { PdfDownloadButton } from '@/components/deals/common/PdfDownloadButton';
+import { DealDetailSkeleton } from '@/components/deals/report/DealDetailSkeleton';
 import { DealHeroCard } from '@/components/deals/report/DealHeroCard';
 import { DealReport } from '@/components/deals/report/DealReport';
 import { DealReportHeader } from '@/components/deals/report/DealReportHeader';
@@ -16,7 +16,7 @@ export function DealDetailPage() {
   const { data, isLoading, isError, error } = useDealDetail(dealId);
 
   if (isLoading) {
-    return <LoadingState label="Loading property…" />;
+    return <DealDetailSkeleton />;
   }
 
   if (isError) {
@@ -49,7 +49,10 @@ export function DealDetailPage() {
       ) : null}
 
       {data.status === 'PROCESSING' ? (
-        <Alert severity="info">This analysis is still running.</Alert>
+        <Alert severity="info">
+          This analysis is still running. The report updates automatically when
+          it finishes.
+        </Alert>
       ) : null}
 
       <DealHeroCard

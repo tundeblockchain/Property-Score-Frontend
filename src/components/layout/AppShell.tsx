@@ -42,7 +42,11 @@ export function AppHeader() {
       position="sticky"
       color="inherit"
       elevation={0}
-      sx={{ borderBottom: '1px solid', borderColor: 'divider' }}
+      sx={{
+        borderBottom: '1px solid',
+        borderColor: 'divider',
+        '@media print': { display: 'none' },
+      }}
     >
       <Toolbar>
         <BrandMark to={user ? '/analyse' : '/'} />
@@ -121,7 +125,13 @@ export function AppShell({ children }: AppShellProps) {
       }}
     >
       <AppHeader />
-      <Container maxWidth={isWide ? 'lg' : 'md'} sx={{ py: { xs: 3, md: 5 } }}>
+      <Container
+        maxWidth={isWide ? 'lg' : 'md'}
+        sx={{
+          py: { xs: 3, md: 5 },
+          '@media print': { py: 0, maxWidth: '100%' },
+        }}
+      >
         {children}
       </Container>
     </Box>
