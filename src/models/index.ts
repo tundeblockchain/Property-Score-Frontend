@@ -31,6 +31,8 @@ export type {
   HmoLayoutRoom,
   HmoLayoutScheme,
   HmoLicensingPath,
+  LicensingSchemePresence,
+  LocalAuthorityLicensingMatch,
   HmoFireEscapeAssessment,
   HmoRefurbBoq,
   FireAssessmentConfidence,

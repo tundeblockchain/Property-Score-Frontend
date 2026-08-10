@@ -104,9 +104,22 @@ export interface HmoLicensingPath {
   planningPermission: LicensingCheck;
   mandatoryLicence: LicensingCheck;
   additionalLicence: LicensingCheck;
+  selectiveLicence?: LicensingCheck;
+  localAuthorityMatch?: LocalAuthorityLicensingMatch;
   actionItems: string[];
   confidence: LicensingConfidence;
   disclaimer: string;
+}
+
+export type LicensingSchemePresence = 'active' | 'not_known_active' | 'unknown';
+
+export interface LocalAuthorityLicensingMatch {
+  adminDistrict: string;
+  additionalHmo: LicensingSchemePresence;
+  selective: LicensingSchemePresence;
+  notes?: string;
+  sourceUrl?: string;
+  asOf: string;
 }
 
 export type FloorPlanRoomKind =
