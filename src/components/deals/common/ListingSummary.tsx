@@ -58,7 +58,7 @@ export function ListingSummary({
             variant={compact ? 'subtitle1' : 'h5'}
             component={compact ? 'p' : 'h2'}
             fontWeight={700}
-            color="primary.dark"
+            color="text.primary"
           >
             {listing.address ?? listing.postcode ?? 'Listing'}
           </Typography>
@@ -66,7 +66,8 @@ export function ListingSummary({
         <Typography
           variant={compact ? 'body1' : 'h6'}
           fontWeight={600}
-          color="primary.dark"
+          color="text.primary"
+          sx={{ fontVariantNumeric: 'tabular-nums' }}
         >
           {formatCurrency(listing.price)}
         </Typography>

@@ -1,29 +1,16 @@
-import { Chip, Stack, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
+import { DataQualityChip } from '@/components/deals/common/DataQualityChip';
+import { Fact } from '@/components/deals/common/Fact';
 import type { TransportEnrichment } from '@/models';
 
 interface TransportPanelProps {
   transport: TransportEnrichment;
 }
 
-function Fact({ label, value }: { label: string; value: string }) {
-  return (
-    <Stack spacing={0.25} sx={{ minWidth: 140 }}>
-      <Typography variant="caption" color="primary.main">
-        {label}
-      </Typography>
-      <Typography fontWeight={600} color="primary.dark">
-        {value}
-      </Typography>
-    </Stack>
-  );
-}
-
 export function TransportPanel({ transport }: TransportPanelProps) {
   return (
     <Stack spacing={1.5}>
-      {transport.stub ? (
-        <Chip label="Estimated" size="small" sx={{ alignSelf: 'flex-start' }} />
-      ) : null}
+      {transport.stub ? <DataQualityChip quality="estimated" /> : null}
       <Stack direction="row" spacing={3} flexWrap="wrap" useFlexGap>
         <Fact
           label="Nearest station"

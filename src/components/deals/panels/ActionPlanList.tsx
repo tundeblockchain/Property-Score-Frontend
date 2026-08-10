@@ -13,10 +13,7 @@ export function ActionPlanList({ items }: ActionPlanListProps) {
     <List dense disablePadding>
       {items.map((item) => (
         <ListItem key={item} disableGutters alignItems="flex-start">
-          <ListItemText
-            primary={item}
-            primaryTypographyProps={{ color: 'primary.dark' }}
-          />
+          <ListItemText primary={item} />
         </ListItem>
       ))}
     </List>

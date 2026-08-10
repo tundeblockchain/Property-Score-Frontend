@@ -17,7 +17,7 @@ export function LicensingPathSection({ licensing }: LicensingPathSectionProps) {
         <Chip
           label={`Use class ${licensing.useClass}`}
           size="small"
-          color="primary"
+          variant="outlined"
         />
         <Chip
           label={`${licensing.confidence} confidence`}
@@ -43,7 +43,7 @@ export function LicensingPathSection({ licensing }: LicensingPathSectionProps) {
           value={String(licensing.estimatedOccupants)}
         />
         <Stack spacing={0.5} sx={{ minWidth: 160 }}>
-          <Typography variant="caption" color="primary.main">
+          <Typography variant="caption" color="text.secondary">
             Planning
           </Typography>
           <Chip
@@ -53,7 +53,7 @@ export function LicensingPathSection({ licensing }: LicensingPathSectionProps) {
           />
         </Stack>
         <Stack spacing={0.5} sx={{ minWidth: 160 }}>
-          <Typography variant="caption" color="primary.main">
+          <Typography variant="caption" color="text.secondary">
             Mandatory licence
           </Typography>
           <Chip
@@ -63,7 +63,7 @@ export function LicensingPathSection({ licensing }: LicensingPathSectionProps) {
           />
         </Stack>
         <Stack spacing={0.5} sx={{ minWidth: 160 }}>
-          <Typography variant="caption" color="primary.main">
+          <Typography variant="caption" color="text.secondary">
             Additional HMO
           </Typography>
           <Chip
@@ -74,7 +74,7 @@ export function LicensingPathSection({ licensing }: LicensingPathSectionProps) {
         </Stack>
         {licensing.selectiveLicence ? (
           <Stack spacing={0.5} sx={{ minWidth: 160 }}>
-            <Typography variant="caption" color="primary.main">
+            <Typography variant="caption" color="text.secondary">
               Selective
             </Typography>
             <Chip
@@ -99,7 +99,7 @@ export function LicensingPathSection({ licensing }: LicensingPathSectionProps) {
       ) : null}
 
       {match?.notes ? (
-        <Typography variant="body2" color="primary.dark">
+        <Typography variant="body2">
           Register note ({match.asOf}): {match.notes}
         </Typography>
       ) : null}

@@ -13,7 +13,7 @@ export function ListingDescription({ description }: ListingDescriptionProps) {
 
   if (!looksLikeHtml(trimmed)) {
     return (
-      <Typography color="primary.dark" whiteSpace="pre-wrap">
+      <Typography color="text.primary" whiteSpace="pre-wrap">
         {trimmed}
       </Typography>
     );
@@ -28,7 +28,7 @@ export function ListingDescription({ description }: ListingDescriptionProps) {
     <Box
       className="listing-description"
       sx={{
-        color: 'primary.dark',
+        color: 'text.primary',
         '& p': {
           m: 0,
           mb: 1.5,
@@ -38,7 +38,7 @@ export function ListingDescription({ description }: ListingDescriptionProps) {
           mb: 0,
         },
         '& h1, & h2, & h3, & h4, & h5, & h6': {
-          color: 'primary.dark',
+          color: 'text.primary',
           fontFamily: '"Plus Jakarta Sans", "Manrope", sans-serif',
           fontWeight: 700,
           lineHeight: 1.35,
@@ -67,7 +67,7 @@ export function ListingDescription({ description }: ListingDescriptionProps) {
           fontWeight: 600,
         },
         '& strong, & b': {
-          color: 'primary.dark',
+          color: 'text.primary',
           fontWeight: 700,
         },
       }}

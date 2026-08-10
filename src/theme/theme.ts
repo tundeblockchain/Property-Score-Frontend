@@ -75,6 +75,19 @@ export const theme = createTheme({
       letterSpacing: 0,
       lineHeight: 1.4,
     },
+    subtitle2: {
+      fontSize: '1.0625rem',
+      fontWeight: 600,
+    },
+    body1: {
+      fontSize: '1.0625rem',
+    },
+    body2: {
+      fontSize: '1rem',
+    },
+    caption: {
+      fontSize: '0.9rem',
+    },
     button: {
       textTransform: 'none',
       fontWeight: 600,
@@ -95,8 +108,24 @@ export const theme = createTheme({
         elevation: 0,
       },
       styleOverrides: {
-        root: {
+        // Only flat surfaces are cards. Raised surfaces (dialogs, menus,
+        // popovers) read as floating and a border makes them look boxed in.
+        elevation0: {
           border: '1px solid #E2E8F0',
+        },
+      },
+    },
+    MuiTableCell: {
+      styleOverrides: {
+        root: {
+          fontSize: '1rem',
+        },
+      },
+    },
+    MuiChip: {
+      styleOverrides: {
+        label: {
+          fontSize: '0.85rem',
         },
       },
     },

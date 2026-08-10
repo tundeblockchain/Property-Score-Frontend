@@ -34,20 +34,17 @@ export function RefurbBoqSection({ boq }: RefurbBoqSectionProps) {
       </Stack>
 
       <Stack spacing={1}>
-        <Typography variant="subtitle2" color="primary.dark">
-          Line items
-        </Typography>
+        <Typography variant="subtitle2">Line items</Typography>
         {boq.lineItems.map((item) => (
           <Box
             key={item.id}
             sx={{
               borderLeft: 3,
+              // Only fire compliance is a flag; the rest are plain line items.
               borderColor:
                 item.category === 'fire_compliance'
                   ? 'warning.main'
-                  : item.category === 'contingency'
-                    ? 'divider'
-                    : 'primary.main',
+                  : 'divider',
               pl: 1.5,
               py: 0.5,
             }}
@@ -59,21 +56,23 @@ export function RefurbBoqSection({ boq }: RefurbBoqSectionProps) {
               flexWrap="wrap"
               useFlexGap
             >
-              <Typography fontWeight={600} color="primary.dark">
-                {item.label}
-              </Typography>
+              <Typography fontWeight={600}>{item.label}</Typography>
               <Chip
                 size="small"
                 variant="outlined"
                 label={refurbCategoryLabel(item.category)}
               />
               {item.quantity > 1 ? (
-                <Typography variant="body2" color="primary.main">
+                <Typography variant="body2" color="text.secondary">
                   ×{item.quantity}
                   {item.unit ? ` ${item.unit}` : ''}
                 </Typography>
               ) : null}
-              <Typography variant="body2" color="primary.dark" fontWeight={600}>
+              <Typography
+                variant="body2"
+                fontWeight={600}
+                sx={{ fontVariantNumeric: 'tabular-nums' }}
+              >
                 {lineRange(item)}
               </Typography>
             </Stack>

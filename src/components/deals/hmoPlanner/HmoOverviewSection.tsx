@@ -17,9 +17,7 @@ function VisionSummary({ analysis }: { analysis: FloorPlanAnalysis }) {
 
   return (
     <Stack spacing={1.5}>
-      <Typography variant="subtitle2" color="primary.dark">
-        Floor-plan vision
-      </Typography>
+      <Typography variant="subtitle2">Floor-plan vision</Typography>
       <Stack direction="row" spacing={3} flexWrap="wrap" useFlexGap>
         <Fact
           label="Detected beds / baths"
@@ -40,7 +38,7 @@ function VisionSummary({ analysis }: { analysis: FloorPlanAnalysis }) {
         ) : null}
       </Stack>
       {analysis.convertibleRooms.length > 0 ? (
-        <Typography variant="body2" color="primary.dark">
+        <Typography variant="body2">
           Convertible: {analysis.convertibleRooms.join(', ')}
         </Typography>
       ) : null}

@@ -53,15 +53,11 @@ export function FireEscapeSection({ fireEscape }: FireEscapeSectionProps) {
       </Stack>
 
       <Stack spacing={1}>
-        <Typography variant="subtitle2" color="primary.dark">
-          Checklist
-        </Typography>
+        <Typography variant="subtitle2">Checklist</Typography>
         {fireEscape.items.map((item) => (
           <Stack key={item.id} spacing={0.5}>
             <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap>
-              <Typography fontWeight={600} color="primary.dark">
-                {item.title}
-              </Typography>
+              <Typography fontWeight={600}>{item.title}</Typography>
               <Chip
                 size="small"
                 color={fireCheckChipColor(item.status)}
@@ -76,7 +72,7 @@ export function FireEscapeSection({ fireEscape }: FireEscapeSectionProps) {
       </Stack>
 
       {fireEscape.visionNotes ? (
-        <Typography variant="body2" color="primary.dark">
+        <Typography variant="body2">
           Vision note: {fireEscape.visionNotes}
         </Typography>
       ) : null}
