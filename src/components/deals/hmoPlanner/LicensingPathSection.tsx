@@ -1,4 +1,4 @@
-import { Chip, Stack, Typography } from '@mui/material';
+import { Chip, Link, Stack, Typography } from '@mui/material';
 import type { HmoLicensingPath } from '@/models';
 import { Fact } from './Fact';
 import { NoteList } from './NoteList';
@@ -9,6 +9,8 @@ interface LicensingPathSectionProps {
 }
 
 export function LicensingPathSection({ licensing }: LicensingPathSectionProps) {
+  const match = licensing.localAuthorityMatch;
+
   return (
     <Stack spacing={1.5}>
       <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap>
@@ -22,6 +24,13 @@ export function LicensingPathSection({ licensing }: LicensingPathSectionProps) {
           size="small"
           variant="outlined"
         />
+        {match ? (
+          <Chip
+            label={`Register: ${match.adminDistrict}`}
+            size="small"
+            variant="outlined"
+          />
+        ) : null}
       </Stack>
 
       <Stack direction="row" spacing={3} flexWrap="wrap" useFlexGap>
@@ -55,7 +64,7 @@ export function LicensingPathSection({ licensing }: LicensingPathSectionProps) {
         </Stack>
         <Stack spacing={0.5} sx={{ minWidth: 160 }}>
           <Typography variant="caption" color="primary.main">
-            Additional / selective
+            Additional HMO
           </Typography>
           <Chip
             size="small"
@@ -63,11 +72,43 @@ export function LicensingPathSection({ licensing }: LicensingPathSectionProps) {
             label={licensingStatusLabel(licensing.additionalLicence.status)}
           />
         </Stack>
+        {licensing.selectiveLicence ? (
+          <Stack spacing={0.5} sx={{ minWidth: 160 }}>
+            <Typography variant="caption" color="primary.main">
+              Selective
+            </Typography>
+            <Chip
+              size="small"
+              color={licensingChipColor(licensing.selectiveLicence.status)}
+              label={licensingStatusLabel(licensing.selectiveLicence.status)}
+            />
+          </Stack>
+        ) : null}
       </Stack>
 
       <Typography variant="body2" color="text.secondary">
         {licensing.planningPermission.reason}
       </Typography>
+      <Typography variant="body2" color="text.secondary">
+        {licensing.additionalLicence.reason}
+      </Typography>
+      {licensing.selectiveLicence ? (
+        <Typography variant="body2" color="text.secondary">
+          {licensing.selectiveLicence.reason}
+        </Typography>
+      ) : null}
+
+      {match?.notes ? (
+        <Typography variant="body2" color="primary.dark">
+          Register note ({match.asOf}): {match.notes}
+        </Typography>
+      ) : null}
+      {match?.sourceUrl ? (
+        <Link href={match.sourceUrl} target="_blank" rel="noopener noreferrer">
+          Local authority licensing source
+        </Link>
+      ) : null}
+
       <NoteList title="Licensing actions" items={licensing.actionItems} />
       <Typography variant="caption" color="text.secondary">
         {licensing.disclaimer}
