@@ -4,6 +4,7 @@ import type {
   FireRiskBand,
   HmoPlannerResult,
   LicensingRequirementStatus,
+  RefurbBoqCategory,
 } from '@/models';
 
 export function conversionActionLabel(action: ConversionAction): string {
@@ -91,5 +92,26 @@ export function fireRiskLabel(band: FireRiskBand): string {
       return 'Medium';
     case 'higher':
       return 'Higher';
+  }
+}
+
+export function refurbCategoryLabel(category: RefurbBoqCategory): string {
+  switch (category) {
+    case 'room_fabric':
+      return 'Room fabric';
+    case 'conversion':
+      return 'Conversion';
+    case 'ensuite_wetroom':
+      return 'Ensuite / wet room';
+    case 'kitchen_communal':
+      return 'Kitchen';
+    case 'bathroom':
+      return 'Bathroom';
+    case 'fire_compliance':
+      return 'Fire compliance';
+    case 'care_adaptations':
+      return 'Care adaptations';
+    case 'contingency':
+      return 'Contingency';
   }
 }

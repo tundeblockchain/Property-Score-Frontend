@@ -164,9 +164,49 @@ export interface HmoLayoutScheme {
   financials: HmoSchemeFinancials;
   licensing: HmoLicensingPath;
   fireEscape?: HmoFireEscapeAssessment;
+  refurbBoq?: HmoRefurbBoq;
   conversionPlan?: GeometryConversionPlan;
   fitScore: number;
   recommended: boolean;
+}
+
+export type RefurbBoqCategory =
+  | 'room_fabric'
+  | 'conversion'
+  | 'ensuite_wetroom'
+  | 'kitchen_communal'
+  | 'bathroom'
+  | 'fire_compliance'
+  | 'care_adaptations'
+  | 'contingency';
+
+export type RefurbBoqLineSource =
+  | 'base_allowance'
+  | 'conversion_step'
+  | 'fire_checklist'
+  | 'use_case';
+
+export interface RefurbBoqLineItem {
+  id: string;
+  category: RefurbBoqCategory;
+  label: string;
+  quantity: number;
+  unit?: string;
+  lowGbp: number;
+  highGbp: number;
+  notes?: string;
+  source: RefurbBoqLineSource;
+}
+
+export interface HmoRefurbBoq {
+  lineItems: RefurbBoqLineItem[];
+  subtotalLowGbp: number;
+  subtotalHighGbp: number;
+  totalLowGbp: number;
+  totalHighGbp: number;
+  contingencyPct: number;
+  notes: string[];
+  disclaimer: string;
 }
 
 export type FireCheckStatus =
