@@ -31,7 +31,7 @@ export function FinancialModelPanel({ model }: FinancialModelPanelProps) {
           spacing={2}
         >
           <Typography color="primary.main">{row.label}</Typography>
-          <Typography fontWeight={600} color="primary.dark">
+          <Typography fontWeight={600} color="info.dark">
             {row.value}
           </Typography>
         </Stack>

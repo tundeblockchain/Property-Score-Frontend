@@ -13,10 +13,10 @@ export function DealsPage() {
   return (
     <Stack spacing={2}>
       <PageHeader
-        title="Deals"
+        title="Properties"
         subtitle="Your 25 most recent analyses, newest first."
       />
-      {isLoading ? <LoadingState label="Loading deals…" /> : null}
+      {isLoading ? <LoadingState label="Loading properties…" /> : null}
       {isError ? <ErrorAlert error={error} /> : null}
       {data ? <DealList deals={data.deals} /> : null}
     </Stack>

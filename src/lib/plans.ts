@@ -15,7 +15,7 @@ export const PLAN_OPTIONS: PlanOption[] = [
     title: 'Starter',
     priceLabel: 'Monthly',
     creditsLabel: '25 credits / month',
-    description: 'For investors analysing a few deals each month.',
+    description: 'For investors analysing a few properties each month.',
   },
   {
     product: 'pro_subscription',

@@ -1,6 +1,6 @@
 import { Chip, Stack, Typography } from '@mui/material';
 import type { HmoFireEscapeAssessment } from '@/models';
-import { Fact } from './Fact';
+import { Fact } from '@/components/deals/Fact';
 import { NoteList } from './NoteList';
 import { fireCheckChipColor, fireCheckStatusLabel, fireRiskLabel } from './labels';
 

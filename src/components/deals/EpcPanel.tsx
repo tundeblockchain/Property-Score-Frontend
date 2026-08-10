@@ -15,13 +15,52 @@ interface EpcPanelProps {
   epc: EpcEnrichment;
 }
 
-function Fact({ label, value }: { label: string; value: string }) {
+/** UK EPC band colours tuned for readable text on a light background. */
+function epcRatingColor(rating: string | undefined): string {
+  const band = rating?.trim().charAt(0).toUpperCase();
+  switch (band) {
+    case 'A':
+      return '#15803D';
+    case 'B':
+      return '#16A34A';
+    case 'C':
+      return '#65A30D';
+    case 'D':
+      return '#CA8A04';
+    case 'E':
+      return '#EA580C';
+    case 'F':
+      return '#C2410C';
+    case 'G':
+      return '#B91C1C';
+    default:
+      return 'inherit';
+  }
+}
+
+function Fact({
+  label,
+  value,
+  valueColor,
+  emphasize,
+}: {
+  label: string;
+  value: string;
+  valueColor?: string;
+  emphasize?: boolean;
+}) {
   return (
     <Stack spacing={0.25} sx={{ minWidth: 120 }}>
       <Typography variant="caption" color="primary.main">
         {label}
       </Typography>
-      <Typography fontWeight={600} color="primary.dark">
+      <Typography
+        fontWeight={emphasize ? 800 : 600}
+        fontSize={emphasize ? '1.5rem' : undefined}
+        lineHeight={emphasize ? 1.2 : undefined}
+        color={valueColor ? undefined : 'info.dark'}
+        sx={valueColor ? { color: valueColor } : undefined}
+      >
         {value}
       </Typography>
     </Stack>
@@ -30,6 +69,8 @@ function Fact({ label, value }: { label: string; value: string }) {
 
 export function EpcPanel({ epc }: EpcPanelProps) {
   const history = epc.history ?? [];
+  const currentRating = epc.currentRating ?? '—';
+  const potentialRating = epc.potentialRating ?? '—';
 
   return (
     <Stack spacing={2}>
@@ -38,8 +79,18 @@ export function EpcPanel({ epc }: EpcPanelProps) {
       ) : null}
 
       <Stack direction="row" spacing={3} flexWrap="wrap" useFlexGap>
-        <Fact label="Current rating" value={epc.currentRating ?? '—'} />
-        <Fact label="Potential rating" value={epc.potentialRating ?? '—'} />
+        <Fact
+          label="Current rating"
+          value={currentRating}
+          valueColor={epcRatingColor(epc.currentRating)}
+          emphasize
+        />
+        <Fact
+          label="Potential rating"
+          value={potentialRating}
+          valueColor={epcRatingColor(epc.potentialRating)}
+          emphasize
+        />
         <Fact
           label="Current score"
           value={epc.currentScore != null ? String(epc.currentScore) : '—'}
@@ -88,10 +139,16 @@ export function EpcPanel({ epc }: EpcPanelProps) {
                   <TableCell sx={{ color: 'primary.dark' }}>
                     {entry.address ?? '—'}
                   </TableCell>
-                  <TableCell sx={{ color: 'primary.dark' }}>
+                  <TableCell
+                    sx={{
+                      color: epcRatingColor(entry.currentRating),
+                      fontWeight: 800,
+                      fontSize: '1.125rem',
+                    }}
+                  >
                     {entry.currentRating ?? '—'}
                   </TableCell>
-                  <TableCell sx={{ color: 'primary.dark' }}>
+                  <TableCell sx={{ color: 'info.dark' }}>
                     {formatDateOnly(entry.lodgementDate)}
                   </TableCell>
                 </TableRow>

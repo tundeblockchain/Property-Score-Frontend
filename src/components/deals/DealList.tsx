@@ -11,7 +11,7 @@ export function DealList({ deals }: DealListProps) {
   if (deals.length === 0) {
     return (
       <EmptyState
-        title="No deals yet"
+        title="No properties yet"
         description="Analyse a Rightmove listing to see it here."
       />
     );

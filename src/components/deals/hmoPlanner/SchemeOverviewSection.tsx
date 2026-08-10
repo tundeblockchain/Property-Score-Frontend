@@ -1,7 +1,7 @@
 import { Box, Chip, Stack, Typography } from '@mui/material';
 import { formatCurrency, formatPercent } from '@/lib/format';
 import type { HmoLayoutScheme } from '@/models';
-import { Fact } from './Fact';
+import { Fact } from '@/components/deals/Fact';
 
 interface SchemeOverviewSectionProps {
   scheme: HmoLayoutScheme;
@@ -22,31 +22,45 @@ export function SchemeOverviewSection({ scheme }: SchemeOverviewSectionProps) {
       <Typography color="primary.dark">{scheme.summary}</Typography>
 
       <Stack direction="row" spacing={3} flexWrap="wrap" useFlexGap>
-        <Fact label="Letting rooms" value={String(scheme.lettingRooms)} />
-        <Fact label="Area fit" value={`${scheme.fitScore}/100`} />
+        <Fact
+          label="Letting rooms"
+          value={String(scheme.lettingRooms)}
+          info="Number of rooms intended for letting under this scheme, after any conversion plan."
+        />
+        <Fact
+          label="Area fit"
+          value={`${scheme.fitScore}/100`}
+          info="How well the layout and room sizes fit this use case. Higher scores mean a better match to space and scheme goals."
+        />
         <Fact
           label="Est. monthly rent"
           value={formatCurrency(scheme.financials.estimatedRentMonthly)}
+          info="Indicative total monthly rent from all letting rooms in this scheme."
         />
         <Fact
           label="Gross yield"
           value={formatPercent(scheme.financials.grossYield)}
+          info="Annual rent before costs, divided by asking price. A quick income screening metric, not net return."
         />
         <Fact
           label="Void assumed"
           value={`${Math.round(scheme.financials.voidRateAssumed * 100)}%`}
+          info="Assumed empty-room downtime between tenancies. Higher voids reduce effective income."
         />
         <Fact
           label="Room rent / wk"
           value={formatCurrency(scheme.financials.roomRentWeeklyAssumed)}
+          info="Assumed weekly rent per letting room used to build this scheme’s income model."
         />
         <Fact
           label="Refurb range"
           value={`${formatCurrency(scheme.estimatedRefurbLowGbp)} – ${formatCurrency(scheme.estimatedRefurbHighGbp)}`}
+          info="Indicative low–high refurb cost to deliver this scheme, including conversion and compliance items where modelled."
         />
         <Fact
           label="Net cash flow / yr"
           value={formatCurrency(scheme.financials.netCashFlowAnnual)}
+          info="Estimated annual cash left after operating costs and voids. Negative values mean the scheme may not cover costs at these assumptions."
         />
       </Stack>
 

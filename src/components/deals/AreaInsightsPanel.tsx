@@ -1,4 +1,5 @@
 import { Chip, Stack, Typography } from '@mui/material';
+import { Fact } from '@/components/deals/Fact';
 import { formatCurrency } from '@/lib/format';
 import type {
   BroadbandEnrichment,
@@ -14,19 +15,6 @@ interface AreaInsightsPanelProps {
   market?: MarketEnrichment;
   crime?: CrimeEnrichment;
   demographics?: DemographicsEnrichment;
-}
-
-function Fact({ label, value }: { label: string; value: string }) {
-  return (
-    <Stack spacing={0.25} sx={{ minWidth: 140 }}>
-      <Typography variant="caption" color="primary.main">
-        {label}
-      </Typography>
-      <Typography fontWeight={600} color="primary.dark">
-        {value}
-      </Typography>
-    </Stack>
-  );
 }
 
 function weeklyRent(value: number | undefined): string {
@@ -61,29 +49,32 @@ export function AreaInsightsPanel({
             <Fact
               label="Est. room rent"
               value={weeklyRent(market.estimatedRoomRentWeekly)}
+              info="Indicative weekly rent for a typical single letting room in this area. Used as a baseline for HMO income screening."
             />
             <Fact
               label="Double room"
               value={weeklyRent(market.doubleRoomRentWeekly)}
+              info="Indicative weekly rent where the room can sleep two people."
             />
             <Fact
               label="Ensuite double"
               value={weeklyRent(market.ensuiteRoomRentWeekly)}
+              info="Indicative weekly rent for a double room with a private bathroom."
             />
-            <Fact label="Void risk" value={market.voidRisk} />
+            <Fact
+              label="Void risk"
+              value={market.voidRisk}
+              info="Relative risk of empty rooms between tenancies. Higher void risk means more downtime and lower effective income."
+            />
             <Fact
               label="HMO saturation"
               value={`${Math.round(market.hmoSaturationIndex * 100)}%`}
+              info="How saturated the local market appears for HMO / room lets. Higher saturation can mean more competition for tenants."
             />
             {market.region ? (
               <Fact label="Region" value={market.region} />
             ) : null}
           </Stack>
-          {market.notes ? (
-            <Typography variant="caption" color="text.secondary">
-              {market.notes}
-            </Typography>
-          ) : null}
         </Stack>
       ) : null}
 
@@ -103,6 +94,7 @@ export function AreaInsightsPanel({
                   ? `${broadband.maxDownloadMbps} Mbps`
                   : '—'
               }
+              info="Estimated maximum download speed available at or near the property."
             />
             <Fact
               label="Fibre"
@@ -113,13 +105,9 @@ export function AreaInsightsPanel({
                     ? 'Available'
                     : 'Not indicated'
               }
+              info="Whether fibre broadband is indicated as available for this location."
             />
           </Stack>
-          {broadband.notes ? (
-            <Typography variant="caption" color="text.secondary">
-              {broadband.notes}
-            </Typography>
-          ) : null}
         </Stack>
       ) : null}
 
@@ -138,6 +126,7 @@ export function AreaInsightsPanel({
                     ? 'Yes'
                     : 'No'
               }
+              info="Article 4 directions can remove permitted development rights, so converting a house to a small HMO may need full planning permission."
             />
             <Fact
               label="Conservation area"
@@ -148,6 +137,7 @@ export function AreaInsightsPanel({
                     ? 'Yes'
                     : 'No'
               }
+              info="Properties in conservation areas often face stricter controls on alterations, extensions, and external changes."
             />
             <Fact
               label="Listed nearby"
@@ -158,6 +148,7 @@ export function AreaInsightsPanel({
                     ? 'Yes'
                     : 'No'
               }
+              info="A listed building nearby can add design and consent constraints that affect works or conversion plans."
             />
             <Fact
               label="Flood risk zones"
@@ -166,13 +157,9 @@ export function AreaInsightsPanel({
                   ? planning.floodRiskZones.join(', ')
                   : 'None noted'
               }
+              info="Recorded flood-risk designations for the location. Higher risk can affect insurance, lending, and long-term resilience."
             />
           </Stack>
-          {planning.notes ? (
-            <Typography variant="caption" color="text.secondary">
-              {planning.notes}
-            </Typography>
-          ) : null}
         </Stack>
       ) : null}
 
@@ -185,14 +172,17 @@ export function AreaInsightsPanel({
             <Fact
               label="Crimes (est. 12m)"
               value={String(crime.crimesLast12m)}
+              info="Estimated crime count over about 12 months, annualised from the sampled months of police data."
             />
             <Fact
               label="Crime rate / 1000"
               value={String(crime.crimeRatePer1000)}
+              info="Estimated crimes per 1,000 people in the area, for comparing relative crime levels."
             />
             <Fact
               label="Months sampled"
               value={String(crime.monthsSampled)}
+              info="How many months of police data were used to build the estimate."
             />
             <Fact
               label="Top categories"
@@ -201,13 +191,9 @@ export function AreaInsightsPanel({
                   ? crime.dominantCategories.join(', ')
                   : 'None noted'
               }
+              info="The most common crime categories in the sample for this location."
             />
           </Stack>
-          {crime.notes ? (
-            <Typography variant="caption" color="text.secondary">
-              {crime.notes}
-            </Typography>
-          ) : null}
         </Stack>
       ) : null}
 
@@ -223,12 +209,14 @@ export function AreaInsightsPanel({
             <Fact
               label="Admin district"
               value={demographics.adminDistrict ?? '—'}
+              info="Local authority / administrative district for the postcode."
             />
             <Fact label="Region" value={demographics.region ?? '—'} />
             <Fact label="Parish" value={demographics.parish ?? '—'} />
             <Fact
               label="Rural/urban"
               value={demographics.ruralUrban ?? '—'}
+              info="Official rural–urban classification for the area, which can affect demand and tenant mix."
             />
             <Fact
               label="IMD decile"
@@ -237,6 +225,7 @@ export function AreaInsightsPanel({
                   ? String(demographics.imdDecile)
                   : '—'
               }
+              info="Index of Multiple Deprivation decile (1 = most deprived, 10 = least). Useful context for demand and social-care schemes."
             />
             <Fact
               label="IMD rank"
@@ -245,15 +234,9 @@ export function AreaInsightsPanel({
                   ? String(demographics.imdRank)
                   : '—'
               }
+              info="National IMD rank for the neighbourhood. Lower ranks are more deprived."
             />
-            <Fact label="LSOA" value={demographics.lsoa ?? '—'} />
-            <Fact label="MSOA" value={demographics.msoa ?? '—'} />
           </Stack>
-          {demographics.notes ? (
-            <Typography variant="caption" color="text.secondary">
-              {demographics.notes}
-            </Typography>
-          ) : null}
         </Stack>
       ) : null}
     </Stack>
