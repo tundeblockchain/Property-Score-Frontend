@@ -1,12 +1,13 @@
-import { Box, Dialog } from '@mui/material';
+import { Box } from '@mui/material';
 import { useState } from 'react';
+import { ImageLightbox } from '@/components/deals/common/ImageLightbox';
 
 interface PropertyImagesProps {
   imageUrls: string[];
 }
 
 export function PropertyImages({ imageUrls }: PropertyImagesProps) {
-  const [selectedUrl, setSelectedUrl] = useState<string | null>(null);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   if (imageUrls.length === 0) {
     return null;
@@ -30,7 +31,7 @@ export function PropertyImages({ imageUrls }: PropertyImagesProps) {
             key={url}
             component="button"
             type="button"
-            onClick={() => setSelectedUrl(url)}
+            onClick={() => setOpenIndex(index)}
             aria-label={`View property image ${index + 1} of ${imageUrls.length}`}
             sx={{
               display: 'block',
@@ -70,29 +71,13 @@ export function PropertyImages({ imageUrls }: PropertyImagesProps) {
         ))}
       </Box>
 
-      <Dialog
-        open={selectedUrl != null}
-        onClose={() => setSelectedUrl(null)}
-        maxWidth="lg"
-        fullWidth
-        aria-label="Property image preview"
-      >
-        {selectedUrl ? (
-          <Box
-            component="img"
-            src={selectedUrl}
-            alt="Property photo enlarged"
-            sx={{
-              display: 'block',
-              width: '100%',
-              height: 'auto',
-              maxHeight: '90vh',
-              objectFit: 'contain',
-              bgcolor: 'secondary.main',
-            }}
-          />
-        ) : null}
-      </Dialog>
+      <ImageLightbox
+        images={imageUrls}
+        openIndex={openIndex}
+        onClose={() => setOpenIndex(null)}
+        onIndexChange={setOpenIndex}
+        label="Property photo"
+      />
     </>
   );
 }
