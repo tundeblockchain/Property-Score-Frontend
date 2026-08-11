@@ -63,9 +63,9 @@ function unavailableSection(
 }
 
 /**
- * Builds the report as a single ordered column: the analysis and its
- * conclusions first and open, then the supporting evidence and the raw listing
- * material, both closed.
+ * Builds the report as a single ordered column: listing visuals first (closed),
+ * then the analysis and its conclusions (open), then supporting evidence and
+ * the listing description (closed).
  *
  * The checks that run for every property keep their place once the analysis is
  * complete, even with no data. Until then there is nothing to report, and
@@ -77,6 +77,28 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
   const enrichment = deal.enrichment;
   const isComplete = deal.status === 'COMPLETED';
   const sections: ReportSectionSpec[] = [];
+
+  if (listing?.imageUrls && listing.imageUrls.length > 0) {
+    const imageUrls = listing.imageUrls;
+    sections.push({
+      id: 'property-images',
+      title: 'Property images',
+      defaultExpanded: false,
+      icon: PhotoLibraryOutlinedIcon,
+      render: () => <PropertyImages imageUrls={imageUrls} />,
+    });
+  }
+
+  if (listing?.floorPlanUrls && listing.floorPlanUrls.length > 0) {
+    const floorPlanUrls = listing.floorPlanUrls;
+    sections.push({
+      id: 'floor-plans',
+      title: 'Floor plans',
+      defaultExpanded: false,
+      icon: ArchitectureOutlinedIcon,
+      render: () => <FloorPlans floorPlanUrls={floorPlanUrls} />,
+    });
+  }
 
   if (scores) {
     sections.push({
@@ -255,28 +277,6 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
     });
   } else if (isComplete) {
     sections.push(unavailableSection('schools', 'Schools', SchoolOutlinedIcon));
-  }
-
-  if (listing?.imageUrls && listing.imageUrls.length > 0) {
-    const imageUrls = listing.imageUrls;
-    sections.push({
-      id: 'property-images',
-      title: 'Property images',
-      defaultExpanded: false,
-      icon: PhotoLibraryOutlinedIcon,
-      render: () => <PropertyImages imageUrls={imageUrls} />,
-    });
-  }
-
-  if (listing?.floorPlanUrls && listing.floorPlanUrls.length > 0) {
-    const floorPlanUrls = listing.floorPlanUrls;
-    sections.push({
-      id: 'floor-plans',
-      title: 'Floor plans',
-      defaultExpanded: false,
-      icon: ArchitectureOutlinedIcon,
-      render: () => <FloorPlans floorPlanUrls={floorPlanUrls} />,
-    });
   }
 
   if (listing?.description) {
