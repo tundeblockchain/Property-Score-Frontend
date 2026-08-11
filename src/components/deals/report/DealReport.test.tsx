@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { DealReport } from '@/components/deals/report/DealReport';
@@ -111,12 +111,53 @@ describe('DealReport', () => {
     expect(target).not.toBeNull();
   });
 
-  it('renders nothing when the deal has no analysis content yet', () => {
-    renderWithProviders(<DealReport deal={buildDealDetail()} />);
+  it('renders nothing while analysis is still running and has no content yet', () => {
+    renderWithProviders(
+      <DealReport deal={buildDealDetail({ status: 'PROCESSING' })} />,
+    );
 
     expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
     expect(
       screen.queryByRole('button', { name: /Expand all/ }),
     ).not.toBeInTheDocument();
+  });
+
+  it('shows a muted placeholder when an always-run check returned nothing', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<DealReport deal={buildDealDetail()} />);
+
+    await user.click(screen.getByRole('button', { name: 'Transport' }));
+
+    expect(
+      await screen.findByText('Not available for this property.'),
+    ).toBeInTheDocument();
+  });
+
+  it('opens every section before print so unmounted content is included', () => {
+    renderWithProviders(<DealReport deal={deal} />);
+
+    expect(screen.getByRole('button', { name: 'EPC' })).toHaveAttribute(
+      'aria-expanded',
+      'false',
+    );
+
+    act(() => {
+      window.dispatchEvent(new Event('beforeprint'));
+    });
+
+    expect(screen.getByRole('button', { name: 'EPC' })).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    );
+    expect(screen.getByText('Current rating')).toBeInTheDocument();
+
+    act(() => {
+      window.dispatchEvent(new Event('afterprint'));
+    });
+
+    expect(screen.getByRole('button', { name: 'EPC' })).toHaveAttribute(
+      'aria-expanded',
+      'false',
+    );
   });
 });

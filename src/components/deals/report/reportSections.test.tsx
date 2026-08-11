@@ -13,14 +13,35 @@ import {
   buildTransportEnrichment,
 } from '@/test/factories';
 
+const ALWAYS_RUN_SECTION_IDS = [
+  'score-breakdown',
+  'financial-model',
+  'area-insights',
+  'epc',
+  'sold-comparables',
+  'transport',
+  'schools',
+] as const;
+
 describe('buildReportSections', () => {
-  it('returns nothing for a deal with no analysis content', () => {
-    expect(buildReportSections(buildDealDetail())).toEqual([]);
+  it('returns nothing while analysis is still running and has no content yet', () => {
+    expect(
+      buildReportSections(buildDealDetail({ status: 'PROCESSING' })),
+    ).toEqual([]);
   });
 
-  it('only includes sections whose data is present', () => {
+  it('keeps the always-run checks visible on a completed deal with no data', () => {
+    const sections = buildReportSections(buildDealDetail());
+
+    expect(sections.map((section) => section.id)).toEqual([
+      ...ALWAYS_RUN_SECTION_IDS,
+    ]);
+  });
+
+  it('only includes present sections while a deal is still processing', () => {
     const sections = buildReportSections(
       buildDealDetail({
+        status: 'PROCESSING',
         scores: buildScoreBreakdown(),
         financialModel: buildFinancialModel(),
       }),
@@ -52,6 +73,11 @@ describe('buildReportSections', () => {
       'financial-model',
       'narrative',
       'action-plan',
+      'area-insights',
+      'epc',
+      'sold-comparables',
+      'transport',
+      'schools',
       'property-images',
       'floor-plans',
       'listing-description',
@@ -73,6 +99,8 @@ describe('buildReportSections', () => {
 
     expect(sections.map((section) => section.id)).toEqual([
       'score-breakdown',
+      'financial-model',
+      'area-insights',
       'epc',
       'sold-comparables',
       'transport',
@@ -100,6 +128,7 @@ describe('buildReportSections', () => {
   it('adds an overview plus one section per HMO scheme in product order', () => {
     const sections = buildReportSections(
       buildDealDetail({
+        status: 'PROCESSING',
         hmoPlanner: buildHmoPlanner({
           schemes: [
             buildHmoScheme({
@@ -129,6 +158,7 @@ describe('buildReportSections', () => {
   it('badges the recommended scheme instead of renaming it', () => {
     const sections = buildReportSections(
       buildDealDetail({
+        status: 'PROCESSING',
         hmoPlanner: buildHmoPlanner({
           schemes: [
             buildHmoScheme({
@@ -164,7 +194,10 @@ describe('buildReportSections', () => {
 
   it('skips the HMO sections when the planner returned no usable schemes', () => {
     const sections = buildReportSections(
-      buildDealDetail({ hmoPlanner: buildHmoPlanner({ schemes: [] }) }),
+      buildDealDetail({
+        status: 'PROCESSING',
+        hmoPlanner: buildHmoPlanner({ schemes: [] }),
+      }),
     );
 
     expect(sections).toEqual([]);
@@ -173,6 +206,7 @@ describe('buildReportSections', () => {
   it('shows area insights when any single area signal is present', () => {
     const sections = buildReportSections(
       buildDealDetail({
+        status: 'PROCESSING',
         enrichment: {
           crime: {
             postcode: 'LS1 1AA',
@@ -213,5 +247,18 @@ describe('buildReportSections', () => {
     const ids = sections.map((section) => section.id);
 
     expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it('leaves optional listing content out rather than marking it unavailable', () => {
+    const sections = buildReportSections(buildDealDetail());
+
+    expect(
+      sections.map((section) => section.id),
+    ).not.toContain('property-images');
+    expect(sections.map((section) => section.id)).not.toContain('floor-plans');
+    expect(sections.map((section) => section.id)).not.toContain(
+      'listing-description',
+    );
+    expect(sections.map((section) => section.id)).not.toContain('hmo-overview');
   });
 });

@@ -1,7 +1,8 @@
 import UnfoldLessOutlinedIcon from '@mui/icons-material/UnfoldLessOutlined';
 import UnfoldMoreOutlinedIcon from '@mui/icons-material/UnfoldMoreOutlined';
 import { Box, Button, Stack } from '@mui/material';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { ReportNav } from '@/components/deals/report/ReportNav';
 import { ReportSection } from '@/components/deals/report/ReportSection';
 import {
@@ -23,6 +24,42 @@ export function DealReport({ deal }: DealReportProps) {
   const [expandedOverrides, setExpandedOverrides] = useState<
     Record<string, boolean>
   >({});
+  const expandedOverridesRef = useRef(expandedOverrides);
+  const printRestoreRef = useRef<Record<string, boolean> | null>(null);
+
+  useEffect(() => {
+    expandedOverridesRef.current = expandedOverrides;
+  }, [expandedOverrides]);
+
+  /**
+   * Closed sections unmount their content, so a print needs every section open
+   * first. flushSync commits that before the browser captures the page.
+   */
+  useEffect(() => {
+    function handleBeforePrint() {
+      printRestoreRef.current = expandedOverridesRef.current;
+      flushSync(() => {
+        setExpandedOverrides(
+          Object.fromEntries(sections.map((section) => [section.id, true])),
+        );
+      });
+    }
+
+    function handleAfterPrint() {
+      if (printRestoreRef.current == null) {
+        return;
+      }
+      setExpandedOverrides(printRestoreRef.current);
+      printRestoreRef.current = null;
+    }
+
+    window.addEventListener('beforeprint', handleBeforePrint);
+    window.addEventListener('afterprint', handleAfterPrint);
+    return () => {
+      window.removeEventListener('beforeprint', handleBeforePrint);
+      window.removeEventListener('afterprint', handleAfterPrint);
+    };
+  }, [sections]);
 
   const isExpanded = (section: ReportSectionSpec) =>
     expandedOverrides[section.id] ?? section.defaultExpanded;
@@ -49,15 +86,19 @@ export function DealReport({ deal }: DealReportProps) {
   }
 
   return (
-    <Stack spacing={2}>
+    <Stack spacing={2} className="deal-report">
       <Button
         onClick={handleToggleAll}
         size="small"
         color="inherit"
+        className="deal-report-toolbar"
         startIcon={
           allExpanded ? <UnfoldLessOutlinedIcon /> : <UnfoldMoreOutlinedIcon />
         }
-        sx={{ alignSelf: 'flex-end' }}
+        sx={{
+          alignSelf: 'flex-end',
+          '@media print': { display: 'none' },
+        }}
       >
         {allExpanded ? 'Collapse all' : 'Expand all'}
       </Button>
@@ -71,12 +112,18 @@ export function DealReport({ deal }: DealReportProps) {
             xs: 'minmax(0, 1fr)',
             lg: '180px minmax(0, 1fr)',
           },
+          '@media print': {
+            display: 'block',
+          },
         }}
       >
         <ReportNav
           sections={sections}
           onSelect={handleNavSelect}
-          sx={{ display: { xs: 'none', lg: 'block' } }}
+          sx={{
+            display: { xs: 'none', lg: 'block' },
+            '@media print': { display: 'none' },
+          }}
         />
 
         <Stack spacing={2} sx={{ minWidth: 0 }}>
@@ -91,6 +138,12 @@ export function DealReport({ deal }: DealReportProps) {
               onExpandedChange={(next) =>
                 handleExpandedChange(section.id, next)
               }
+              sx={{
+                '@media print': {
+                  breakInside: 'avoid',
+                  pageBreakInside: 'avoid',
+                },
+              }}
             >
               {section.render()}
             </ReportSection>

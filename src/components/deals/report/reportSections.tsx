@@ -30,6 +30,7 @@ import { ListingDescription } from '@/components/deals/panels/ListingDescription
 import { PropertyImages } from '@/components/deals/panels/PropertyImages';
 import { SchoolsPanel } from '@/components/deals/panels/SchoolsPanel';
 import { TransportPanel } from '@/components/deals/panels/TransportPanel';
+import { SectionUnavailable } from '@/components/deals/report/SectionUnavailable';
 import type { DealDetail } from '@/models';
 
 export interface ReportSectionSpec {
@@ -44,14 +45,37 @@ export interface ReportSectionSpec {
 }
 
 /**
+ * Placeholder for a check we run on every property but which returned nothing,
+ * so its absence reads as a result rather than as a missing feature.
+ */
+function unavailableSection(
+  id: string,
+  title: string,
+  icon: ComponentType<SvgIconProps>,
+): ReportSectionSpec {
+  return {
+    id,
+    title,
+    defaultExpanded: false,
+    icon,
+    render: () => <SectionUnavailable />,
+  };
+}
+
+/**
  * Builds the report as a single ordered column: the analysis and its
  * conclusions first and open, then the supporting evidence and the raw listing
  * material, both closed.
+ *
+ * The checks that run for every property keep their place once the analysis is
+ * complete, even with no data. Until then there is nothing to report, and
+ * genuinely optional content stays conditional either way.
  */
 export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
   const { listing, scores, financialModel, hmoPlanner, narrative, actionPlan } =
     deal;
   const enrichment = deal.enrichment;
+  const isComplete = deal.status === 'COMPLETED';
   const sections: ReportSectionSpec[] = [];
 
   if (scores) {
@@ -64,6 +88,14 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
         <ScoreBreakdownBars scores={scores} includeOverall={false} />
       ),
     });
+  } else if (isComplete) {
+    sections.push(
+      unavailableSection(
+        'score-breakdown',
+        'Score breakdown',
+        InsightsOutlinedIcon,
+      ),
+    );
   }
 
   if (financialModel) {
@@ -74,6 +106,14 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
       icon: PaymentsOutlinedIcon,
       render: () => <FinancialModelPanel model={financialModel} />,
     });
+  } else if (isComplete) {
+    sections.push(
+      unavailableSection(
+        'financial-model',
+        'Financial model',
+        PaymentsOutlinedIcon,
+      ),
+    );
   }
 
   if (hmoPlanner) {
@@ -151,6 +191,10 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
         />
       ),
     });
+  } else if (isComplete) {
+    sections.push(
+      unavailableSection('area-insights', 'Area insights', PlaceOutlinedIcon),
+    );
   }
 
   if (enrichment?.epc) {
@@ -162,6 +206,8 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
       icon: BoltOutlinedIcon,
       render: () => <EpcPanel epc={epc} />,
     });
+  } else if (isComplete) {
+    sections.push(unavailableSection('epc', 'EPC', BoltOutlinedIcon));
   }
 
   if (enrichment?.soldPrices) {
@@ -173,6 +219,10 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
       icon: SellOutlinedIcon,
       render: () => <ComparablesPanel soldPrices={soldPrices} />,
     });
+  } else if (isComplete) {
+    sections.push(
+      unavailableSection('sold-comparables', 'Sold comparables', SellOutlinedIcon),
+    );
   }
 
   if (enrichment?.transport) {
@@ -184,6 +234,14 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
       icon: DirectionsTransitOutlinedIcon,
       render: () => <TransportPanel transport={transport} />,
     });
+  } else if (isComplete) {
+    sections.push(
+      unavailableSection(
+        'transport',
+        'Transport',
+        DirectionsTransitOutlinedIcon,
+      ),
+    );
   }
 
   if (enrichment?.schools) {
@@ -195,6 +253,8 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
       icon: SchoolOutlinedIcon,
       render: () => <SchoolsPanel schools={schools} />,
     });
+  } else if (isComplete) {
+    sections.push(unavailableSection('schools', 'Schools', SchoolOutlinedIcon));
   }
 
   if (listing?.imageUrls && listing.imageUrls.length > 0) {
