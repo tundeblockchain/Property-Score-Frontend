@@ -1,9 +1,15 @@
 import { env } from '@/config/env';
-import type { DealUpdateSocketMessage } from '@/models';
+import type {
+  DealUpdateSocketMessage,
+  HmoRenderUpdateSocketMessage,
+  JobSocketMessage,
+} from '@/models';
 
-export type DealUpdateHandler = (message: DealUpdateSocketMessage) => void;
+export type JobSocketHandler = (message: JobSocketMessage) => void;
 
-function isDealUpdateMessage(value: unknown): value is DealUpdateSocketMessage {
+const HMO_RENDER_STATUSES = new Set(['pending', 'ready', 'failed', 'skipped']);
+
+export function isDealUpdateMessage(value: unknown): value is DealUpdateSocketMessage {
   if (typeof value !== 'object' || value === null) {
     return false;
   }
@@ -17,11 +23,34 @@ function isDealUpdateMessage(value: unknown): value is DealUpdateSocketMessage {
   );
 }
 
+export function isHmoRenderUpdateMessage(value: unknown): value is HmoRenderUpdateSocketMessage {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+  const message = value as Partial<HmoRenderUpdateSocketMessage>;
+  const rendering = message.rendering;
+  return (
+    message.type === 'HMO_RENDER_UPDATE' &&
+    typeof message.jobId === 'string' &&
+    typeof message.schemeId === 'string' &&
+    typeof rendering === 'object' &&
+    rendering !== null &&
+    rendering.kind === 'proposed_floor_plan' &&
+    typeof rendering.promptVersion === 'string' &&
+    typeof rendering.status === 'string' &&
+    HMO_RENDER_STATUSES.has(rendering.status)
+  );
+}
+
+function isJobSocketMessage(value: unknown): value is JobSocketMessage {
+  return isDealUpdateMessage(value) || isHmoRenderUpdateMessage(value);
+}
+
 export class AnalysisSocket {
   private socket: WebSocket | null = null;
-  private readonly onUpdate: DealUpdateHandler;
+  private readonly onUpdate: JobSocketHandler;
 
-  constructor(onUpdate: DealUpdateHandler) {
+  constructor(onUpdate: JobSocketHandler) {
     this.onUpdate = onUpdate;
   }
 
@@ -34,7 +63,7 @@ export class AnalysisSocket {
     socket.addEventListener('message', (event) => {
       try {
         const data: unknown = JSON.parse(String(event.data));
-        if (isDealUpdateMessage(data)) {
+        if (isJobSocketMessage(data)) {
           this.onUpdate(data);
         }
       } catch {

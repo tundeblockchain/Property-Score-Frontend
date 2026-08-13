@@ -49,24 +49,24 @@ export function useDealDetail(dealId: string | undefined) {
       ),
   });
 
-  const isProcessing = query.data?.status === 'PROCESSING';
-
   useEffect(() => {
-    if (!dealId || !isProcessing) {
+    if (!dealId) {
       return;
     }
 
     let cancelled = false;
     /**
-     * The socket reports completion only, so the refetch is what brings the
-     * finished report in. A job id doubles as its deal id.
+     * Subscribe for analysis completion and proposed-layout render updates.
+     * HTTP polling remains the fallback while status is PROCESSING.
      */
     const socket = new AnalysisSocket((message) => {
       if (message.jobId !== dealId) {
         return;
       }
       void queryClient.invalidateQueries({ queryKey: queryKeys.deal(dealId) });
-      void queryClient.invalidateQueries({ queryKey: queryKeys.deals });
+      if (message.type === 'DEAL_UPDATE') {
+        void queryClient.invalidateQueries({ queryKey: queryKeys.deals });
+      }
     });
 
     void (async () => {
@@ -88,7 +88,7 @@ export function useDealDetail(dealId: string | undefined) {
       cancelled = true;
       socket.close();
     };
-  }, [dealId, getIdToken, isProcessing, queryClient]);
+  }, [dealId, getIdToken, queryClient]);
 
   return query;
 }

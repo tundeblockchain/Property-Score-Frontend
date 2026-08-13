@@ -8,7 +8,7 @@ import {
   isValidRightmoveUrl,
   normalizeRightmoveUrl,
 } from '@/lib/rightmoveUrl';
-import type { AnalyseStatusResponse, DealUpdateSocketMessage } from '@/models';
+import type { AnalyseStatusResponse, JobSocketMessage } from '@/models';
 
 const POLL_INTERVAL_MS = 4000;
 const MAX_POLL_MS = 5 * 60 * 1000;
@@ -47,8 +47,8 @@ export function useAnalysisJob(jobId: string | null) {
   }, [jobId]);
 
   const handleSocketUpdate = useCallback(
-    (message: DealUpdateSocketMessage) => {
-      if (!jobId || message.jobId !== jobId) {
+    (message: JobSocketMessage) => {
+      if (message.type !== 'DEAL_UPDATE' || !jobId || message.jobId !== jobId) {
         return;
       }
       setSocketCompleted(true);
