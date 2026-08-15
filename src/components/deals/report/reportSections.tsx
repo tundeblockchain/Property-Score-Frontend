@@ -1,4 +1,5 @@
 import ArchitectureOutlinedIcon from '@mui/icons-material/ArchitectureOutlined';
+import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined';
 import BoltOutlinedIcon from '@mui/icons-material/BoltOutlined';
 import ChecklistOutlinedIcon from '@mui/icons-material/ChecklistOutlined';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
@@ -17,8 +18,10 @@ import type { ComponentType, ReactNode } from 'react';
 import { ScoreBreakdownBars } from '@/components/deals/common/ScoreBreakdownBars';
 import {
   HmoOverviewSection,
+  ProposedLayoutGallery,
   SchemeAccordion,
   orderedHmoSchemes,
+  schemesWithReadyProposedLayout,
 } from '@/components/deals/hmoPlanner';
 import { ActionPlanList } from '@/components/deals/panels/ActionPlanList';
 import { AreaInsightsPanel } from '@/components/deals/panels/AreaInsightsPanel';
@@ -97,6 +100,24 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
       defaultExpanded: false,
       icon: ArchitectureOutlinedIcon,
       render: () => <FloorPlans floorPlanUrls={floorPlanUrls} />,
+    });
+  }
+
+  const readyProposedLayouts = hmoPlanner
+    ? schemesWithReadyProposedLayout(hmoPlanner)
+    : [];
+  if (readyProposedLayouts.length > 0) {
+    sections.push({
+      id: 'proposed-layout',
+      title: 'Proposed layout',
+      defaultExpanded: true,
+      icon: AutoAwesomeOutlinedIcon,
+      render: () => (
+        <ProposedLayoutGallery
+          dealId={deal.dealId}
+          schemes={readyProposedLayouts}
+        />
+      ),
     });
   }
 

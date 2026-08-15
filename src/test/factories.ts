@@ -3,9 +3,11 @@ import type {
   DealDetail,
   EpcEnrichment,
   FinancialModel,
+  GeometryConversionPlan,
   HmoLayoutScheme,
   HmoLicensingPath,
   HmoPlannerResult,
+  HmoSchemeRendering,
   LicensingCheck,
   PropertyListingSummary,
   ScoreBreakdown,
@@ -72,6 +74,31 @@ function buildLicensingPath(): HmoLicensingPath {
     actionItems: [],
     confidence: 'medium',
     disclaimer: 'Indicative only.',
+  };
+}
+
+export function buildConversionPlan(
+  overrides: Partial<GeometryConversionPlan> = {},
+): GeometryConversionPlan {
+  return {
+    useCase: 'students',
+    asBuiltBedrooms: 3,
+    proposedLettingRooms: 5,
+    steps: [],
+    retainedCommunal: ['Kitchen'],
+    blocked: [],
+    ...overrides,
+  };
+}
+
+export function buildHmoSchemeRendering(
+  overrides: Partial<HmoSchemeRendering> = {},
+): HmoSchemeRendering {
+  return {
+    kind: 'proposed_floor_plan',
+    status: 'ready',
+    promptVersion: 'hmo-render-v3',
+    ...overrides,
   };
 }
 

@@ -179,8 +179,33 @@ export interface HmoLayoutScheme {
   fireEscape?: HmoFireEscapeAssessment;
   refurbBoq?: HmoRefurbBoq;
   conversionPlan?: GeometryConversionPlan;
+  renderings?: HmoSchemeRendering[];
   fitScore: number;
   recommended: boolean;
+}
+
+export type HmoRenderKind = 'proposed_floor_plan';
+export type HmoRenderStatus = 'pending' | 'ready' | 'failed' | 'skipped';
+export type HmoRenderSkipReason =
+  | 'no_conversion_plan'
+  | 'empty_conversion_steps'
+  | 'no_floor_plan_image'
+  | 'no_api_key';
+
+export interface HmoRenderFloorPage {
+  floorKey: string;
+  floorLabel: string;
+}
+
+export interface HmoSchemeRendering {
+  kind: HmoRenderKind;
+  status: HmoRenderStatus;
+  promptVersion: string;
+  model?: string;
+  skipReason?: HmoRenderSkipReason;
+  errorMessage?: string;
+  generatedAt?: string;
+  pages?: HmoRenderFloorPage[];
 }
 
 export type RefurbBoqCategory =
@@ -491,6 +516,15 @@ export interface DealPdfResponse {
   expiresInSeconds: number;
 }
 
+export interface RenderDealSchemeResponse {
+  dealId: string;
+  schemeId: string;
+  rendering: HmoSchemeRendering;
+  imageUrl?: string;
+  imageUrls?: string[];
+  expiresInSeconds?: number;
+}
+
 export interface BillingSummaryResponse {
   email: string;
   tier: UserTier;
@@ -532,3 +566,12 @@ export interface DealUpdateSocketMessage {
   scores: ScoreBreakdown;
   reportUrl?: string;
 }
+
+export interface HmoRenderUpdateSocketMessage {
+  type: 'HMO_RENDER_UPDATE';
+  jobId: string;
+  schemeId: string;
+  rendering: HmoSchemeRendering;
+}
+
+export type JobSocketMessage = DealUpdateSocketMessage | HmoRenderUpdateSocketMessage;
