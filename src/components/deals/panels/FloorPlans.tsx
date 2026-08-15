@@ -4,9 +4,14 @@ import { ImageLightbox } from '@/components/deals/common/ImageLightbox';
 
 interface FloorPlansProps {
   floorPlanUrls: string[];
+  /** Accessible name for thumbnails and the lightbox, e.g. "Floor plan". */
+  label?: string;
 }
 
-export function FloorPlans({ floorPlanUrls }: FloorPlansProps) {
+export function FloorPlans({
+  floorPlanUrls,
+  label = 'Floor plan',
+}: FloorPlansProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   if (floorPlanUrls.length === 0) {
@@ -31,7 +36,7 @@ export function FloorPlans({ floorPlanUrls }: FloorPlansProps) {
             component="button"
             type="button"
             onClick={() => setOpenIndex(index)}
-            aria-label={`View floor plan ${index + 1} of ${floorPlanUrls.length}`}
+            aria-label={`View ${label.toLowerCase()} ${index + 1} of ${floorPlanUrls.length}`}
             sx={{
               display: 'block',
               width: '100%',
@@ -53,8 +58,9 @@ export function FloorPlans({ floorPlanUrls }: FloorPlansProps) {
             <Box
               component="img"
               src={url}
-              alt={`Floor plan ${index + 1}`}
+              alt={`${label} ${index + 1}`}
               loading="lazy"
+              referrerPolicy="no-referrer"
               sx={{
                 display: 'block',
                 width: '100%',
@@ -72,7 +78,7 @@ export function FloorPlans({ floorPlanUrls }: FloorPlansProps) {
         openIndex={openIndex}
         onClose={() => setOpenIndex(null)}
         onIndexChange={setOpenIndex}
-        label="Floor plan"
+        label={label}
         imageSx={{ bgcolor: 'background.paper' }}
       />
     </>

@@ -1,4 +1,9 @@
-import type { HmoLayoutScheme, HmoPlannerResult, HmoUseCase } from '@/models';
+import type {
+  HmoLayoutScheme,
+  HmoPlannerResult,
+  HmoSchemeRendering,
+  HmoUseCase,
+} from '@/models';
 
 const USE_CASE_ORDER: readonly HmoUseCase[] = [
   'students',
@@ -16,5 +21,30 @@ export function orderedHmoSchemes(
 
   return USE_CASE_ORDER.map((useCase) => byUseCase.get(useCase)).filter(
     (scheme): scheme is HmoLayoutScheme => scheme != null,
+  );
+}
+
+export function proposedFloorPlanRendering(
+  scheme: Pick<HmoLayoutScheme, 'renderings'>,
+): HmoSchemeRendering | undefined {
+  return scheme.renderings?.find((item) => item.kind === 'proposed_floor_plan');
+}
+
+/** Recommended scheme with a conversion plan, otherwise the first that has one. */
+export function schemeForProposedLayout(
+  planner: HmoPlannerResult,
+): HmoLayoutScheme | undefined {
+  const schemes = orderedHmoSchemes(planner);
+  return (
+    schemes.find((scheme) => scheme.recommended && scheme.conversionPlan) ??
+    schemes.find((scheme) => scheme.conversionPlan)
+  );
+}
+
+export function schemesWithReadyProposedLayout(
+  planner: HmoPlannerResult,
+): HmoLayoutScheme[] {
+  return orderedHmoSchemes(planner).filter(
+    (scheme) => proposedFloorPlanRendering(scheme)?.status === 'ready',
   );
 }

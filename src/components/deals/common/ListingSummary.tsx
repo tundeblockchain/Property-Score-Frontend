@@ -38,6 +38,7 @@ export function ListingSummary({
           src={primaryImage}
           alt={listing.address ?? 'Property listing'}
           loading="lazy"
+          referrerPolicy="no-referrer"
           sx={{
             width: { xs: '100%', sm: compact ? 168 : 200 },
             maxWidth: { xs: '100%', sm: compact ? 168 : 200 },

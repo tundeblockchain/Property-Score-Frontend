@@ -192,6 +192,11 @@ export type HmoRenderSkipReason =
   | 'no_floor_plan_image'
   | 'no_api_key';
 
+export interface HmoRenderFloorPage {
+  floorKey: string;
+  floorLabel: string;
+}
+
 export interface HmoSchemeRendering {
   kind: HmoRenderKind;
   status: HmoRenderStatus;
@@ -200,6 +205,7 @@ export interface HmoSchemeRendering {
   skipReason?: HmoRenderSkipReason;
   errorMessage?: string;
   generatedAt?: string;
+  pages?: HmoRenderFloorPage[];
 }
 
 export type RefurbBoqCategory =
@@ -508,6 +514,15 @@ export interface DealPdfResponse {
   dealId: string;
   reportUrl: string;
   expiresInSeconds: number;
+}
+
+export interface RenderDealSchemeResponse {
+  dealId: string;
+  schemeId: string;
+  rendering: HmoSchemeRendering;
+  imageUrl?: string;
+  imageUrls?: string[];
+  expiresInSeconds?: number;
 }
 
 export interface BillingSummaryResponse {

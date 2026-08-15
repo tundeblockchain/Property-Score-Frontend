@@ -56,6 +56,7 @@ export function PropertyImages({ imageUrls }: PropertyImagesProps) {
               src={url}
               alt={`Property photo ${index + 1}`}
               loading="lazy"
+              referrerPolicy="no-referrer"
               sx={{
                 display: 'block',
                 width: '100%',
