@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { buildReportSections } from '@/components/deals/report/reportSections';
 import {
+  buildConversionPlan,
   buildDealDetail,
   buildEpcEnrichment,
   buildFinancialModel,
   buildHmoPlanner,
   buildHmoScheme,
+  buildHmoSchemeRendering,
   buildListing,
   buildSchoolsEnrichment,
   buildScoreBreakdown,
@@ -82,6 +84,44 @@ describe('buildReportSections', () => {
       'schools',
       'listing-description',
     ]);
+  });
+
+  it('places a ready proposed layout just below floor plans', () => {
+    const sections = buildReportSections(
+      buildDealDetail({
+        listing: buildListing({
+          imageUrls: ['https://example.com/a.jpg'],
+          floorPlanUrls: ['https://example.com/plan.png'],
+        }),
+        hmoPlanner: buildHmoPlanner({
+          schemes: [
+            buildHmoScheme({
+              conversionPlan: buildConversionPlan(),
+              renderings: [buildHmoSchemeRendering({ status: 'ready' })],
+            }),
+          ],
+        }),
+      }),
+    );
+
+    expect(sections.map((section) => section.id)).toEqual([
+      'property-images',
+      'floor-plans',
+      'proposed-layout',
+      'score-breakdown',
+      'financial-model',
+      'hmo-overview',
+      'hmo-scheme-scheme-students',
+      'area-insights',
+      'epc',
+      'sold-comparables',
+      'transport',
+      'schools',
+    ]);
+    expect(
+      sections.find((section) => section.id === 'proposed-layout')
+        ?.defaultExpanded,
+    ).toBe(true);
   });
 
   it('places the supporting evidence panels after the analysis', () => {

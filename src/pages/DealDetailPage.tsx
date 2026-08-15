@@ -5,6 +5,7 @@ import {
   FailedAnalysisAlert,
 } from '@/components/common/Feedback';
 import { PdfDownloadButton } from '@/components/deals/common/PdfDownloadButton';
+import { GenerateProposedLayoutButton } from '@/components/deals/hmoPlanner/GenerateProposedLayoutButton';
 import { DealDetailSkeleton } from '@/components/deals/report/DealDetailSkeleton';
 import { DealHeroCard } from '@/components/deals/report/DealHeroCard';
 import { DealReport } from '@/components/deals/report/DealReport';
@@ -37,10 +38,19 @@ export function DealDetailPage() {
         status={data.status}
         updatedAt={data.updatedAt}
         action={
-          <PdfDownloadButton
-            dealId={dealId}
-            disabled={data.status !== 'COMPLETED'}
-          />
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            spacing={1}
+            useFlexGap
+            flexWrap="wrap"
+            alignItems={{ xs: 'stretch', sm: 'flex-start' }}
+          >
+            <GenerateProposedLayoutButton deal={data} />
+            <PdfDownloadButton
+              dealId={dealId}
+              disabled={data.status !== 'COMPLETED'}
+            />
+          </Stack>
         }
       />
 

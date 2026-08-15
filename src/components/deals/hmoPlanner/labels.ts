@@ -3,6 +3,7 @@ import type {
   FireCheckStatus,
   FireRiskBand,
   HmoPlannerResult,
+  HmoRenderSkipReason,
   LicensingRequirementStatus,
   RefurbBoqCategory,
 } from '@/models';
@@ -92,6 +93,19 @@ export function fireRiskLabel(band: FireRiskBand): string {
       return 'Medium';
     case 'higher':
       return 'Higher';
+  }
+}
+
+export function hmoRenderSkipReasonLabel(reason: HmoRenderSkipReason): string {
+  switch (reason) {
+    case 'no_conversion_plan':
+      return 'This scheme has no conversion plan to illustrate.';
+    case 'empty_conversion_steps':
+      return 'There are no conversion steps to illustrate.';
+    case 'no_floor_plan_image':
+      return 'A listing floor-plan image is needed to generate a proposed layout.';
+    case 'no_api_key':
+      return 'Proposed layouts are not available at the moment. Try again later.';
   }
 }
 

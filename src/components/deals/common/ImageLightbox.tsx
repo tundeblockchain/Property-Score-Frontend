@@ -158,6 +158,7 @@ export function ImageLightbox({
           component="img"
           src={url}
           alt={`${label} ${index + 1} of ${count}`}
+          referrerPolicy="no-referrer"
           sx={[
             {
               display: 'block',
