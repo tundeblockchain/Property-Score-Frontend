@@ -49,6 +49,11 @@ const BillingCancelPage = lazy(() =>
     default: module.BillingCancelPage,
   })),
 );
+const AccountPage = lazy(() =>
+  import('@/pages/AccountPage').then((module) => ({
+    default: module.AccountPage,
+  })),
+);
 
 export function App() {
   return (
@@ -65,6 +70,7 @@ export function App() {
             <Route path="/billing" element={<BillingPage />} />
             <Route path="/billing/success" element={<BillingSuccessPage />} />
             <Route path="/billing/cancel" element={<BillingCancelPage />} />
+            <Route path="/account" element={<AccountPage />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

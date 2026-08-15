@@ -1,4 +1,5 @@
 import type {
+  BillingSummaryResponse,
   DealDetail,
   EpcEnrichment,
   FinancialModel,
@@ -192,6 +193,18 @@ export function buildSchoolsEnrichment(
     schoolCountWithin2Miles: 9,
     nearbySchools: [{ name: 'Example Primary', miles: 0.4 }],
     notes: 'Ofsted ratings not included.',
+    ...overrides,
+  };
+}
+
+export function buildBillingSummary(
+  overrides: Partial<BillingSummaryResponse> = {},
+): BillingSummaryResponse {
+  return {
+    email: 'investor@example.com',
+    tier: 'FREE',
+    creditsRemaining: 4,
+    monthlyAllowance: 5,
     ...overrides,
   };
 }

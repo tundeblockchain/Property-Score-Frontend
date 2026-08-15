@@ -63,4 +63,14 @@ describe('App route code splitting', () => {
       ).toBeInTheDocument();
     });
   });
+
+  it('redirects unauthenticated users away from the account page', async () => {
+    renderApp('/account');
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('heading', { name: /sign in/i }),
+      ).toBeInTheDocument();
+    });
+  });
 });

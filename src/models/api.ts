@@ -547,6 +547,14 @@ export interface CreatePortalResponse {
   portalUrl: string;
 }
 
+export interface ClearDealsResponse {
+  deletedCount: number;
+}
+
+export interface DeleteAccountResponse {
+  deleted: true;
+}
+
 export interface ApiErrorBody {
   error: string;
 }

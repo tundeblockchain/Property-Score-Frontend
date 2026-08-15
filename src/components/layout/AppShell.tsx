@@ -16,6 +16,7 @@ const NAV_LINKS = [
   { to: '/analyse', label: 'Analyse' },
   { to: '/deals', label: 'Properties' },
   { to: '/billing', label: 'Billing' },
+  { to: '/account', label: 'Account' },
 ] as const;
 
 /** Marketing pages need more horizontal room than the app forms. */
