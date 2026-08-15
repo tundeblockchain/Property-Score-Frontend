@@ -96,7 +96,7 @@ export function buildHmoSchemeRendering(
   return {
     kind: 'proposed_floor_plan',
     status: 'ready',
-    promptVersion: 'hmo-render-v2',
+    promptVersion: 'hmo-render-v3',
     ...overrides,
   };
 }
