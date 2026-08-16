@@ -5,4 +5,5 @@ export const queryKeys = {
   schemeRender: (dealId: string, schemeId: string) =>
     ['deals', dealId, 'render', schemeId] as const,
   analysis: (jobId: string) => ['analysis', jobId] as const,
+  testimonials: ['testimonials'] as const,
 };

@@ -569,6 +569,24 @@ export interface SupportSubmissionResponse {
   id: string;
 }
 
+export interface SubmitTestimonialRequest {
+  quote: string;
+  displayName: string;
+  role?: string;
+}
+
+export interface PublicTestimonial {
+  id: string;
+  quote: string;
+  displayName: string;
+  role?: string;
+  createdAt: string;
+}
+
+export interface ListTestimonialsResponse {
+  testimonials: PublicTestimonial[];
+}
+
 export interface ApiErrorBody {
   error: string;
 }

@@ -10,6 +10,7 @@ import type {
   HmoSchemeRendering,
   LicensingCheck,
   PropertyListingSummary,
+  PublicTestimonial,
   ScoreBreakdown,
   SchoolsEnrichment,
   SoldPricesEnrichment,
@@ -217,6 +218,20 @@ export function buildDealDetail(overrides: Partial<DealDetail> = {}): DealDetail
     listingUrl: 'https://www.rightmove.co.uk/properties/123456',
     createdAt: '2026-03-01T10:00:00.000Z',
     updatedAt: '2026-03-12T14:30:00.000Z',
+    ...overrides,
+  };
+}
+
+export function buildPublicTestimonial(
+  overrides: Partial<PublicTestimonial> = {},
+): PublicTestimonial {
+  return {
+    id: 'testimonial_1',
+    displayName: 'James',
+    role: 'HMO investor, Manchester',
+    quote:
+      'The report saved me a weekend of spreadsheet work before the viewing.',
+    createdAt: '2026-08-16T09:00:00.000Z',
     ...overrides,
   };
 }

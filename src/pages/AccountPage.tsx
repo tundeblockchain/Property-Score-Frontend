@@ -10,11 +10,13 @@ import {
   PageHeader,
 } from '@/components/common/Feedback';
 import { AccountMessageForm } from '@/components/account/AccountMessageForm';
+import { TestimonialForm } from '@/components/account/TestimonialForm';
 import {
   useClearDeals,
   useContactTeam,
   useDeleteAccount,
   useReportBug,
+  useSubmitTestimonial,
 } from '@/hooks/useAccountMutations';
 import { useBilling } from '@/hooks/useBilling';
 import { tierLabel } from '@/lib/plans';
@@ -27,6 +29,7 @@ export function AccountPage() {
   const deleteAccount = useDeleteAccount();
   const reportBug = useReportBug();
   const contactTeam = useContactTeam();
+  const submitTestimonial = useSubmitTestimonial();
   const [clearOpen, setClearOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
@@ -136,6 +139,17 @@ export function AccountPage() {
           succeeded={contactTeam.isSuccess}
           onSubmit={async ({ subject, body }) => {
             await contactTeam.mutateAsync({ subject, message: body });
+          }}
+        />
+      </Paper>
+
+      <Paper sx={{ p: 3 }}>
+        <TestimonialForm
+          pending={submitTestimonial.isPending}
+          error={submitTestimonial.error}
+          succeeded={submitTestimonial.isSuccess}
+          onSubmit={async (values) => {
+            await submitTestimonial.mutateAsync(values);
           }}
         />
       </Paper>

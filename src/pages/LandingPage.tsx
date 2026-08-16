@@ -6,6 +6,7 @@ import { FeatureHighlights } from '@/components/landing/FeatureHighlights';
 import { HowItWorks } from '@/components/landing/HowItWorks';
 import { LandingHero } from '@/components/landing/LandingHero';
 import { PlansTeaser } from '@/components/landing/PlansTeaser';
+import { TestimonialsSection } from '@/components/landing/TestimonialsSection';
 import { TryItPanel } from '@/components/landing/TryItPanel';
 
 export function LandingPage() {
@@ -28,6 +29,7 @@ export function LandingPage() {
       <TryItPanel />
       <HowItWorks />
       <FeatureHighlights />
+      <TestimonialsSection />
       <PlansTeaser />
       <FaqSection />
     </Stack>
