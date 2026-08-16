@@ -54,20 +54,6 @@ export function FailedAnalysisAlert({ errorMessage }: FailedAnalysisAlertProps) 
   );
 }
 
-interface EmptyStateProps {
-  title: string;
-  description: string;
-}
-
-export function EmptyState({ title, description }: EmptyStateProps) {
-  return (
-    <Stack spacing={1} py={6} alignItems="flex-start">
-      <Typography variant="h6">{title}</Typography>
-      <Typography color="text.secondary">{description}</Typography>
-    </Stack>
-  );
-}
-
 interface PageHeaderProps {
   title: string;
   subtitle?: string;
