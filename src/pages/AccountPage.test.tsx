@@ -5,7 +5,12 @@ import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { clearDeals, deleteAccount } from '@/api/account';
+import {
+  clearDeals,
+  contactTeam,
+  deleteAccount,
+  reportBug,
+} from '@/api/account';
 import { getBilling } from '@/api/billing';
 import {
   AuthContext,
@@ -25,6 +30,8 @@ vi.mock('@/api/billing', () => ({
 vi.mock('@/api/account', () => ({
   clearDeals: vi.fn(),
   deleteAccount: vi.fn(),
+  reportBug: vi.fn(),
+  contactTeam: vi.fn(),
 }));
 
 const signOut = vi.fn().mockResolvedValue(undefined);
@@ -73,6 +80,8 @@ describe('AccountPage', () => {
     vi.mocked(getBilling).mockResolvedValue(buildBillingSummary());
     vi.mocked(clearDeals).mockResolvedValue({ deletedCount: 2 });
     vi.mocked(deleteAccount).mockResolvedValue({ deleted: true });
+    vi.mocked(reportBug).mockResolvedValue({ id: 'bug_1' });
+    vi.mocked(contactTeam).mockResolvedValue({ id: 'contact_1' });
     signOut.mockClear();
   });
 
@@ -86,6 +95,12 @@ describe('AccountPage', () => {
     expect(
       screen.getByRole('link', { name: 'Choose a plan' }),
     ).toHaveAttribute('href', '/billing');
+    expect(
+      screen.getByRole('heading', { name: 'Report a bug' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Contact us' }),
+    ).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: 'Clear all properties' }),
     ).toBeInTheDocument();
@@ -154,5 +169,34 @@ describe('AccountPage', () => {
     expect(deleteAccount).toHaveBeenCalledOnce();
     expect(signOut).toHaveBeenCalledOnce();
     expect(await screen.findByText('Home')).toBeInTheDocument();
+  });
+
+  it('sends a bug report from the account form', async () => {
+    const user = userEvent.setup();
+    renderAccountPage();
+
+    await screen.findByRole('heading', { name: 'Account' });
+    const form = screen.getByRole('form', { name: 'Report a bug' });
+    await user.type(
+      within(form).getByRole('textbox', { name: /subject/i }),
+      'Layout stuck',
+    );
+    await user.type(
+      within(form).getByRole('textbox', { name: /what happened/i }),
+      'The proposed layout never left pending.',
+    );
+    await user.click(
+      within(form).getByRole('button', { name: 'Send bug report' }),
+    );
+
+    expect(reportBug).toHaveBeenCalledWith({
+      subject: 'Layout stuck',
+      description: 'The proposed layout never left pending.',
+    });
+    expect(
+      await screen.findByText(
+        'Thanks. We have sent your bug report to the team.',
+      ),
+    ).toBeInTheDocument();
   });
 });

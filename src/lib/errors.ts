@@ -58,6 +58,9 @@ export function getUserFacingErrorMessage(
     if (error.status === 429) {
       return 'Too many requests. Please wait a moment and try again.';
     }
+    if (error.status === 503) {
+      return 'This form is temporarily unavailable. Please try again later.';
+    }
     return fallback;
   }
 

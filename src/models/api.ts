@@ -555,6 +555,20 @@ export interface DeleteAccountResponse {
   deleted: true;
 }
 
+export interface ReportBugRequest {
+  subject: string;
+  description: string;
+}
+
+export interface ContactTeamRequest {
+  subject: string;
+  message: string;
+}
+
+export interface SupportSubmissionResponse {
+  id: string;
+}
+
 export interface ApiErrorBody {
   error: string;
 }

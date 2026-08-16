@@ -9,7 +9,13 @@ import {
   LoadingState,
   PageHeader,
 } from '@/components/common/Feedback';
-import { useClearDeals, useDeleteAccount } from '@/hooks/useAccountMutations';
+import { AccountMessageForm } from '@/components/account/AccountMessageForm';
+import {
+  useClearDeals,
+  useContactTeam,
+  useDeleteAccount,
+  useReportBug,
+} from '@/hooks/useAccountMutations';
 import { useBilling } from '@/hooks/useBilling';
 import { tierLabel } from '@/lib/plans';
 
@@ -19,6 +25,8 @@ export function AccountPage() {
   const billing = useBilling();
   const clearDeals = useClearDeals();
   const deleteAccount = useDeleteAccount();
+  const reportBug = useReportBug();
+  const contactTeam = useContactTeam();
   const [clearOpen, setClearOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
@@ -96,6 +104,40 @@ export function AccountPage() {
             </Button>
           </Stack>
         </Stack>
+      </Paper>
+
+      <Paper sx={{ p: 3 }}>
+        <AccountMessageForm
+          title="Report a bug"
+          description="Tell us what went wrong. We will email the team and keep a copy of your report."
+          bodyLabel="What happened?"
+          submitLabel="Send bug report"
+          pendingLabel="Sending…"
+          successMessage="Thanks. We have sent your bug report to the team."
+          pending={reportBug.isPending}
+          error={reportBug.error}
+          succeeded={reportBug.isSuccess}
+          onSubmit={async ({ subject, body }) => {
+            await reportBug.mutateAsync({ subject, description: body });
+          }}
+        />
+      </Paper>
+
+      <Paper sx={{ p: 3 }}>
+        <AccountMessageForm
+          title="Contact us"
+          description="Ask a question about billing, analysis, or your account."
+          bodyLabel="Your question"
+          submitLabel="Send message"
+          pendingLabel="Sending…"
+          successMessage="Thanks. We have sent your message to the team."
+          pending={contactTeam.isPending}
+          error={contactTeam.error}
+          succeeded={contactTeam.isSuccess}
+          onSubmit={async ({ subject, body }) => {
+            await contactTeam.mutateAsync({ subject, message: body });
+          }}
+        />
       </Paper>
 
       <Paper sx={{ p: 3 }}>
