@@ -4,6 +4,7 @@ import type {
   ContactTeamRequest,
   DeleteAccountResponse,
   ReportBugRequest,
+  SubmitTestimonialRequest,
   SupportSubmissionResponse,
 } from '@/models';
 
@@ -28,4 +29,13 @@ export function contactTeam(
   body: ContactTeamRequest,
 ): Promise<SupportSubmissionResponse> {
   return apiClient.post<SupportSubmissionResponse>('/api/account/contact', body);
+}
+
+export function submitTestimonial(
+  body: SubmitTestimonialRequest,
+): Promise<SupportSubmissionResponse> {
+  return apiClient.post<SupportSubmissionResponse>(
+    '/api/account/testimonial',
+    body,
+  );
 }

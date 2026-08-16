@@ -4,9 +4,14 @@ import {
   contactTeam,
   deleteAccount,
   reportBug,
+  submitTestimonial,
 } from '@/api/account';
 import { queryKeys } from '@/hooks/queryKeys';
-import type { ContactTeamRequest, ReportBugRequest } from '@/models';
+import type {
+  ContactTeamRequest,
+  ReportBugRequest,
+  SubmitTestimonialRequest,
+} from '@/models';
 
 export function useClearDeals() {
   const queryClient = useQueryClient();
@@ -34,5 +39,11 @@ export function useReportBug() {
 export function useContactTeam() {
   return useMutation({
     mutationFn: (body: ContactTeamRequest) => contactTeam(body),
+  });
+}
+
+export function useSubmitTestimonial() {
+  return useMutation({
+    mutationFn: (body: SubmitTestimonialRequest) => submitTestimonial(body),
   });
 }

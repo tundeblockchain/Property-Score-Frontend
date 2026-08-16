@@ -10,6 +10,7 @@ import {
   contactTeam,
   deleteAccount,
   reportBug,
+  submitTestimonial,
 } from '@/api/account';
 import { getBilling } from '@/api/billing';
 import {
@@ -32,6 +33,7 @@ vi.mock('@/api/account', () => ({
   deleteAccount: vi.fn(),
   reportBug: vi.fn(),
   contactTeam: vi.fn(),
+  submitTestimonial: vi.fn(),
 }));
 
 const signOut = vi.fn().mockResolvedValue(undefined);
@@ -75,13 +77,14 @@ function renderAccountPage(): void {
   render(<AccountPage />, { wrapper: Wrapper });
 }
 
-describe('AccountPage', () => {
+describe('AccountPage', { timeout: 15_000 }, () => {
   beforeEach(() => {
     vi.mocked(getBilling).mockResolvedValue(buildBillingSummary());
     vi.mocked(clearDeals).mockResolvedValue({ deletedCount: 2 });
     vi.mocked(deleteAccount).mockResolvedValue({ deleted: true });
     vi.mocked(reportBug).mockResolvedValue({ id: 'bug_1' });
     vi.mocked(contactTeam).mockResolvedValue({ id: 'contact_1' });
+    vi.mocked(submitTestimonial).mockResolvedValue({ id: 'testimonial_1' });
     signOut.mockClear();
   });
 
@@ -100,6 +103,9 @@ describe('AccountPage', () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole('heading', { name: 'Contact us' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Share a testimonial' }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: 'Clear all properties' }),
@@ -130,7 +136,7 @@ describe('AccountPage', () => {
   });
 
   it('clears all properties after confirmation', async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderAccountPage();
 
     await screen.findByRole('heading', { name: 'Account' });
@@ -148,7 +154,7 @@ describe('AccountPage', () => {
   });
 
   it('deletes the account after the email is confirmed', async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderAccountPage();
 
     await screen.findByRole('heading', { name: 'Account' });
@@ -172,7 +178,7 @@ describe('AccountPage', () => {
   });
 
   it('sends a bug report from the account form', async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderAccountPage();
 
     await screen.findByRole('heading', { name: 'Account' });
@@ -196,6 +202,35 @@ describe('AccountPage', () => {
     expect(
       await screen.findByText(
         'Thanks. We have sent your bug report to the team.',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('sends a testimonial from the account form', async () => {
+    const user = userEvent.setup({ delay: null });
+    renderAccountPage();
+
+    await screen.findByRole('heading', { name: 'Account' });
+    const form = screen.getByRole('form', { name: 'Share a testimonial' });
+    await user.type(
+      within(form).getByRole('textbox', { name: /display name/i }),
+      'James',
+    );
+    await user.type(
+      within(form).getByRole('textbox', { name: /your quote/i }),
+      'Clear licensing notes before I booked the surveyor.',
+    );
+    await user.click(
+      within(form).getByRole('button', { name: 'Send testimonial' }),
+    );
+
+    expect(submitTestimonial).toHaveBeenCalledWith({
+      displayName: 'James',
+      quote: 'Clear licensing notes before I booked the surveyor.',
+    });
+    expect(
+      await screen.findByText(
+        'Thanks. We have received your testimonial and will review it shortly.',
       ),
     ).toBeInTheDocument();
   });

@@ -79,3 +79,20 @@ export const apiClient = {
       body: body === undefined ? undefined : JSON.stringify(body),
     }),
 };
+
+export async function publicGet<T>(path: string): Promise<T> {
+  const response = await fetch(`${env.apiBaseUrl}${path}`, {
+    signal: AbortSignal.timeout(8_000),
+  });
+
+  if (!response.ok) {
+    const body = await parseErrorBody(response);
+    throw new ApiError(
+      response.status,
+      body?.error ?? `Request failed (${response.status})`,
+      body,
+    );
+  }
+
+  return (await response.json()) as T;
+}

@@ -11,6 +11,7 @@ import type {
   HmoSchemeRendering,
   LicensingCheck,
   PropertyListingSummary,
+  PublicTestimonial,
   ScoreBreakdown,
   SchoolsEnrichment,
   SoldPricesEnrichment,
@@ -228,6 +229,20 @@ export function buildDealSummary(
 export function buildDealDetail(overrides: Partial<DealDetail> = {}): DealDetail {
   return {
     ...buildDealSummary(),
+    ...overrides,
+  };
+}
+
+export function buildPublicTestimonial(
+  overrides: Partial<PublicTestimonial> = {},
+): PublicTestimonial {
+  return {
+    id: 'testimonial_1',
+    displayName: 'James',
+    role: 'HMO investor, Manchester',
+    quote:
+      'The report saved me a weekend of spreadsheet work before the viewing.',
+    createdAt: '2026-08-16T09:00:00.000Z',
     ...overrides,
   };
 }
