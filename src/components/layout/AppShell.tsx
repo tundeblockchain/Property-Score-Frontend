@@ -7,7 +7,7 @@ import {
   Toolbar,
 } from '@mui/material';
 import { useState, type ReactNode } from 'react';
-import { Link as RouterLink, NavLink, useLocation } from 'react-router-dom';
+import { Link as RouterLink, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/auth/AuthContext';
 import { AuthDialog } from '@/components/auth/AuthDialog';
 import { BrandMark, CreditsBadge } from '@/components/layout/BrandAndCredits';
@@ -34,9 +34,15 @@ const navButtonSx = {
 export function AppHeader() {
   const { user, signOut } = useAuth();
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
 
   const showPublicNav = !user && pathname !== '/login';
+
+  async function handleSignOut() {
+    navigate('/', { replace: true });
+    await signOut();
+  }
 
   return (
     <AppBar
@@ -68,7 +74,9 @@ export function AppHeader() {
             <CreditsBadge />
             <Button
               color="inherit"
-              onClick={() => void signOut()}
+              onClick={() => {
+                void handleSignOut();
+              }}
               sx={{ fontSize: '1rem', px: 1.5 }}
             >
               Sign out
