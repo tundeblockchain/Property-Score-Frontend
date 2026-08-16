@@ -11,6 +11,7 @@ import { Link as RouterLink, NavLink, useLocation, useNavigate } from 'react-rou
 import { useAuth } from '@/auth/AuthContext';
 import { AuthDialog } from '@/components/auth/AuthDialog';
 import { BrandMark, CreditsBadge } from '@/components/layout/BrandAndCredits';
+import { PROPERTIES_PATH } from '@/lib/paths';
 
 const NAV_LINKS = [
   { to: '/analyse', label: 'Analyse' },
@@ -56,7 +57,7 @@ export function AppHeader() {
       }}
     >
       <Toolbar>
-        <BrandMark to={user ? '/analyse' : '/'} />
+        <BrandMark to={user ? PROPERTIES_PATH : '/'} />
         <Box flex={1} />
         {user ? (
           <Stack direction="row" spacing={1.5} alignItems="center">
@@ -110,7 +111,10 @@ export function AppHeader() {
       <AuthDialog
         open={authDialogOpen}
         onClose={() => setAuthDialogOpen(false)}
-        onAuthenticated={() => setAuthDialogOpen(false)}
+        onAuthenticated={() => {
+          setAuthDialogOpen(false);
+          navigate(PROPERTIES_PATH);
+        }}
         initialMode="signIn"
       />
     </AppBar>

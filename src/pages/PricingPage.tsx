@@ -1,6 +1,6 @@
 import { Alert, Box, Button, Paper, Stack, Typography } from '@mui/material';
 import { useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/auth/AuthContext';
 import { AuthDialog } from '@/components/auth/AuthDialog';
 import { PlanCards, PlanCardShell } from '@/components/billing/PlanCards';
@@ -8,6 +8,7 @@ import { PageHeader } from '@/components/common/Feedback';
 import { CheckIcon } from '@/components/common/icons';
 import { useBilling } from '@/hooks/useBilling';
 import { useCheckout } from '@/hooks/useBillingMutations';
+import { PROPERTIES_PATH } from '@/lib/paths';
 import { FREE_PLAN_SUMMARY, PLAN_OPTIONS, tierLabel } from '@/lib/plans';
 import type { CheckoutProduct } from '@/models';
 
@@ -26,6 +27,7 @@ const INCLUDED_IN_EVERY_PLAN = [
 
 export function PricingPage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const billing = useBilling();
   const checkout = useCheckout();
   const [pendingAction, setPendingAction] = useState<PendingAction | null>(null);
@@ -43,7 +45,9 @@ export function PricingPage() {
     setPendingAction(null);
     if (action?.kind === 'checkout') {
       checkout.mutate(action.product);
+      return;
     }
+    navigate(PROPERTIES_PATH);
   }
 
   return (

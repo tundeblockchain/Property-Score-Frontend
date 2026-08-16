@@ -1,12 +1,14 @@
 import { Box, Button, Stack, Typography } from '@mui/material';
 import { useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/auth/AuthContext';
 import { AuthDialog } from '@/components/auth/AuthDialog';
 import { ReportPreviewCard } from '@/components/landing/ReportPreviewCard';
+import { PROPERTIES_PATH } from '@/lib/paths';
 
 export function LandingHero() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
 
   return (
@@ -44,7 +46,7 @@ export function LandingHero() {
           {user ? (
             <Button
               component={RouterLink}
-              to="/deals"
+              to={PROPERTIES_PATH}
               variant="outlined"
               size="large"
             >
@@ -87,7 +89,10 @@ export function LandingHero() {
       <AuthDialog
         open={authDialogOpen}
         onClose={() => setAuthDialogOpen(false)}
-        onAuthenticated={() => setAuthDialogOpen(false)}
+        onAuthenticated={() => {
+          setAuthDialogOpen(false);
+          navigate(PROPERTIES_PATH);
+        }}
         initialMode="signUp"
         description="Create an account to start scoring listings with 5 free credits."
       />

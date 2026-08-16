@@ -20,18 +20,28 @@ vi.mock('@/api/billing', () => ({
 }));
 
 const signOut = vi.fn().mockResolvedValue(undefined);
+const signInWithGoogle = vi.fn().mockResolvedValue(undefined);
 
-const authValue: AuthContextValue = {
+const signedInAuth: AuthContextValue = {
   user: { email: 'investor@example.com' } as User,
   loading: false,
   signIn: vi.fn(),
   signUp: vi.fn(),
-  signInWithGoogle: vi.fn(),
+  signInWithGoogle,
   signOut,
   getIdToken: vi.fn().mockResolvedValue('token'),
 };
 
-function renderHeader(route = '/analyse'): void {
+const signedOutAuth: AuthContextValue = {
+  ...signedInAuth,
+  user: null,
+  getIdToken: vi.fn().mockResolvedValue(null),
+};
+
+function renderHeader(
+  route = '/analyse',
+  auth: AuthContextValue = signedInAuth,
+): void {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: { retry: false },
@@ -43,11 +53,12 @@ function renderHeader(route = '/analyse'): void {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={theme}>
           <MemoryRouter initialEntries={[route]}>
-            <AuthContext.Provider value={authValue}>
+            <AuthContext.Provider value={auth}>
               {children}
               <Routes>
                 <Route path="/" element={<div>Landing</div>} />
                 <Route path="/analyse" element={<div>Analyse page</div>} />
+                <Route path="/deals" element={<div>Properties</div>} />
               </Routes>
             </AuthContext.Provider>
           </MemoryRouter>
@@ -63,6 +74,7 @@ describe('AppHeader', () => {
   beforeEach(() => {
     vi.mocked(getBilling).mockResolvedValue(buildBillingSummary());
     signOut.mockClear();
+    signInWithGoogle.mockClear();
   });
 
   it('takes a signed-in user to the landing page after sign out', async () => {
@@ -75,5 +87,18 @@ describe('AppHeader', () => {
     expect(signOut).toHaveBeenCalledOnce();
     expect(await screen.findByText('Landing')).toBeInTheDocument();
     expect(screen.queryByText('Analyse page')).not.toBeInTheDocument();
+  });
+
+  it('takes a visitor to Properties after signing in from the header', async () => {
+    const user = userEvent.setup({ delay: null });
+    renderHeader('/', signedOutAuth);
+
+    await user.click(screen.getByRole('button', { name: 'Sign in' }));
+    await user.click(
+      screen.getByRole('button', { name: 'Continue with Google' }),
+    );
+
+    expect(signInWithGoogle).toHaveBeenCalledOnce();
+    expect(await screen.findByText('Properties')).toBeInTheDocument();
   });
 });
