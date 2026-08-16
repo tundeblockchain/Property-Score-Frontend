@@ -1,6 +1,5 @@
 import { Stack } from '@mui/material';
 import { DealListItem } from '@/components/deals/list/DealListItem';
-import { EmptyState } from '@/components/common/Feedback';
 import type { DealSummary } from '@/models';
 
 interface DealListProps {
@@ -9,12 +8,7 @@ interface DealListProps {
 
 export function DealList({ deals }: DealListProps) {
   if (deals.length === 0) {
-    return (
-      <EmptyState
-        title="No properties yet"
-        description="Analyse a Rightmove listing to see it here."
-      />
-    );
+    return null;
   }
 
   return (

@@ -1,6 +1,7 @@
 import type {
   BillingSummaryResponse,
   DealDetail,
+  DealSummary,
   EpcEnrichment,
   FinancialModel,
   GeometryConversionPlan,
@@ -210,14 +211,24 @@ export function buildBillingSummary(
   };
 }
 
-/** Minimal completed deal; opt into listing, scores and enrichment per test. */
-export function buildDealDetail(overrides: Partial<DealDetail> = {}): DealDetail {
+/** Minimal deal list item; opt into listing and scores per test. */
+export function buildDealSummary(
+  overrides: Partial<DealSummary> = {},
+): DealSummary {
   return {
     dealId: 'deal-1',
     status: 'COMPLETED',
     listingUrl: 'https://www.rightmove.co.uk/properties/123456',
     createdAt: '2026-03-01T10:00:00.000Z',
     updatedAt: '2026-03-12T14:30:00.000Z',
+    ...overrides,
+  };
+}
+
+/** Minimal completed deal; opt into listing, scores and enrichment per test. */
+export function buildDealDetail(overrides: Partial<DealDetail> = {}): DealDetail {
+  return {
+    ...buildDealSummary(),
     ...overrides,
   };
 }
