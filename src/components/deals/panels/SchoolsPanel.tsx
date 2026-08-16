@@ -1,10 +1,19 @@
 import { Stack, Typography } from '@mui/material';
 import { DataQualityChip } from '@/components/deals/common/DataQualityChip';
 import { Fact } from '@/components/deals/common/Fact';
-import type { SchoolsEnrichment } from '@/models';
+import type { NearbySchool, SchoolsEnrichment } from '@/models';
 
 interface SchoolsPanelProps {
   schools: SchoolsEnrichment;
+}
+
+function formatNearbySchool(school: NearbySchool): string {
+  const details = [
+    `${school.miles} mi`,
+    school.phase,
+    school.ofstedRating,
+  ].filter((part): part is string => Boolean(part));
+  return `${school.name} (${details.join(', ')})`;
 }
 
 export function SchoolsPanel({ schools }: SchoolsPanelProps) {
@@ -16,9 +25,17 @@ export function SchoolsPanel({ schools }: SchoolsPanelProps) {
           label="Within 2 miles"
           value={String(schools.schoolCountWithin2Miles)}
         />
+        <Fact
+          label="Good or Outstanding"
+          value={
+            schools.goodOrOutstandingWithin2Miles != null
+              ? String(schools.goodOrOutstandingWithin2Miles)
+              : '—'
+          }
+        />
         <Fact label="Nearest" value={schools.nearestSchoolName ?? '—'} />
         <Fact
-          label="Nearest distance"
+          label="Nearest primary"
           value={
             schools.nearestPrimaryMiles != null
               ? `${schools.nearestPrimaryMiles} mi`
@@ -28,10 +45,7 @@ export function SchoolsPanel({ schools }: SchoolsPanelProps) {
       </Stack>
       {schools.nearbySchools.length > 0 ? (
         <Typography variant="body2" color="text.secondary">
-          {schools.nearbySchools
-            .slice(0, 5)
-            .map((school) => `${school.name} (${school.miles} mi)`)
-            .join(' · ')}
+          {schools.nearbySchools.slice(0, 5).map(formatNearbySchool).join(' · ')}
         </Typography>
       ) : null}
       {schools.notes ? (
