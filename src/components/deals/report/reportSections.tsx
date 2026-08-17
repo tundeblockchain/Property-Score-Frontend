@@ -67,8 +67,8 @@ function unavailableSection(
 
 /**
  * Builds the report as a single ordered column: listing visuals first (closed),
- * then the analysis and its conclusions (open), then supporting evidence and
- * the listing description (closed).
+ * then the analysis (open), then supporting evidence (closed), then narrative
+ * and action plan (open) at the bottom.
  *
  * The checks that run for every property keep their place once the analysis is
  * complete, even with no data. Until then there is nothing to report, and
@@ -89,6 +89,17 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
       defaultExpanded: false,
       icon: PhotoLibraryOutlinedIcon,
       render: () => <PropertyImages imageUrls={imageUrls} />,
+    });
+  }
+
+  if (listing?.description) {
+    const description = listing.description;
+    sections.push({
+      id: 'listing-description',
+      title: 'Listing description',
+      defaultExpanded: false,
+      icon: DescriptionOutlinedIcon,
+      render: () => <ListingDescription description={description} />,
     });
   }
 
@@ -186,30 +197,6 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
     }
   }
 
-  if (narrative) {
-    sections.push({
-      id: 'narrative',
-      title: 'Narrative',
-      defaultExpanded: true,
-      icon: NotesOutlinedIcon,
-      render: () => (
-        <Typography color="text.primary" whiteSpace="pre-wrap">
-          {narrative}
-        </Typography>
-      ),
-    });
-  }
-
-  if (actionPlan && actionPlan.length > 0) {
-    sections.push({
-      id: 'action-plan',
-      title: 'Action plan',
-      defaultExpanded: true,
-      icon: ChecklistOutlinedIcon,
-      render: () => <ActionPlanList items={actionPlan} />,
-    });
-  }
-
   const hasAreaInsights = Boolean(
     enrichment?.broadband ||
       enrichment?.planning ||
@@ -300,14 +287,27 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
     sections.push(unavailableSection('schools', 'Schools', SchoolOutlinedIcon));
   }
 
-  if (listing?.description) {
-    const description = listing.description;
+  if (narrative) {
     sections.push({
-      id: 'listing-description',
-      title: 'Listing description',
-      defaultExpanded: false,
-      icon: DescriptionOutlinedIcon,
-      render: () => <ListingDescription description={description} />,
+      id: 'narrative',
+      title: 'Narrative',
+      defaultExpanded: true,
+      icon: NotesOutlinedIcon,
+      render: () => (
+        <Typography color="text.primary" whiteSpace="pre-wrap">
+          {narrative}
+        </Typography>
+      ),
+    });
+  }
+
+  if (actionPlan && actionPlan.length > 0) {
+    sections.push({
+      id: 'action-plan',
+      title: 'Action plan',
+      defaultExpanded: true,
+      icon: ChecklistOutlinedIcon,
+      render: () => <ActionPlanList items={actionPlan} />,
     });
   }
 
