@@ -447,6 +447,8 @@ export interface TransportEnrichment {
 export interface NearbySchool {
   name: string;
   miles: number;
+  phase?: string;
+  ofstedRating?: string;
 }
 
 export interface SchoolsEnrichment {
@@ -454,6 +456,7 @@ export interface SchoolsEnrichment {
   latitude: number;
   longitude: number;
   schoolCountWithin2Miles: number;
+  goodOrOutstandingWithin2Miles?: number;
   nearestPrimaryMiles?: number;
   nearestSchoolName?: string;
   nearbySchools: NearbySchool[];

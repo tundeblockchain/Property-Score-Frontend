@@ -193,8 +193,11 @@ export function buildSchoolsEnrichment(
     latitude: 53.8,
     longitude: -1.55,
     schoolCountWithin2Miles: 9,
-    nearbySchools: [{ name: 'Example Primary', miles: 0.4 }],
-    notes: 'Ofsted ratings not included.',
+    goodOrOutstandingWithin2Miles: 4,
+    nearbySchools: [
+      { name: 'Example Primary', miles: 0.4, phase: 'Primary', ofstedRating: 'Good' },
+    ],
+    notes: 'Live school locations from DfE Get Information About Schools.',
     ...overrides,
   };
 }
