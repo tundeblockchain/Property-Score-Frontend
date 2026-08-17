@@ -55,7 +55,7 @@ describe('buildReportSections', () => {
     ]);
   });
 
-  it('puts listing visuals first, then the analysis, then the description', () => {
+  it('puts listing visuals first, then the analysis, then narrative and action plan', () => {
     const sections = buildReportSections(
       buildDealDetail({
         listing: buildListing({
@@ -72,17 +72,17 @@ describe('buildReportSections', () => {
 
     expect(sections.map((section) => section.id)).toEqual([
       'property-images',
+      'listing-description',
       'floor-plans',
       'score-breakdown',
       'financial-model',
-      'narrative',
-      'action-plan',
       'area-insights',
       'epc',
       'sold-comparables',
       'transport',
       'schools',
-      'listing-description',
+      'narrative',
+      'action-plan',
     ]);
   });
 
