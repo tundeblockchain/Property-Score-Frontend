@@ -1,8 +1,11 @@
-import { Alert, Button, LinearProgress, Stack } from '@mui/material';
+import { Alert, Button, LinearProgress, Stack, Typography } from '@mui/material';
 import { useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import { ErrorAlert } from '@/components/common/Feedback';
 import { ImageLightbox } from '@/components/deals/common/ImageLightbox';
+import { useBilling } from '@/hooks/useBilling';
 import { schemeRenderImageUrls, useSchemeRender } from '@/hooks/useSchemeRender';
+import { ApiError, getUserFacingErrorMessage } from '@/lib/errors';
 import type { DealDetail, HmoSchemeRendering } from '@/models';
 import { hmoRenderSkipReasonLabel } from './labels';
 import { proposedFloorPlanRendering, schemeForProposedLayout } from './schemes';
@@ -27,11 +30,15 @@ function canRetry(rendering: HmoSchemeRendering | undefined): boolean {
 export function GenerateProposedLayoutButton({
   deal,
 }: GenerateProposedLayoutButtonProps) {
+  const billing = useBilling();
   const scheme =
     deal.status === 'COMPLETED' && deal.hmoPlanner
       ? schemeForProposedLayout(deal.hmoPlanner)
       : undefined;
   const rendering = scheme ? proposedFloorPlanRendering(scheme) : undefined;
+  const outOfCredits =
+    billing.data?.creditsRemaining !== undefined &&
+    billing.data.creditsRemaining <= 0;
 
   const { query, generate } = useSchemeRender({
     dealId: deal.dealId,
@@ -80,17 +87,42 @@ export function GenerateProposedLayoutButton({
   }
 
   const showGenerate = !isPending && canRetry(liveRendering);
+  const showUpgrade =
+    generate.error instanceof ApiError && generate.error.isInsufficientCredits;
 
   return (
     <Stack spacing={1} sx={{ minWidth: { sm: 220 } }}>
       {showGenerate ? (
-        <Button
-          variant="contained"
-          disabled={generate.isPending}
-          onClick={() => generate.mutate()}
-        >
-          {liveRendering ? 'Try again' : 'Generate proposed layout'}
-        </Button>
+        <>
+          <Button
+            variant="contained"
+            disabled={generate.isPending || outOfCredits}
+            onClick={() => generate.mutate()}
+          >
+            {liveRendering ? 'Try again' : 'Generate proposed layout'}
+          </Button>
+          <Typography variant="caption" color="text.secondary">
+            Uses 1 credit.
+          </Typography>
+        </>
+      ) : null}
+
+      {outOfCredits && showGenerate ? (
+        <Alert severity="warning">
+          You are out of credits.{' '}
+          <Button component={RouterLink} to="/billing" size="small">
+            Upgrade or buy credits
+          </Button>
+        </Alert>
+      ) : null}
+
+      {showUpgrade ? (
+        <Alert severity="warning">
+          {getUserFacingErrorMessage(generate.error)}{' '}
+          <Button component={RouterLink} to="/billing" size="small">
+            Go to billing
+          </Button>
+        </Alert>
       ) : null}
 
       {isPending ? (
@@ -108,7 +140,9 @@ export function GenerateProposedLayoutButton({
 
       {failedMessage ? <Alert severity="error">{failedMessage}</Alert> : null}
 
-      {generate.isError ? <ErrorAlert error={generate.error} /> : null}
+      {generate.isError && !showUpgrade ? (
+        <ErrorAlert error={generate.error} />
+      ) : null}
     </Stack>
   );
 }

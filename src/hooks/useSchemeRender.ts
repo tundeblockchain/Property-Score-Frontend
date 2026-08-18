@@ -43,7 +43,13 @@ export function useSchemeRender(input: {
 
   const query = useQuery({
     queryKey: queryKeys.schemeRender(dealId, schemeId),
-    queryFn: () => getSchemeRender(dealId, schemeId),
+    queryFn: async () => {
+      const result = await getSchemeRender(dealId, schemeId);
+      if (result.rendering.status === 'failed') {
+        void queryClient.invalidateQueries({ queryKey: queryKeys.billing });
+      }
+      return result;
+    },
     enabled:
       enabled && (rendering?.status === 'pending' || rendering?.status === 'ready'),
     refetchInterval: (currentQuery) =>
@@ -55,6 +61,7 @@ export function useSchemeRender(input: {
     onSuccess: (data) => {
       queryClient.setQueryData(queryKeys.schemeRender(dealId, schemeId), data);
       void queryClient.invalidateQueries({ queryKey: queryKeys.deal(dealId) });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.billing });
     },
   });
 
