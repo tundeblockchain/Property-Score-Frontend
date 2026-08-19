@@ -139,7 +139,11 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
       defaultExpanded: true,
       icon: InsightsOutlinedIcon,
       render: () => (
-        <ScoreBreakdownBars scores={scores} includeOverall={false} />
+        <ScoreBreakdownBars
+          scores={scores}
+          includeOverall={false}
+          tierAccess={deal.tierAccess}
+        />
       ),
     });
   } else if (isComplete) {

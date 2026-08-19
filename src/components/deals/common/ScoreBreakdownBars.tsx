@@ -1,7 +1,8 @@
 import { Box, LinearProgress, Stack, Typography } from '@mui/material';
 import { alpha } from '@mui/material/styles';
+import { TierUpgradePrompt } from '@/components/billing/TierUpgradePrompt';
 import { clampScore, scoreTone } from '@/lib/scores';
-import type { ScoreBreakdown } from '@/models';
+import type { ScoreBreakdown, TierAccess } from '@/models';
 
 const SCORE_LABELS: Array<{ key: keyof ScoreBreakdown; label: string }> = [
   { key: 'overall', label: 'Overall' },
@@ -12,21 +13,39 @@ const SCORE_LABELS: Array<{ key: keyof ScoreBreakdown; label: string }> = [
   { key: 'refurb', label: 'Refurb' },
 ];
 
+const PREMIUM_SCORE_KEYS = new Set<keyof ScoreBreakdown>([
+  'compliance',
+  'marketDemand',
+  'location',
+  'refurb',
+]);
+
 interface ScoreBreakdownBarsProps {
   scores: ScoreBreakdown;
   compact?: boolean;
   /** Turn off where the overall score is already shown, such as the report. */
   includeOverall?: boolean;
+  tierAccess?: TierAccess;
 }
 
 export function ScoreBreakdownBars({
   scores,
   compact = false,
   includeOverall = true,
+  tierAccess,
 }: ScoreBreakdownBarsProps) {
-  const entries = compact
-    ? SCORE_LABELS.filter((item) => item.key === 'overall')
-    : SCORE_LABELS.filter((item) => includeOverall || item.key !== 'overall');
+  const entries = SCORE_LABELS.filter((item) => {
+    if (compact) {
+      return item.key === 'overall';
+    }
+    if (!includeOverall && item.key === 'overall') {
+      return false;
+    }
+    if (tierAccess && !tierAccess.scoreBreakdown && PREMIUM_SCORE_KEYS.has(item.key)) {
+      return false;
+    }
+    return true;
+  });
 
   return (
     <Stack spacing={1.5}>
@@ -60,6 +79,12 @@ export function ScoreBreakdownBars({
           </Box>
         );
       })}
+      {tierAccess && !tierAccess.scoreBreakdown ? (
+        <TierUpgradePrompt
+          title="Full score breakdown"
+          description="Upgrade to Starter to unlock compliance, market, location and refurb sub-scores."
+        />
+      ) : null}
     </Stack>
   );
 }

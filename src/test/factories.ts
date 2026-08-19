@@ -15,6 +15,7 @@ import type {
   ScoreBreakdown,
   SchoolsEnrichment,
   SoldPricesEnrichment,
+  TierAccess,
   TransportEnrichment,
 } from '@/models';
 
@@ -202,6 +203,21 @@ export function buildSchoolsEnrichment(
   };
 }
 
+export function buildTierAccess(
+  overrides: Partial<TierAccess> = {},
+): TierAccess {
+  return {
+    scoreBreakdown: true,
+    pdfExport: true,
+    narrativeActionPlan: true,
+    fullHmoPlanner: true,
+    standardAreaInsights: true,
+    fullAreaInsights: true,
+    moneyComparison: true,
+    ...overrides,
+  };
+}
+
 export function buildBillingSummary(
   overrides: Partial<BillingSummaryResponse> = {},
 ): BillingSummaryResponse {
@@ -210,6 +226,17 @@ export function buildBillingSummary(
     tier: 'FREE',
     creditsRemaining: 4,
     monthlyAllowance: 5,
+    analysisCreditCost: 1,
+    proposedLayoutCreditCost: 3,
+    tierAccess: buildTierAccess({
+      scoreBreakdown: false,
+      pdfExport: false,
+      narrativeActionPlan: false,
+      fullHmoPlanner: false,
+      standardAreaInsights: false,
+      fullAreaInsights: false,
+      moneyComparison: false,
+    }),
     ...overrides,
   };
 }
@@ -232,6 +259,7 @@ export function buildDealSummary(
 export function buildDealDetail(overrides: Partial<DealDetail> = {}): DealDetail {
   return {
     ...buildDealSummary(),
+    tierAccess: buildTierAccess(),
     ...overrides,
   };
 }

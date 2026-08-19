@@ -1,5 +1,5 @@
 import { Chip, Stack, Typography } from '@mui/material';
-import { tierLabel } from '@/lib/plans';
+import { formatCreditCostLabel, tierLabel } from '@/lib/plans';
 import type { BillingSummaryResponse } from '@/models';
 
 interface BillingSummaryProps {
@@ -26,6 +26,10 @@ export function BillingSummary({ billing }: BillingSummaryProps) {
       <Typography color="text.secondary">
         Signed in as {billing.email}. Monthly allowance:{' '}
         {billing.monthlyAllowance} credits.
+      </Typography>
+      <Typography variant="body2" color="text.secondary">
+        {formatCreditCostLabel(billing.analysisCreditCost, 'analysis')} ·{' '}
+        {formatCreditCostLabel(billing.proposedLayoutCreditCost, 'layout')}
       </Typography>
     </Stack>
   );

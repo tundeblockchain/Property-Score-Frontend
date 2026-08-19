@@ -1,8 +1,9 @@
-import { Alert, Button, LinearProgress, Stack } from '@mui/material';
+import { Alert, Button, LinearProgress, Stack, Typography } from '@mui/material';
 import { useState } from 'react';
 import { ErrorAlert } from '@/components/common/Feedback';
 import { ImageLightbox } from '@/components/deals/common/ImageLightbox';
 import { schemeRenderImageUrls, useSchemeRender } from '@/hooks/useSchemeRender';
+import { PROPOSED_LAYOUT_CREDIT_COST } from '@/lib/plans';
 import type { DealDetail, HmoSchemeRendering } from '@/models';
 import { hmoRenderSkipReasonLabel } from './labels';
 import { proposedFloorPlanRendering, schemeForProposedLayout } from './schemes';
@@ -39,6 +40,7 @@ export function GenerateProposedLayoutButton({
     enabled: Boolean(scheme),
     rendering,
   });
+  const layoutCreditCost = PROPOSED_LAYOUT_CREDIT_COST;
 
   const liveRendering =
     query.data?.rendering ?? generate.data?.rendering ?? rendering;
@@ -89,7 +91,7 @@ export function GenerateProposedLayoutButton({
           disabled={generate.isPending}
           onClick={() => generate.mutate()}
         >
-          {liveRendering ? 'Try again' : 'Generate proposed layout'}
+          {liveRendering ? 'Try again' : `Generate proposed layout (${layoutCreditCost} credits)`}
         </Button>
       ) : null}
 
