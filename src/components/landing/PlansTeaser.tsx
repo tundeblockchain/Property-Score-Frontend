@@ -1,11 +1,19 @@
 import { Button, Divider, Paper, Stack, Typography } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { SectionHeading } from '@/components/landing/SectionHeading';
-import { FREE_PLAN_SUMMARY, PLAN_OPTIONS } from '@/lib/plans';
+import {
+  CREDIT_PACK_PLANS,
+  FREE_PLAN_SUMMARY,
+  SUBSCRIPTION_PLANS,
+} from '@/lib/plans';
 
 const TEASER_ROWS = [
   { title: FREE_PLAN_SUMMARY.title, creditsLabel: FREE_PLAN_SUMMARY.creditsLabel },
-  ...PLAN_OPTIONS.map((plan) => ({
+  ...SUBSCRIPTION_PLANS.map((plan) => ({
+    title: plan.title,
+    creditsLabel: plan.creditsLabel,
+  })),
+  ...CREDIT_PACK_PLANS.slice(0, 2).map((plan) => ({
     title: plan.title,
     creditsLabel: plan.creditsLabel,
   })),
@@ -17,7 +25,7 @@ export function PlansTeaser() {
       <SectionHeading
         eyebrow="Pricing"
         title="Start free, scale when you are screening more"
-        subtitle="Credits never disappear mid-analysis — one credit is taken when a report starts."
+        subtitle="One credit per analysis. Proposed layouts use three credits from the same balance."
       />
       <Paper sx={{ p: { xs: 2.5, sm: 3.5 } }}>
         <Stack spacing={2.5}>

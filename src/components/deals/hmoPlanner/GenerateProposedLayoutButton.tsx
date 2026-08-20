@@ -5,6 +5,7 @@ import { ErrorAlert } from '@/components/common/Feedback';
 import { ImageLightbox } from '@/components/deals/common/ImageLightbox';
 import { useBilling } from '@/hooks/useBilling';
 import { schemeRenderImageUrls, useSchemeRender } from '@/hooks/useSchemeRender';
+import { PROPOSED_LAYOUT_CREDIT_COST } from '@/lib/plans';
 import { ApiError, getUserFacingErrorMessage } from '@/lib/errors';
 import type { DealDetail, HmoSchemeRendering } from '@/models';
 import { hmoRenderSkipReasonLabel } from './labels';
@@ -46,6 +47,7 @@ export function GenerateProposedLayoutButton({
     enabled: Boolean(scheme),
     rendering,
   });
+  const layoutCreditCost = PROPOSED_LAYOUT_CREDIT_COST;
 
   const liveRendering =
     query.data?.rendering ?? generate.data?.rendering ?? rendering;
@@ -102,7 +104,7 @@ export function GenerateProposedLayoutButton({
             {liveRendering ? 'Try again' : 'Generate proposed layout'}
           </Button>
           <Typography variant="caption" color="text.secondary">
-            Uses 1 credit.
+            Uses {layoutCreditCost} credits.
           </Typography>
         </>
       ) : null}

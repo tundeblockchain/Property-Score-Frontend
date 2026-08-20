@@ -49,6 +49,7 @@ export function DealDetailPage() {
             <PdfDownloadButton
               dealId={dealId}
               disabled={data.status !== 'COMPLETED'}
+              tierAccess={data.tierAccess}
             />
           </Stack>
         }

@@ -5,25 +5,23 @@ import { useAuth } from '@/auth/AuthContext';
 import { AuthDialog } from '@/components/auth/AuthDialog';
 import { PlanCards, PlanCardShell } from '@/components/billing/PlanCards';
 import { PageHeader } from '@/components/common/Feedback';
-import { CheckIcon } from '@/components/common/icons';
 import { useBilling } from '@/hooks/useBilling';
 import { useCheckout } from '@/hooks/useBillingMutations';
+import {
+  CREDIT_PACK_PLANS,
+  formatCreditCostLabel,
+  FREE_PLAN_SUMMARY,
+  PROPOSED_LAYOUT_CREDIT_COST,
+  SUBSCRIPTION_PLAN_FEATURES,
+  SUBSCRIPTION_PLANS,
+  tierLabel,
+} from '@/lib/plans';
 import { PROPERTIES_PATH } from '@/lib/paths';
-import { FREE_PLAN_SUMMARY, PLAN_OPTIONS, tierLabel } from '@/lib/plans';
 import type { CheckoutProduct } from '@/models';
 
 type PendingAction =
   | { kind: 'checkout'; product: CheckoutProduct }
   | { kind: 'startFree' };
-
-const INCLUDED_IN_EVERY_PLAN = [
-  'Overall score with financial, compliance, market, location and refurb breakdowns',
-  'Financial model with estimated rent, gross yield, cash flow and ROI',
-  'HMO planner, licensing checks and fire escape assessment',
-  'Area enrichment: EPC, planning, sold prices, crime, schools, transport, broadband',
-  'Floor plan room detection and extension potential',
-  'PDF export and a saved history of every analysis',
-];
 
 export function PricingPage() {
   const { user } = useAuth();
@@ -54,7 +52,7 @@ export function PricingPage() {
     <Stack spacing={4} pb={{ xs: 4, md: 6 }}>
       <PageHeader
         title="Pricing"
-        subtitle="One credit per analysis. Start on the Free plan and upgrade when you are screening more deals."
+        subtitle={`${formatCreditCostLabel(1, 'analysis')}. Proposed layouts use ${formatCreditCostLabel(PROPOSED_LAYOUT_CREDIT_COST, 'layout')}.`}
       />
 
       {user && billing.data ? (
@@ -71,55 +69,99 @@ export function PricingPage() {
         </Alert>
       ) : null}
 
-      <PlanCards
-        plans={PLAN_OPTIONS}
-        loadingProduct={checkout.isPending ? (checkout.variables ?? null) : null}
-        error={checkout.error}
-        onSelect={handleSelect}
-        leadingCard={
-          <PlanCardShell
-            {...FREE_PLAN_SUMMARY}
-            action={
-              user ? (
-                <Button component={RouterLink} to="/analyse" variant="outlined">
-                  Analyse a listing
-                </Button>
-              ) : (
-                <Button
-                  variant="outlined"
-                  onClick={() => setPendingAction({ kind: 'startFree' })}
-                >
-                  Start free
-                </Button>
-              )
-            }
-          />
-        }
-      />
+      <Stack spacing={1.5}>
+        <Typography variant="h5" component="h2">
+          Subscriptions
+        </Typography>
+        <PlanCards
+          plans={SUBSCRIPTION_PLANS}
+          loadingProduct={checkout.isPending ? (checkout.variables ?? null) : null}
+          error={checkout.error}
+          onSelect={handleSelect}
+          leadingCard={
+            <PlanCardShell
+              {...FREE_PLAN_SUMMARY}
+              action={
+                user ? (
+                  <Button component={RouterLink} to="/analyse" variant="outlined">
+                    Analyse a listing
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outlined"
+                    onClick={() => setPendingAction({ kind: 'startFree' })}
+                  >
+                    Start free
+                  </Button>
+                )
+              }
+            />
+          }
+        />
+      </Stack>
+
+      <Stack spacing={1.5}>
+        <Typography variant="h5" component="h2">
+          Credit top-ups
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          One credit pool for analyses and proposed layouts. Top-ups never expire
+          while your account is active.
+        </Typography>
+        <PlanCards
+          plans={CREDIT_PACK_PLANS}
+          loadingProduct={checkout.isPending ? (checkout.variables ?? null) : null}
+          error={null}
+          onSelect={handleSelect}
+        />
+      </Stack>
 
       <Paper sx={{ p: { xs: 2.5, sm: 3.5 } }}>
         <Stack spacing={2}>
           <Typography variant="h6" component="h2">
-            Every plan includes
+            Compare plans
           </Typography>
           <Box
-            component="ul"
-            sx={{ listStyle: 'none', m: 0, p: 0, display: 'grid', gap: 1.25 }}
+            display="grid"
+            gridTemplateColumns={{ xs: '1fr', md: 'repeat(3, minmax(0, 1fr))' }}
+            gap={2}
           >
-            {INCLUDED_IN_EVERY_PLAN.map((item) => (
-              <Stack
-                key={item}
-                component="li"
-                direction="row"
-                spacing={1.25}
-                alignItems="flex-start"
-              >
-                <Box color="primary.main" mt={0.25} display="flex">
-                  <CheckIcon />
-                </Box>
-                <Typography variant="body2" color="text.secondary">
-                  {item}
+            {SUBSCRIPTION_PLAN_FEATURES.map((plan) => (
+              <Stack key={plan.label} spacing={1.5}>
+                <Typography variant="subtitle1" fontWeight={700}>
+                  {plan.label}
                 </Typography>
+                <Stack spacing={1}>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Included
+                  </Typography>
+                  <Box component="ul" sx={{ m: 0, pl: 2.5 }}>
+                    {plan.included.map((item) => (
+                      <Typography key={item} component="li" variant="body2">
+                        {item}
+                      </Typography>
+                    ))}
+                  </Box>
+                </Stack>
+                {plan.missing.length > 0 ? (
+                  <Stack spacing={1}>
+                    <Typography variant="subtitle2" color="text.secondary">
+                      Not included
+                    </Typography>
+                    <Box component="ul" sx={{ m: 0, pl: 2.5 }}>
+                      {plan.missing.map((item) => (
+                        <Typography
+                          key={item}
+                          component="li"
+                          variant="body2"
+                          color="text.secondary"
+                        >
+                          {item}
+                        </Typography>
+                      ))}
+                    </Box>
+                  </Stack>
+                ) : null}
               </Stack>
             ))}
           </Box>

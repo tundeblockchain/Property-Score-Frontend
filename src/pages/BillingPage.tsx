@@ -6,10 +6,14 @@ import {
 } from '@/components/common/Feedback';
 import { BillingSummary } from '@/components/billing/BillingSummary';
 import { ManageSubscriptionButton } from '@/components/billing/ManageSubscriptionButton';
-import { PlanCards } from '@/components/billing/PlanCards';
+import { PlanCardShell, PlanCards } from '@/components/billing/PlanCards';
 import { useBilling } from '@/hooks/useBilling';
 import { useCheckout } from '@/hooks/useBillingMutations';
-import { PLAN_OPTIONS } from '@/lib/plans';
+import {
+  CREDIT_PACK_PLANS,
+  FREE_PLAN_SUMMARY,
+  SUBSCRIPTION_PLANS,
+} from '@/lib/plans';
 import type { CheckoutProduct } from '@/models';
 
 export function BillingPage() {
@@ -46,14 +50,40 @@ export function BillingPage() {
 
       <Stack spacing={1.5}>
         <Typography variant="h5" component="h2">
-          Plans & top-ups
+          Subscriptions
         </Typography>
         <PlanCards
-          plans={PLAN_OPTIONS}
+          plans={SUBSCRIPTION_PLANS}
           loadingProduct={
             checkout.isPending ? (checkout.variables ?? null) : null
           }
           error={checkout.error}
+          onSelect={handleSelect}
+          leadingCard={
+            <PlanCardShell
+              {...FREE_PLAN_SUMMARY}
+              action={
+                billing.data.tier === 'FREE' ? (
+                  <Typography variant="body2" color="text.secondary">
+                    Current plan
+                  </Typography>
+                ) : null
+              }
+            />
+          }
+        />
+      </Stack>
+
+      <Stack spacing={1.5}>
+        <Typography variant="h5" component="h2">
+          Credit top-ups
+        </Typography>
+        <PlanCards
+          plans={CREDIT_PACK_PLANS}
+          loadingProduct={
+            checkout.isPending ? (checkout.variables ?? null) : null
+          }
+          error={null}
           onSelect={handleSelect}
         />
       </Stack>

@@ -121,7 +121,7 @@ describe('AccountPage', { timeout: 15_000 }, () => {
         tier: 'STARTER',
         stripeSubscriptionId: 'sub_123',
         stripeSubscriptionStatus: 'active',
-        monthlyAllowance: 25,
+        monthlyAllowance: 20,
       }),
     );
 

@@ -5,7 +5,20 @@ export type DealStatus = 'PROCESSING' | 'COMPLETED' | 'FAILED';
 export type CheckoutProduct =
   | 'starter_subscription'
   | 'pro_subscription'
-  | 'credits_10';
+  | 'credits_5'
+  | 'credits_15'
+  | 'credits_40'
+  | 'credits_100';
+
+export interface TierAccess {
+  scoreBreakdown: boolean;
+  pdfExport: boolean;
+  narrativeActionPlan: boolean;
+  fullHmoPlanner: boolean;
+  standardAreaInsights: boolean;
+  fullAreaInsights: boolean;
+  moneyComparison: boolean;
+}
 
 export interface AnalyseRequest {
   rightmove_url: string;
@@ -507,6 +520,7 @@ export interface DealDetail extends DealSummary {
   narrative?: string;
   actionPlan?: string[];
   errorMessage?: string;
+  tierAccess?: TierAccess;
 }
 
 export interface DealsListResponse {
@@ -535,6 +549,9 @@ export interface BillingSummaryResponse {
   stripeSubscriptionId?: string;
   stripeSubscriptionStatus?: string;
   monthlyAllowance: number;
+  analysisCreditCost: number;
+  proposedLayoutCreditCost: number;
+  tierAccess: TierAccess;
 }
 
 export interface CreateCheckoutRequest {

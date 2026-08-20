@@ -76,6 +76,7 @@ export type {
   SoldComparable,
   SupportSubmissionResponse,
   SubmitTestimonialRequest,
+  TierAccess,
   PublicTestimonial,
   ListTestimonialsResponse,
   SoldPricesEnrichment,

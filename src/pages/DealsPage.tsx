@@ -46,7 +46,7 @@ export function DealsPage() {
                 creditsRemaining={billing.data?.creditsRemaining}
                 onAccepted={setJobId}
                 heading="Analyse a listing"
-                description="New accounts start with 5 free credits. Each analysis uses 1 credit."
+                description="New accounts start with 5 free credits. Each analysis uses 1 credit; proposed layouts use 3 credits."
               />
             )}
           </Paper>

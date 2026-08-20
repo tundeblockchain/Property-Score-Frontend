@@ -75,7 +75,7 @@ describe('GenerateProposedLayoutButton', () => {
     renderButton(<GenerateProposedLayoutButton deal={completedDeal()} />);
 
     await user.click(
-      screen.getByRole('button', { name: 'Generate proposed layout' }),
+      screen.getByRole('button', { name: /Generate proposed layout \(3 credits\)/i }),
     );
 
     expect(postSchemeRenderMock).toHaveBeenCalledWith('deal-1', 'scheme-students');
@@ -184,7 +184,7 @@ describe('GenerateProposedLayoutButton', () => {
       ),
     ).toBeInTheDocument();
     expect(
-      screen.queryByRole('button', { name: 'Generate proposed layout' }),
+      screen.queryByRole('button', { name: /Generate proposed layout/i }),
     ).not.toBeInTheDocument();
   });
 
@@ -203,7 +203,7 @@ describe('GenerateProposedLayoutButton', () => {
     );
 
     expect(
-      screen.queryByRole('button', { name: 'Generate proposed layout' }),
+      screen.queryByRole('button', { name: /Generate proposed layout/i }),
     ).not.toBeInTheDocument();
   });
 });

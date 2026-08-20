@@ -22,7 +22,7 @@ const FAQS = [
   {
     question: 'What does an analysis cost?',
     answer:
-      'One credit per listing. New accounts start on the Free plan with 5 credits, and paid plans add more credits each month.',
+      'One credit per listing analysis. AI proposed layouts use three credits. New accounts start on the Free plan with 5 credits, and paid plans add more credits each month.',
   },
   {
     question: 'How long does a report take?',
@@ -37,7 +37,7 @@ const FAQS = [
   {
     question: 'Can I share a report?',
     answer:
-      'Every completed analysis can be exported as a PDF from the report page, and your past analyses stay under your properties.',
+      'Starter plans and above can export every completed analysis as a PDF from the report page. Your past analyses stay under your properties.',
   },
 ];
 

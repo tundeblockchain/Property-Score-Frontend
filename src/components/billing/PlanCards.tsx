@@ -1,14 +1,56 @@
-import { Button, Stack, Typography } from '@mui/material';
+import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
+import { Box, Button, Stack, Typography } from '@mui/material';
 import type { ReactNode } from 'react';
 import { ErrorAlert } from '@/components/common/Feedback';
-import type { PlanOption } from '@/lib/plans';
+import type { PlanComparison, PlanOption } from '@/lib/plans';
 import type { CheckoutProduct } from '@/models';
+
+interface PlanFeatureListProps {
+  title: string;
+  items: string[];
+  variant: 'included' | 'missing';
+}
+
+function PlanFeatureList({ title, items, variant }: PlanFeatureListProps) {
+  if (items.length === 0) {
+    return null;
+  }
+
+  const Icon = variant === 'included' ? CheckOutlinedIcon : CloseOutlinedIcon;
+  const iconColor = variant === 'included' ? 'success.main' : 'text.disabled';
+  const textColor = variant === 'included' ? 'text.primary' : 'text.secondary';
+
+  return (
+    <Stack spacing={0.75}>
+      <Typography variant="subtitle2" color="text.secondary">
+        {title}
+      </Typography>
+      <Box component="ul" sx={{ m: 0, pl: 0, listStyle: 'none' }}>
+        {items.map((item) => (
+          <Box
+            key={item}
+            component="li"
+            sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 0.75 }}
+          >
+            <Icon sx={{ fontSize: 18, color: iconColor, mt: 0.15, flexShrink: 0 }} />
+            <Typography variant="body2" color={textColor}>
+              {item}
+            </Typography>
+          </Box>
+        ))}
+      </Box>
+    </Stack>
+  );
+}
 
 interface PlanCardShellProps {
   title: string;
   priceLabel: string;
   creditsLabel: string;
   description: string;
+  comparison?: PlanComparison;
+  features?: string[];
   highlight?: boolean;
   /** Call to action rendered at the bottom of the card. */
   action: ReactNode;
@@ -19,6 +61,8 @@ export function PlanCardShell({
   priceLabel,
   creditsLabel,
   description,
+  comparison,
+  features,
   highlight = false,
   action,
 }: PlanCardShellProps) {
@@ -39,9 +83,28 @@ export function PlanCardShell({
         {priceLabel}
       </Typography>
       <Typography fontWeight={600}>{creditsLabel}</Typography>
-      <Typography variant="body2" color="text.secondary" flex={1}>
+      <Typography variant="body2" color="text.secondary">
         {description}
       </Typography>
+      <Stack spacing={1.5} flex={1}>
+        {comparison ? (
+          <>
+            <PlanFeatureList
+              title="Included"
+              items={comparison.included}
+              variant="included"
+            />
+            <PlanFeatureList
+              title="Not included"
+              items={comparison.missing}
+              variant="missing"
+            />
+          </>
+        ) : null}
+        {features ? (
+          <PlanFeatureList title="Includes" items={features} variant="included" />
+        ) : null}
+      </Stack>
       {action}
     </Stack>
   );
@@ -62,6 +125,8 @@ export function PlanCard({ plan, loadingProduct, onSelect }: PlanCardProps) {
       priceLabel={plan.priceLabel}
       creditsLabel={plan.creditsLabel}
       description={plan.description}
+      comparison={plan.comparison}
+      features={plan.features}
       highlight={plan.highlight}
       action={
         <Button

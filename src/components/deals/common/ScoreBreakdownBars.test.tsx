@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { ScoreBreakdownBars } from '@/components/deals/common/ScoreBreakdownBars';
-import { buildScoreBreakdown } from '@/test/factories';
+import { buildScoreBreakdown, buildTierAccess } from '@/test/factories';
 import { renderWithProviders } from '@/test/renderWithProviders';
 
 describe('ScoreBreakdownBars', () => {
@@ -35,5 +35,27 @@ describe('ScoreBreakdownBars', () => {
 
     expect(screen.getByText('Overall')).toBeInTheDocument();
     expect(screen.queryByText('Financial')).not.toBeInTheDocument();
+  });
+
+  it('shows a blurred upgrade overlay for locked premium sub-scores', () => {
+    renderWithProviders(
+      <ScoreBreakdownBars
+        scores={buildScoreBreakdown()}
+        includeOverall={false}
+        tierAccess={buildTierAccess({ scoreBreakdown: false })}
+      />,
+    );
+
+    expect(screen.getByText('Financial')).toBeInTheDocument();
+    expect(screen.getByText('Compliance')).toBeInTheDocument();
+    expect(
+      screen.getByRole('region', {
+        name: /full score breakdown/i,
+      }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'View plans' })).toHaveAttribute(
+      'href',
+      '/pricing',
+    );
   });
 });
