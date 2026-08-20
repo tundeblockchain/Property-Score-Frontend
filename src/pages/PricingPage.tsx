@@ -12,6 +12,7 @@ import {
   formatCreditCostLabel,
   FREE_PLAN_SUMMARY,
   PROPOSED_LAYOUT_CREDIT_COST,
+  SUBSCRIPTION_PLAN_FEATURES,
   SUBSCRIPTION_PLANS,
   tierLabel,
 } from '@/lib/plans';
@@ -21,35 +22,6 @@ import type { CheckoutProduct } from '@/models';
 type PendingAction =
   | { kind: 'checkout'; product: CheckoutProduct }
   | { kind: 'startFree' };
-
-const PLAN_FEATURES = [
-  {
-    label: 'Free',
-    items: [
-      'Overall score and financial model',
-      'EPC and sold comparables',
-      'Recommended HMO scheme summary',
-      'Last 5 saved deals',
-    ],
-  },
-  {
-    label: 'Starter',
-    items: [
-      '20 credits / month',
-      'Full score breakdown and floor-plan vision',
-      'All HMO schemes, BoQ, licensing and fire checks',
-      'Transport, schools and PDF export',
-    ],
-  },
-  {
-    label: 'Pro',
-    items: [
-      '60 credits / month',
-      'Full area insights and money comparison',
-      'Unlimited deal history',
-    ],
-  },
-];
 
 export function PricingPage() {
   const { user } = useAuth();
@@ -154,18 +126,42 @@ export function PricingPage() {
             gridTemplateColumns={{ xs: '1fr', md: 'repeat(3, minmax(0, 1fr))' }}
             gap={2}
           >
-            {PLAN_FEATURES.map((plan) => (
-              <Stack key={plan.label} spacing={1}>
+            {SUBSCRIPTION_PLAN_FEATURES.map((plan) => (
+              <Stack key={plan.label} spacing={1.5}>
                 <Typography variant="subtitle1" fontWeight={700}>
                   {plan.label}
                 </Typography>
-                <Box component="ul" sx={{ m: 0, pl: 2.5 }}>
-                  {plan.items.map((item) => (
-                    <Typography key={item} component="li" variant="body2" color="text.secondary">
-                      {item}
+                <Stack spacing={1}>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Included
+                  </Typography>
+                  <Box component="ul" sx={{ m: 0, pl: 2.5 }}>
+                    {plan.included.map((item) => (
+                      <Typography key={item} component="li" variant="body2">
+                        {item}
+                      </Typography>
+                    ))}
+                  </Box>
+                </Stack>
+                {plan.missing.length > 0 ? (
+                  <Stack spacing={1}>
+                    <Typography variant="subtitle2" color="text.secondary">
+                      Not included
                     </Typography>
-                  ))}
-                </Box>
+                    <Box component="ul" sx={{ m: 0, pl: 2.5 }}>
+                      {plan.missing.map((item) => (
+                        <Typography
+                          key={item}
+                          component="li"
+                          variant="body2"
+                          color="text.secondary"
+                        >
+                          {item}
+                        </Typography>
+                      ))}
+                    </Box>
+                  </Stack>
+                ) : null}
               </Stack>
             ))}
           </Box>

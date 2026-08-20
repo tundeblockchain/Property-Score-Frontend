@@ -1,25 +1,25 @@
-import { Alert, Button, Stack, Typography } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import type { ReactNode } from 'react';
+import { TierLockedOverlay } from '@/components/billing/TierLockedOverlay';
 
 interface TierUpgradePromptProps {
   title: string;
   description: string;
+  /** Optional preview content shown blurred beneath the upgrade prompt. */
+  preview?: ReactNode;
 }
 
-export function TierUpgradePrompt({ title, description }: TierUpgradePromptProps) {
+export function TierUpgradePrompt({ title, description, preview }: TierUpgradePromptProps) {
+  if (preview) {
+    return (
+      <TierLockedOverlay title={title} description={description}>
+        {preview}
+      </TierLockedOverlay>
+    );
+  }
+
   return (
-    <Alert
-      severity="info"
-      action={
-        <Button component={RouterLink} to="/pricing" color="inherit" size="small">
-          View plans
-        </Button>
-      }
-    >
-      <Stack spacing={0.5}>
-        <Typography variant="subtitle2">{title}</Typography>
-        <Typography variant="body2">{description}</Typography>
-      </Stack>
-    </Alert>
+    <TierLockedOverlay title={title} description={description}>
+      <div style={{ minHeight: 48 }} />
+    </TierLockedOverlay>
   );
 }

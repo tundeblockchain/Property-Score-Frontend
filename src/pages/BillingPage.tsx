@@ -6,10 +6,14 @@ import {
 } from '@/components/common/Feedback';
 import { BillingSummary } from '@/components/billing/BillingSummary';
 import { ManageSubscriptionButton } from '@/components/billing/ManageSubscriptionButton';
-import { PlanCards } from '@/components/billing/PlanCards';
+import { PlanCardShell, PlanCards } from '@/components/billing/PlanCards';
 import { useBilling } from '@/hooks/useBilling';
 import { useCheckout } from '@/hooks/useBillingMutations';
-import { CREDIT_PACK_PLANS, SUBSCRIPTION_PLANS } from '@/lib/plans';
+import {
+  CREDIT_PACK_PLANS,
+  FREE_PLAN_SUMMARY,
+  SUBSCRIPTION_PLANS,
+} from '@/lib/plans';
 import type { CheckoutProduct } from '@/models';
 
 export function BillingPage() {
@@ -55,6 +59,18 @@ export function BillingPage() {
           }
           error={checkout.error}
           onSelect={handleSelect}
+          leadingCard={
+            <PlanCardShell
+              {...FREE_PLAN_SUMMARY}
+              action={
+                billing.data.tier === 'FREE' ? (
+                  <Typography variant="body2" color="text.secondary">
+                    Current plan
+                  </Typography>
+                ) : null
+              }
+            />
+          }
         />
       </Stack>
 
