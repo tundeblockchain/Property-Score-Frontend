@@ -104,7 +104,7 @@ export function GenerateProposedLayoutButton({
             {liveRendering ? 'Try again' : 'Generate proposed layout'}
           </Button>
           <Typography variant="caption" color="text.secondary">
-            Uses 1 credit.
+            Uses {layoutCreditCost} credits.
           </Typography>
         </>
       ) : null}
