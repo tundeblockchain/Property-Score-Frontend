@@ -103,7 +103,13 @@ export function useAnalysisJob(jobId: string | null) {
 
   return useQuery({
     queryKey: queryKeys.analysis(jobId ?? ''),
-    queryFn: () => getAnalysisStatus(jobId!),
+    queryFn: async () => {
+      const result = await getAnalysisStatus(jobId!);
+      if (result.status === 'FAILED') {
+        void queryClient.invalidateQueries({ queryKey: queryKeys.billing });
+      }
+      return result;
+    },
     enabled: Boolean(jobId),
     refetchInterval: (query) => {
       if (socketCompleted) {

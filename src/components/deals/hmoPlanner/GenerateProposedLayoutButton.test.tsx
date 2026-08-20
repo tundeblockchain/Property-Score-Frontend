@@ -20,6 +20,14 @@ vi.mock('@/api/deals', () => ({
   postSchemeRender: vi.fn(),
 }));
 
+vi.mock('@/hooks/useBilling', () => ({
+  useBilling: () => ({
+    data: { creditsRemaining: 5 },
+    isLoading: false,
+    isError: false,
+  }),
+}));
+
 const getSchemeRenderMock = vi.mocked(getSchemeRender);
 const postSchemeRenderMock = vi.mocked(postSchemeRender);
 
