@@ -4,29 +4,31 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/auth/AuthContext';
 import { AuthDialog } from '@/components/auth/AuthDialog';
 import { PlanCards, PlanCardShell } from '@/components/billing/PlanCards';
-import { PageHeader } from '@/components/common/Feedback';
+import { ErrorAlert, LoadingState, PageHeader } from '@/components/common/Feedback';
 import { useBilling } from '@/hooks/useBilling';
+import { useBillingPlans } from '@/hooks/useBillingPlans';
 import { useCheckout } from '@/hooks/useBillingMutations';
-import {
-  CREDIT_PACK_PLANS,
-  formatCreditCostLabel,
-  FREE_PLAN_SUMMARY,
-  PROPOSED_LAYOUT_CREDIT_COST,
-  SUBSCRIPTION_PLAN_FEATURES,
-  SUBSCRIPTION_PLANS,
-  tierLabel,
-} from '@/lib/plans';
+import { formatCreditCostLabel, tierLabel } from '@/lib/plans';
 import { PROPERTIES_PATH } from '@/lib/paths';
-import type { CheckoutProduct } from '@/models';
+import type { CheckoutProduct, PlanCatalogItem } from '@/models';
 
 type PendingAction =
   | { kind: 'checkout'; product: CheckoutProduct }
   | { kind: 'startFree' };
 
+function comparisonGroups(plans: PlanCatalogItem[]) {
+  return plans.map((plan) => ({
+    label: plan.title,
+    included: plan.comparison?.included ?? [],
+    missing: plan.comparison?.missing ?? [],
+  }));
+}
+
 export function PricingPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const billing = useBilling();
+  const plans = useBillingPlans();
   const checkout = useCheckout();
   const [pendingAction, setPendingAction] = useState<PendingAction | null>(null);
 
@@ -48,11 +50,25 @@ export function PricingPage() {
     navigate(PROPERTIES_PATH);
   }
 
+  if (plans.isLoading) {
+    return <LoadingState label="Loading plans…" />;
+  }
+
+  if (plans.isError || !plans.data) {
+    return <ErrorAlert error={plans.error ?? new Error('Plans unavailable')} />;
+  }
+
+  const catalog = plans.data;
+  const featureGroups = comparisonGroups([
+    catalog.freePlan,
+    ...catalog.subscriptionPlans,
+  ]);
+
   return (
     <Stack spacing={4} pb={{ xs: 4, md: 6 }}>
       <PageHeader
         title="Pricing"
-        subtitle={`${formatCreditCostLabel(1, 'analysis')}. Proposed layouts use ${formatCreditCostLabel(PROPOSED_LAYOUT_CREDIT_COST, 'layout')}.`}
+        subtitle={`${formatCreditCostLabel(catalog.analysisCreditCost, 'analysis')}. Proposed layouts use ${formatCreditCostLabel(catalog.proposedLayoutCreditCost, 'layout')}.`}
       />
 
       {user && billing.data ? (
@@ -74,13 +90,13 @@ export function PricingPage() {
           Subscriptions
         </Typography>
         <PlanCards
-          plans={SUBSCRIPTION_PLANS}
+          plans={catalog.subscriptionPlans}
           loadingProduct={checkout.isPending ? (checkout.variables ?? null) : null}
           error={checkout.error}
           onSelect={handleSelect}
           leadingCard={
             <PlanCardShell
-              {...FREE_PLAN_SUMMARY}
+              {...catalog.freePlan}
               action={
                 user ? (
                   <Button component={RouterLink} to="/analyse" variant="outlined">
@@ -109,7 +125,7 @@ export function PricingPage() {
           while your account is active.
         </Typography>
         <PlanCards
-          plans={CREDIT_PACK_PLANS}
+          plans={catalog.creditPacks}
           loadingProduct={checkout.isPending ? (checkout.variables ?? null) : null}
           error={null}
           onSelect={handleSelect}
@@ -126,7 +142,7 @@ export function PricingPage() {
             gridTemplateColumns={{ xs: '1fr', md: 'repeat(3, minmax(0, 1fr))' }}
             gap={2}
           >
-            {SUBSCRIPTION_PLAN_FEATURES.map((plan) => (
+            {featureGroups.map((plan) => (
               <Stack key={plan.label} spacing={1.5}>
                 <Typography variant="subtitle1" fontWeight={700}>
                   {plan.label}
@@ -181,7 +197,7 @@ export function PricingPage() {
         description={
           pendingAction?.kind === 'checkout'
             ? 'Create an account or sign in to continue to checkout.'
-            : 'Create an account to start scoring listings with 5 free credits.'
+            : `Create an account to start scoring listings with ${catalog.freePlan.creditsLabel}.`
         }
       />
     </Stack>

@@ -24,6 +24,7 @@ import type { User } from '@/models';
 
 vi.mock('@/api/billing', () => ({
   getBilling: vi.fn(),
+  getBillingPlans: vi.fn(),
   createCheckout: vi.fn(),
   createPortal: vi.fn(),
 }));

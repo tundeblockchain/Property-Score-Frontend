@@ -8,29 +8,34 @@ import { BillingSummary } from '@/components/billing/BillingSummary';
 import { ManageSubscriptionButton } from '@/components/billing/ManageSubscriptionButton';
 import { PlanCardShell, PlanCards } from '@/components/billing/PlanCards';
 import { useBilling } from '@/hooks/useBilling';
+import { useBillingPlans } from '@/hooks/useBillingPlans';
 import { useCheckout } from '@/hooks/useBillingMutations';
-import {
-  CREDIT_PACK_PLANS,
-  FREE_PLAN_SUMMARY,
-  SUBSCRIPTION_PLANS,
-} from '@/lib/plans';
 import type { CheckoutProduct } from '@/models';
 
 export function BillingPage() {
   const billing = useBilling();
+  const plans = useBillingPlans();
   const checkout = useCheckout();
 
   function handleSelect(product: CheckoutProduct) {
     checkout.mutate(product);
   }
 
-  if (billing.isLoading) {
+  if (billing.isLoading || plans.isLoading) {
     return <LoadingState label="Loading billing…" />;
   }
 
   if (billing.isError || !billing.data) {
-    return <ErrorAlert error={billing.error ?? new Error('Billing unavailable')} />;
+    return (
+      <ErrorAlert error={billing.error ?? new Error('Billing unavailable')} />
+    );
   }
+
+  if (plans.isError || !plans.data) {
+    return <ErrorAlert error={plans.error ?? new Error('Plans unavailable')} />;
+  }
+
+  const catalog = plans.data;
 
   return (
     <Stack spacing={3}>
@@ -53,7 +58,7 @@ export function BillingPage() {
           Subscriptions
         </Typography>
         <PlanCards
-          plans={SUBSCRIPTION_PLANS}
+          plans={catalog.subscriptionPlans}
           loadingProduct={
             checkout.isPending ? (checkout.variables ?? null) : null
           }
@@ -61,7 +66,7 @@ export function BillingPage() {
           onSelect={handleSelect}
           leadingCard={
             <PlanCardShell
-              {...FREE_PLAN_SUMMARY}
+              {...catalog.freePlan}
               action={
                 billing.data.tier === 'FREE' ? (
                   <Typography variant="body2" color="text.secondary">
@@ -79,7 +84,7 @@ export function BillingPage() {
           Credit top-ups
         </Typography>
         <PlanCards
-          plans={CREDIT_PACK_PLANS}
+          plans={catalog.creditPacks}
           loadingProduct={
             checkout.isPending ? (checkout.variables ?? null) : null
           }

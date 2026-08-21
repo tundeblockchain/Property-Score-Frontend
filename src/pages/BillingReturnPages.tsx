@@ -45,8 +45,9 @@ export function BillingSuccessPage() {
     <Stack spacing={3}>
       <PageHeader title="Payment successful" />
       <Alert severity="success">
-        Stripe checkout completed. Credits and tier update after the webhook
-        lands — usually within a few seconds.
+        Thanks — your payment went through. Your credits and plan will appear
+        here in a moment. You can start analysing listings as soon as they
+        show.
       </Alert>
       {billing.data ? (
         <Typography>

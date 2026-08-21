@@ -73,4 +73,12 @@ describe('App route code splitting', () => {
       ).toBeInTheDocument();
     });
   });
+
+  it('lets unauthenticated users land on the Stripe success page', async () => {
+    renderApp('/billing/success?session_id=cs_test');
+
+    expect(
+      await screen.findByRole('heading', { name: /payment successful/i }),
+    ).toBeInTheDocument();
+  });
 });

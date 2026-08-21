@@ -75,7 +75,7 @@ describe('GenerateProposedLayoutButton', () => {
     renderButton(<GenerateProposedLayoutButton deal={completedDeal()} />);
 
     await user.click(
-      screen.getByRole('button', { name: /Generate proposed layout \(3 credits\)/i }),
+      screen.getByRole('button', { name: 'Generate proposed layout' }),
     );
 
     expect(postSchemeRenderMock).toHaveBeenCalledWith('deal-1', 'scheme-students');

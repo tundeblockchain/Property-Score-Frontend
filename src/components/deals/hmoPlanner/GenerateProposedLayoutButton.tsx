@@ -47,7 +47,8 @@ export function GenerateProposedLayoutButton({
     enabled: Boolean(scheme),
     rendering,
   });
-  const layoutCreditCost = PROPOSED_LAYOUT_CREDIT_COST;
+  const layoutCreditCost =
+    billing.data?.proposedLayoutCreditCost ?? PROPOSED_LAYOUT_CREDIT_COST;
 
   const liveRendering =
     query.data?.rendering ?? generate.data?.rendering ?? rendering;
