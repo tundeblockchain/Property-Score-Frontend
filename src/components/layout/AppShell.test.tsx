@@ -17,6 +17,7 @@ import type { User } from '@/models';
 
 vi.mock('@/api/billing', () => ({
   getBilling: vi.fn(),
+  getBillingPlans: vi.fn(),
 }));
 
 const signOut = vi.fn().mockResolvedValue(undefined);

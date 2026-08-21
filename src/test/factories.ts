@@ -1,4 +1,5 @@
 import type {
+  BillingPlansResponse,
   BillingSummaryResponse,
   DealDetail,
   DealSummary,
@@ -237,6 +238,57 @@ export function buildBillingSummary(
       fullAreaInsights: false,
       moneyComparison: false,
     }),
+    ...overrides,
+  };
+}
+
+export function buildBillingPlans(
+  overrides: Partial<BillingPlansResponse> = {},
+): BillingPlansResponse {
+  return {
+    analysisCreditCost: 1,
+    proposedLayoutCreditCost: 3,
+    freePlan: {
+      title: 'Free',
+      priceGbp: 0,
+      priceLabel: '£0',
+      creditsLabel: '5 credits to start',
+      description: 'Try the core score and comparables.',
+      comparison: { included: ['Overall score'], missing: ['PDF export'] },
+    },
+    subscriptionPlans: [
+      {
+        product: 'starter_subscription',
+        title: 'Starter',
+        priceGbp: 39,
+        priceLabel: '£39 / month',
+        creditsLabel: '20 credits / month',
+        description: 'Full reports.',
+        comparison: { included: ['PDF export'], missing: [] },
+      },
+      {
+        product: 'pro_subscription',
+        title: 'Pro',
+        priceGbp: 99,
+        priceLabel: '£99 / month',
+        creditsLabel: '60 credits / month',
+        description: 'Higher volume screening.',
+        comparison: { included: ['Money comparison'], missing: [] },
+        highlight: true,
+      },
+    ],
+    creditPacks: [
+      {
+        product: 'credits_5',
+        title: '5 Credits',
+        priceGbp: 14,
+        priceLabel: '£14 one-time',
+        creditsLabel: '+5 credits',
+        description: 'Quick top-up.',
+        features: ['Adds 5 credits to your balance'],
+        valueLabel: '£2.80 per credit',
+      },
+    ],
     ...overrides,
   };
 }

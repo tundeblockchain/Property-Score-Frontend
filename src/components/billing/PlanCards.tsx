@@ -1,10 +1,10 @@
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
-import { Box, Button, Stack, Typography } from '@mui/material';
+import { Box, Button, Chip, Stack, Typography } from '@mui/material';
 import type { ReactNode } from 'react';
 import { ErrorAlert } from '@/components/common/Feedback';
-import type { PlanComparison, PlanOption } from '@/lib/plans';
-import type { CheckoutProduct } from '@/models';
+import type { PlanSummary } from '@/lib/plans';
+import type { CheckoutPlanCatalogItem, CheckoutProduct } from '@/models';
 
 interface PlanFeatureListProps {
   title: string;
@@ -44,14 +44,7 @@ function PlanFeatureList({ title, items, variant }: PlanFeatureListProps) {
   );
 }
 
-interface PlanCardShellProps {
-  title: string;
-  priceLabel: string;
-  creditsLabel: string;
-  description: string;
-  comparison?: PlanComparison;
-  features?: string[];
-  highlight?: boolean;
+interface PlanCardShellProps extends PlanSummary {
   /** Call to action rendered at the bottom of the card. */
   action: ReactNode;
 }
@@ -63,6 +56,8 @@ export function PlanCardShell({
   description,
   comparison,
   features,
+  valueLabel,
+  savePercent,
   highlight = false,
   action,
 }: PlanCardShellProps) {
@@ -78,11 +73,26 @@ export function PlanCardShell({
         height: '100%',
       }}
     >
-      <Typography variant="h6">{title}</Typography>
+      <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap>
+        <Typography variant="h6">{title}</Typography>
+        {savePercent != null && savePercent > 0 ? (
+          <Chip
+            label={`Save ${savePercent}%`}
+            color="success"
+            size="small"
+            variant="outlined"
+          />
+        ) : null}
+      </Stack>
       <Typography variant="body2" color="text.secondary">
         {priceLabel}
       </Typography>
       <Typography fontWeight={600}>{creditsLabel}</Typography>
+      {valueLabel ? (
+        <Typography variant="body2" color="success.dark" fontWeight={600}>
+          {valueLabel}
+        </Typography>
+      ) : null}
       <Typography variant="body2" color="text.secondary">
         {description}
       </Typography>
@@ -111,7 +121,7 @@ export function PlanCardShell({
 }
 
 interface PlanCardProps {
-  plan: PlanOption;
+  plan: CheckoutPlanCatalogItem;
   loadingProduct: CheckoutProduct | null;
   onSelect: (product: CheckoutProduct) => void;
 }
@@ -127,6 +137,8 @@ export function PlanCard({ plan, loadingProduct, onSelect }: PlanCardProps) {
       description={plan.description}
       comparison={plan.comparison}
       features={plan.features}
+      valueLabel={plan.valueLabel}
+      savePercent={plan.savePercent}
       highlight={plan.highlight}
       action={
         <Button
@@ -142,7 +154,7 @@ export function PlanCard({ plan, loadingProduct, onSelect }: PlanCardProps) {
 }
 
 interface PlanCardsProps {
-  plans: PlanOption[];
+  plans: CheckoutPlanCatalogItem[];
   loadingProduct: CheckoutProduct | null;
   error: unknown;
   onSelect: (product: CheckoutProduct) => void;

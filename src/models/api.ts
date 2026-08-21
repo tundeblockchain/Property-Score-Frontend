@@ -554,6 +554,37 @@ export interface BillingSummaryResponse {
   tierAccess: TierAccess;
 }
 
+export interface PlanComparison {
+  included: string[];
+  missing: string[];
+}
+
+export interface PlanCatalogItem {
+  product?: CheckoutProduct;
+  title: string;
+  priceLabel: string;
+  creditsLabel: string;
+  description: string;
+  priceGbp: number;
+  comparison?: PlanComparison;
+  features?: string[];
+  valueLabel?: string;
+  savePercent?: number;
+  highlight?: boolean;
+}
+
+export interface CheckoutPlanCatalogItem extends PlanCatalogItem {
+  product: CheckoutProduct;
+}
+
+export interface BillingPlansResponse {
+  analysisCreditCost: number;
+  proposedLayoutCreditCost: number;
+  freePlan: PlanCatalogItem;
+  subscriptionPlans: CheckoutPlanCatalogItem[];
+  creditPacks: CheckoutPlanCatalogItem[];
+}
+
 export interface CreateCheckoutRequest {
   product: CheckoutProduct;
   returnOrigin?: string;

@@ -1,5 +1,6 @@
-import { apiClient } from '@/api/client';
+import { publicGet, apiClient } from '@/api/client';
 import type {
+  BillingPlansResponse,
   BillingSummaryResponse,
   CheckoutProduct,
   CreateCheckoutResponse,
@@ -8,6 +9,10 @@ import type {
 
 export function getBilling(): Promise<BillingSummaryResponse> {
   return apiClient.get<BillingSummaryResponse>('/api/billing');
+}
+
+export function getBillingPlans(): Promise<BillingPlansResponse> {
+  return publicGet<BillingPlansResponse>('/api/billing/plans');
 }
 
 export function createCheckout(
