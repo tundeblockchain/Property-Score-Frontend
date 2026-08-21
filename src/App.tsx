@@ -68,10 +68,10 @@ export function App() {
             <Route path="/deals" element={<DealsPage />} />
             <Route path="/deals/:dealId" element={<DealDetailPage />} />
             <Route path="/billing" element={<BillingPage />} />
-            <Route path="/billing/success" element={<BillingSuccessPage />} />
-            <Route path="/billing/cancel" element={<BillingCancelPage />} />
             <Route path="/account" element={<AccountPage />} />
           </Route>
+          <Route path="/billing/success" element={<BillingSuccessPage />} />
+          <Route path="/billing/cancel" element={<BillingCancelPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>

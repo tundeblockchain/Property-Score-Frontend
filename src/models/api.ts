@@ -556,6 +556,7 @@ export interface BillingSummaryResponse {
 
 export interface CreateCheckoutRequest {
   product: CheckoutProduct;
+  returnOrigin?: string;
 }
 
 export interface CreateCheckoutResponse {

@@ -15,6 +15,7 @@ export function createCheckout(
 ): Promise<CreateCheckoutResponse> {
   return apiClient.post<CreateCheckoutResponse>('/api/billing/checkout', {
     product,
+    returnOrigin: window.location.origin,
   });
 }
 
