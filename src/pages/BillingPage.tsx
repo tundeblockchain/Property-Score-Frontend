@@ -64,6 +64,7 @@ export function BillingPage() {
           }
           error={checkout.error}
           onSelect={handleSelect}
+          currentTier={billing.data.tier}
           leadingCard={
             <PlanCardShell
               {...catalog.freePlan}

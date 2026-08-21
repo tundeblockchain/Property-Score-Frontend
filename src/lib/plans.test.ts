@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
   formatCreditCostLabel,
+  isSubscriptionUpgrade,
   perCreditValueLabel,
+  subscriptionProductForTier,
   tierLabel,
 } from '@/lib/plans';
 
@@ -15,6 +17,12 @@ describe('plan copy helpers', () => {
     expect(tierLabel('FREE')).toBe('Free');
     expect(tierLabel('STARTER')).toBe('Starter');
     expect(tierLabel('PRO')).toBe('Pro');
+  });
+
+  it('treats Pro as an upgrade from Starter', () => {
+    expect(isSubscriptionUpgrade('STARTER', 'pro_subscription')).toBe(true);
+    expect(isSubscriptionUpgrade('PRO', 'starter_subscription')).toBe(false);
+    expect(subscriptionProductForTier('STARTER')).toBe('starter_subscription');
   });
 
   it('keeps only the per-credit rate on pack value labels', () => {
