@@ -8,6 +8,7 @@ import {
   buildFinancialModel,
   buildListing,
   buildScoreBreakdown,
+  buildTierAccess,
 } from '@/test/factories';
 import { renderWithProviders } from '@/test/renderWithProviders';
 
@@ -131,6 +132,36 @@ describe('DealReport', () => {
     expect(
       await screen.findByText('Not available for this property.'),
     ).toBeInTheDocument();
+  });
+
+  it('locks plan-gated cards with an upgrade prompt instead of a missing-data message', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(
+      <DealReport
+        deal={buildDealDetail({
+          tierAccess: buildTierAccess({
+            standardAreaInsights: false,
+            fullAreaInsights: false,
+            narrativeActionPlan: false,
+          }),
+        })}
+      />,
+    );
+
+    await user.click(screen.getByRole('button', { name: /Transport/ }));
+
+    expect(
+      await screen.findByText(
+        'Upgrade to Starter to unlock nearest-station times and local transport.',
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText('Not available for this property.'),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'View plans' })).toHaveAttribute(
+      'href',
+      '/pricing',
+    );
   });
 
   it('opens every section before print so unmounted content is included', () => {

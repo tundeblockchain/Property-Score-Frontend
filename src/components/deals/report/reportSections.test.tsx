@@ -1,3 +1,4 @@
+import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { buildReportSections } from '@/components/deals/report/reportSections';
 import {
@@ -12,8 +13,10 @@ import {
   buildSchoolsEnrichment,
   buildScoreBreakdown,
   buildSoldPricesEnrichment,
+  buildTierAccess,
   buildTransportEnrichment,
 } from '@/test/factories';
+import { renderWithProviders } from '@/test/renderWithProviders';
 
 const ALWAYS_RUN_SECTION_IDS = [
   'score-breakdown',
@@ -300,5 +303,37 @@ describe('buildReportSections', () => {
       'listing-description',
     );
     expect(sections.map((section) => section.id)).not.toContain('hmo-overview');
+  });
+
+  it('locks plan-gated cards instead of saying the property has no data', () => {
+    const sections = buildReportSections(
+      buildDealDetail({
+        tierAccess: buildTierAccess({
+          standardAreaInsights: false,
+          fullAreaInsights: false,
+          narrativeActionPlan: false,
+        }),
+      }),
+    );
+
+    expect(sections.map((section) => section.id)).toEqual([
+      ...ALWAYS_RUN_SECTION_IDS,
+      'narrative',
+      'action-plan',
+    ]);
+
+    const transport = sections.find((section) => section.id === 'transport');
+    renderWithProviders(<>{transport?.render()}</>);
+
+    expect(
+      screen.getByRole('region', { name: /transport/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText('Not available for this property.'),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'View plans' })).toHaveAttribute(
+      'href',
+      '/pricing',
+    );
   });
 });

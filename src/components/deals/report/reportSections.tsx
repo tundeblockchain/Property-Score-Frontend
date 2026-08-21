@@ -7,6 +7,7 @@ import DirectionsTransitOutlinedIcon from '@mui/icons-material/DirectionsTransit
 import HomeWorkOutlinedIcon from '@mui/icons-material/HomeWorkOutlined';
 import InsightsOutlinedIcon from '@mui/icons-material/InsightsOutlined';
 import LayersOutlinedIcon from '@mui/icons-material/LayersOutlined';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import NotesOutlinedIcon from '@mui/icons-material/NotesOutlined';
 import PaymentsOutlinedIcon from '@mui/icons-material/PaymentsOutlined';
 import PhotoLibraryOutlinedIcon from '@mui/icons-material/PhotoLibraryOutlined';
@@ -15,6 +16,7 @@ import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
 import SellOutlinedIcon from '@mui/icons-material/SellOutlined';
 import { Chip, Typography, type SvgIconProps } from '@mui/material';
 import type { ComponentType, ReactNode } from 'react';
+import { TierUpgradePrompt } from '@/components/billing/TierUpgradePrompt';
 import { ScoreBreakdownBars } from '@/components/deals/common/ScoreBreakdownBars';
 import {
   HmoOverviewSection,
@@ -36,6 +38,8 @@ import { TransportPanel } from '@/components/deals/panels/TransportPanel';
 import { SectionUnavailable } from '@/components/deals/report/SectionUnavailable';
 import type { DealDetail } from '@/models';
 
+type UpgradePlan = 'Starter' | 'Pro';
+
 export interface ReportSectionSpec {
   /** Anchor id, also used as the React key and the nav target. */
   readonly id: string;
@@ -45,6 +49,21 @@ export interface ReportSectionSpec {
   readonly badge?: ReactNode;
   /** Called only once the section is open, so a closed one costs nothing. */
   readonly render: () => ReactNode;
+}
+
+function isFeatureLocked(allowed: boolean | undefined): boolean {
+  return allowed === false;
+}
+
+function lockBadge(plan: UpgradePlan): ReactNode {
+  return (
+    <Chip
+      icon={<LockOutlinedIcon />}
+      label={plan}
+      size="small"
+      variant="outlined"
+    />
+  );
 }
 
 /**
@@ -65,6 +84,69 @@ function unavailableSection(
   };
 }
 
+function lockedSection(
+  id: string,
+  title: string,
+  icon: ComponentType<SvgIconProps>,
+  plan: UpgradePlan,
+  description: string,
+): ReportSectionSpec {
+  return {
+    id,
+    title,
+    defaultExpanded: false,
+    icon,
+    badge: lockBadge(plan),
+    render: () => (
+      <TierUpgradePrompt title={title} description={description} />
+    ),
+  };
+}
+
+function completeGatedSection(options: {
+  id: string;
+  title: string;
+  icon: ComponentType<SvgIconProps>;
+  isComplete: boolean;
+  hasData: boolean;
+  allowed: boolean | undefined;
+  plan: UpgradePlan;
+  lockDescription: string;
+  render: () => ReactNode;
+}): ReportSectionSpec | undefined {
+  const {
+    id,
+    title,
+    icon,
+    isComplete,
+    hasData,
+    allowed,
+    plan,
+    lockDescription,
+    render,
+  } = options;
+
+  if (hasData) {
+    return {
+      id,
+      title,
+      defaultExpanded: false,
+      icon,
+      render,
+    };
+  }
+
+  if (!isComplete) {
+    return undefined;
+  }
+
+  if (isFeatureLocked(allowed)) {
+    return lockedSection(id, title, icon, plan, lockDescription);
+  }
+
+  return unavailableSection(id, title, icon);
+}
+
 /**
  * Builds the report as a single ordered column: listing visuals first (closed),
  * then the analysis (open), then supporting evidence (closed), then narrative
@@ -78,6 +160,7 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
   const { listing, scores, financialModel, hmoPlanner, narrative, actionPlan } =
     deal;
   const enrichment = deal.enrichment;
+  const access = deal.tierAccess;
   const isComplete = deal.status === 'COMPLETED';
   const sections: ReportSectionSpec[] = [];
 
@@ -183,7 +266,9 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
         title: 'HMO overview',
         defaultExpanded: true,
         icon: HomeWorkOutlinedIcon,
-        render: () => <HmoOverviewSection planner={hmoPlanner} />,
+        render: () => (
+          <HmoOverviewSection planner={hmoPlanner} tierAccess={access} />
+        ),
       });
 
       for (const scheme of schemes) {
@@ -195,7 +280,9 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
           badge: scheme.recommended ? (
             <Chip label="Recommended" color="success" size="small" />
           ) : undefined,
-          render: () => <SchemeAccordion scheme={scheme} />,
+          render: () => (
+            <SchemeAccordion scheme={scheme} tierAccess={access} />
+          ),
         });
       }
     }
@@ -209,26 +296,28 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
       enrichment?.demographics,
   );
 
-  if (hasAreaInsights && enrichment) {
-    sections.push({
-      id: 'area-insights',
-      title: 'Area insights',
-      defaultExpanded: false,
-      icon: PlaceOutlinedIcon,
-      render: () => (
-        <AreaInsightsPanel
-          broadband={enrichment.broadband}
-          planning={enrichment.planning}
-          market={enrichment.market}
-          crime={enrichment.crime}
-          demographics={enrichment.demographics}
-        />
-      ),
-    });
-  } else if (isComplete) {
-    sections.push(
-      unavailableSection('area-insights', 'Area insights', PlaceOutlinedIcon),
-    );
+  const areaInsights = completeGatedSection({
+    id: 'area-insights',
+    title: 'Area insights',
+    icon: PlaceOutlinedIcon,
+    isComplete,
+    hasData: Boolean(hasAreaInsights && enrichment),
+    allowed: access?.fullAreaInsights,
+    plan: 'Pro',
+    lockDescription:
+      'Upgrade to Pro to unlock planning, crime, broadband and local-area data.',
+    render: () => (
+      <AreaInsightsPanel
+        broadband={enrichment?.broadband}
+        planning={enrichment?.planning}
+        market={enrichment?.market}
+        crime={enrichment?.crime}
+        demographics={enrichment?.demographics}
+      />
+    ),
+  });
+  if (areaInsights) {
+    sections.push(areaInsights);
   }
 
   if (enrichment?.epc) {
@@ -259,36 +348,48 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
     );
   }
 
-  if (enrichment?.transport) {
-    const transport = enrichment.transport;
-    sections.push({
-      id: 'transport',
-      title: 'Transport',
-      defaultExpanded: false,
-      icon: DirectionsTransitOutlinedIcon,
-      render: () => <TransportPanel transport={transport} />,
-    });
-  } else if (isComplete) {
-    sections.push(
-      unavailableSection(
-        'transport',
-        'Transport',
-        DirectionsTransitOutlinedIcon,
+  const transportData = enrichment?.transport;
+  const transport = completeGatedSection({
+    id: 'transport',
+    title: 'Transport',
+    icon: DirectionsTransitOutlinedIcon,
+    isComplete,
+    hasData: Boolean(transportData),
+    allowed: access?.standardAreaInsights,
+    plan: 'Starter',
+    lockDescription:
+      'Upgrade to Starter to unlock nearest-station times and local transport.',
+    render: () =>
+      transportData ? (
+        <TransportPanel transport={transportData} />
+      ) : (
+        <SectionUnavailable />
       ),
-    );
+  });
+  if (transport) {
+    sections.push(transport);
   }
 
-  if (enrichment?.schools) {
-    const schools = enrichment.schools;
-    sections.push({
-      id: 'schools',
-      title: 'Schools',
-      defaultExpanded: false,
-      icon: SchoolOutlinedIcon,
-      render: () => <SchoolsPanel schools={schools} />,
-    });
-  } else if (isComplete) {
-    sections.push(unavailableSection('schools', 'Schools', SchoolOutlinedIcon));
+  const schoolsData = enrichment?.schools;
+  const schools = completeGatedSection({
+    id: 'schools',
+    title: 'Schools',
+    icon: SchoolOutlinedIcon,
+    isComplete,
+    hasData: Boolean(schoolsData),
+    allowed: access?.standardAreaInsights,
+    plan: 'Starter',
+    lockDescription:
+      'Upgrade to Starter to unlock nearby schools and Ofsted ratings.',
+    render: () =>
+      schoolsData ? (
+        <SchoolsPanel schools={schoolsData} />
+      ) : (
+        <SectionUnavailable />
+      ),
+  });
+  if (schools) {
+    sections.push(schools);
   }
 
   if (narrative) {
@@ -303,6 +404,16 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
         </Typography>
       ),
     });
+  } else if (isComplete && isFeatureLocked(access?.narrativeActionPlan)) {
+    sections.push(
+      lockedSection(
+        'narrative',
+        'Narrative',
+        NotesOutlinedIcon,
+        'Starter',
+        'Upgrade to Starter to unlock the investment narrative.',
+      ),
+    );
   }
 
   if (actionPlan && actionPlan.length > 0) {
@@ -313,6 +424,16 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
       icon: ChecklistOutlinedIcon,
       render: () => <ActionPlanList items={actionPlan} />,
     });
+  } else if (isComplete && isFeatureLocked(access?.narrativeActionPlan)) {
+    sections.push(
+      lockedSection(
+        'action-plan',
+        'Action plan',
+        ChecklistOutlinedIcon,
+        'Starter',
+        'Upgrade to Starter to unlock recommended next steps.',
+      ),
+    );
   }
 
   return sections;
