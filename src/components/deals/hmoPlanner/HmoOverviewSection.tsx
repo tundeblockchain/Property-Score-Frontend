@@ -1,11 +1,13 @@
 import { Stack, Typography } from '@mui/material';
-import type { FloorPlanAnalysis, HmoPlannerResult } from '@/models';
+import { TierUpgradePrompt } from '@/components/billing/TierUpgradePrompt';
+import type { FloorPlanAnalysis, HmoPlannerResult, TierAccess } from '@/models';
 import { Fact } from '@/components/deals/common/Fact';
 import { MoneyComparisonSection } from './MoneyComparisonSection';
 import { sourceLabel } from './labels';
 
 interface HmoOverviewSectionProps {
   planner: HmoPlannerResult;
+  tierAccess?: TierAccess;
 }
 
 function VisionSummary({ analysis }: { analysis: FloorPlanAnalysis }) {
@@ -51,7 +53,10 @@ function VisionSummary({ analysis }: { analysis: FloorPlanAnalysis }) {
   );
 }
 
-export function HmoOverviewSection({ planner }: HmoOverviewSectionProps) {
+export function HmoOverviewSection({
+  planner,
+  tierAccess,
+}: HmoOverviewSectionProps) {
   return (
     <Stack spacing={2}>
       <Stack direction="row" spacing={3} flexWrap="wrap" useFlexGap>
@@ -68,10 +73,20 @@ export function HmoOverviewSection({ planner }: HmoOverviewSectionProps) {
 
       {planner.moneyComparison ? (
         <MoneyComparisonSection comparison={planner.moneyComparison} />
+      ) : tierAccess?.moneyComparison === false ? (
+        <TierUpgradePrompt
+          title="Money comparison"
+          description="Upgrade to Pro to unlock family-let vs HMO money comparison."
+        />
       ) : null}
 
       {planner.floorPlanAnalysis ? (
         <VisionSummary analysis={planner.floorPlanAnalysis} />
+      ) : tierAccess?.fullHmoPlanner === false ? (
+        <TierUpgradePrompt
+          title="Floor-plan vision"
+          description="Upgrade to Starter to unlock floor-plan vision."
+        />
       ) : null}
 
       <Typography variant="caption" color="text.secondary">
