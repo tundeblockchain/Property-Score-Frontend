@@ -3,7 +3,7 @@ import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import { Box, Button, Chip, Stack, Typography } from '@mui/material';
 import type { ReactNode } from 'react';
 import { ErrorAlert } from '@/components/common/Feedback';
-import type { PlanSummary } from '@/lib/plans';
+import { perCreditValueLabel, type PlanSummary } from '@/lib/plans';
 import type { CheckoutPlanCatalogItem, CheckoutProduct } from '@/models';
 
 interface PlanFeatureListProps {
@@ -90,7 +90,7 @@ export function PlanCardShell({
       <Typography fontWeight={600}>{creditsLabel}</Typography>
       {valueLabel ? (
         <Typography variant="body2" color="success.dark" fontWeight={600}>
-          {valueLabel}
+          {perCreditValueLabel(valueLabel)}
         </Typography>
       ) : null}
       <Typography variant="body2" color="text.secondary">

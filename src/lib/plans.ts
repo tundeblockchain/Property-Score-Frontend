@@ -41,3 +41,11 @@ export function formatCreditCostLabel(
   const unit = amount === 1 ? 'credit' : 'credits';
   return `${amount} ${unit} per ${noun}`;
 }
+
+/** Keep only the per-credit rate; drop catalog comparison copy. */
+export function perCreditValueLabel(valueLabel: string): string {
+  const separatorIndex = valueLabel.indexOf(' · ');
+  return separatorIndex === -1
+    ? valueLabel
+    : valueLabel.slice(0, separatorIndex);
+}
