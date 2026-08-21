@@ -71,4 +71,19 @@ describe('BillingPage', () => {
     expect(screen.getByRole('heading', { name: '5 Credits' })).toBeInTheDocument();
     expect(screen.getByText('£14 one-time')).toBeInTheDocument();
   });
+
+  it('lets a paid starter subscriber upgrade to Pro', async () => {
+    vi.mocked(getBilling).mockResolvedValue(
+      buildBillingSummary({
+        tier: 'STARTER',
+        stripeSubscriptionId: 'sub_123',
+        stripeSubscriptionStatus: 'active',
+      }),
+    );
+
+    renderBillingPage();
+
+    expect(await screen.findByText('Current plan')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Upgrade' })).toBeInTheDocument();
+  });
 });

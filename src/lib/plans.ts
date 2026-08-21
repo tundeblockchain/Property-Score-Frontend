@@ -1,4 +1,4 @@
-import type { UserTier } from '@/models';
+import type { CheckoutProduct, UserTier } from '@/models';
 
 export interface PlanComparison {
   included: string[];
@@ -48,4 +48,36 @@ export function perCreditValueLabel(valueLabel: string): string {
   return separatorIndex === -1
     ? valueLabel
     : valueLabel.slice(0, separatorIndex);
+}
+
+const TIER_RANK: Record<UserTier, number> = {
+  FREE: 0,
+  STARTER: 1,
+  PRO: 2,
+  ENTERPRISE: 3,
+};
+
+export function subscriptionProductForTier(
+  tier: UserTier,
+): Extract<CheckoutProduct, 'starter_subscription' | 'pro_subscription'> | undefined {
+  if (tier === 'STARTER') {
+    return 'starter_subscription';
+  }
+  if (tier === 'PRO') {
+    return 'pro_subscription';
+  }
+  return undefined;
+}
+
+export function isSubscriptionUpgrade(
+  currentTier: UserTier,
+  product: CheckoutProduct,
+): boolean {
+  if (product === 'starter_subscription') {
+    return TIER_RANK.STARTER > TIER_RANK[currentTier];
+  }
+  if (product === 'pro_subscription') {
+    return TIER_RANK.PRO > TIER_RANK[currentTier];
+  }
+  return false;
 }
