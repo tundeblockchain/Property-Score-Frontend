@@ -3,8 +3,14 @@ import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import { Box, Button, Chip, Stack, Typography } from '@mui/material';
 import type { ReactNode } from 'react';
 import { ErrorAlert } from '@/components/common/Feedback';
-import { perCreditValueLabel, type PlanSummary } from '@/lib/plans';
-import type { CheckoutPlanCatalogItem, CheckoutProduct } from '@/models';
+import {
+  isPaidSubscriptionProduct,
+  isSubscriptionUpgrade,
+  perCreditValueLabel,
+  subscriptionProductForTier,
+  type PlanSummary,
+} from '@/lib/plans';
+import type { CheckoutPlanCatalogItem, CheckoutProduct, UserTier } from '@/models';
 
 interface PlanFeatureListProps {
   title: string;
@@ -41,6 +47,14 @@ function PlanFeatureList({ title, items, variant }: PlanFeatureListProps) {
         ))}
       </Box>
     </Stack>
+  );
+}
+
+export function CurrentPlanButton() {
+  return (
+    <Button variant="outlined" disabled>
+      Current plan
+    </Button>
   );
 }
 
@@ -124,10 +138,46 @@ interface PlanCardProps {
   plan: CheckoutPlanCatalogItem;
   loadingProduct: CheckoutProduct | null;
   onSelect: (product: CheckoutProduct) => void;
+  currentTier?: UserTier;
 }
 
-export function PlanCard({ plan, loadingProduct, onSelect }: PlanCardProps) {
+export function PlanCard({
+  plan,
+  loadingProduct,
+  onSelect,
+  currentTier,
+}: PlanCardProps) {
   const isLoading = loadingProduct === plan.product;
+  const isSubscription = isPaidSubscriptionProduct(plan.product);
+  const currentProduct = currentTier
+    ? subscriptionProductForTier(currentTier)
+    : undefined;
+  const isCurrent = isSubscription && currentProduct === plan.product;
+  const canUpgrade =
+    isSubscription && currentTier
+      ? isSubscriptionUpgrade(currentTier, plan.product)
+      : true;
+
+  let action: ReactNode;
+  if (isCurrent) {
+    action = <CurrentPlanButton />;
+  } else if (isSubscription && !canUpgrade && currentProduct) {
+    action = null;
+  } else {
+    action = (
+      <Button
+        variant={plan.highlight ? 'contained' : 'outlined'}
+        disabled={Boolean(loadingProduct)}
+        onClick={() => onSelect(plan.product)}
+      >
+        {isLoading
+          ? 'Redirecting…'
+          : isSubscription && canUpgrade && currentProduct
+            ? 'Upgrade'
+            : 'Choose'}
+      </Button>
+    );
+  }
 
   return (
     <PlanCardShell
@@ -140,15 +190,7 @@ export function PlanCard({ plan, loadingProduct, onSelect }: PlanCardProps) {
       valueLabel={plan.valueLabel}
       savePercent={plan.savePercent}
       highlight={plan.highlight}
-      action={
-        <Button
-          variant={plan.highlight ? 'contained' : 'outlined'}
-          disabled={Boolean(loadingProduct)}
-          onClick={() => onSelect(plan.product)}
-        >
-          {isLoading ? 'Redirecting…' : 'Choose'}
-        </Button>
-      }
+      action={action}
     />
   );
 }
@@ -158,6 +200,7 @@ interface PlanCardsProps {
   loadingProduct: CheckoutProduct | null;
   error: unknown;
   onSelect: (product: CheckoutProduct) => void;
+  currentTier?: UserTier;
   /** Extra card rendered before the paid plans, e.g. the free tier. */
   leadingCard?: ReactNode;
 }
@@ -167,6 +210,7 @@ export function PlanCards({
   loadingProduct,
   error,
   onSelect,
+  currentTier,
   leadingCard,
 }: PlanCardsProps) {
   return (
@@ -183,6 +227,7 @@ export function PlanCards({
               plan={plan}
               loadingProduct={loadingProduct}
               onSelect={onSelect}
+              currentTier={currentTier}
             />
           </Stack>
         ))}

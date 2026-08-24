@@ -12,6 +12,7 @@ import {
 import { BillingPage } from '@/pages/BillingPage';
 import { buildBillingPlans, buildBillingSummary } from '@/test/factories';
 import { theme } from '@/theme/theme';
+import { USER_TIER } from '@/lib/plans';
 import type { User } from '@/models';
 
 vi.mock('@/api/billing', () => ({
@@ -66,9 +67,26 @@ describe('BillingPage', () => {
     renderBillingPage();
 
     expect(await screen.findByRole('heading', { name: 'Starter' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Current plan' })).toBeDisabled();
     expect(screen.getByText('£39 / month')).toBeInTheDocument();
     expect(screen.getByText('20 credits / month')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '5 Credits' })).toBeInTheDocument();
     expect(screen.getByText('£14 one-time')).toBeInTheDocument();
+  });
+
+  it('lets a paid starter subscriber upgrade to Pro', async () => {
+    vi.mocked(getBilling).mockResolvedValue(
+      buildBillingSummary({
+        tier: USER_TIER.STARTER,
+        stripeSubscriptionId: 'sub_123',
+        stripeSubscriptionStatus: 'active',
+      }),
+    );
+
+    renderBillingPage();
+
+    const currentPlan = await screen.findByRole('button', { name: 'Current plan' });
+    expect(currentPlan).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Upgrade' })).toBeEnabled();
   });
 });

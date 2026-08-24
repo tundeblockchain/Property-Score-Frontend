@@ -6,10 +6,15 @@ import {
 } from '@/components/common/Feedback';
 import { BillingSummary } from '@/components/billing/BillingSummary';
 import { ManageSubscriptionButton } from '@/components/billing/ManageSubscriptionButton';
-import { PlanCardShell, PlanCards } from '@/components/billing/PlanCards';
+import {
+  CurrentPlanButton,
+  PlanCardShell,
+  PlanCards,
+} from '@/components/billing/PlanCards';
 import { useBilling } from '@/hooks/useBilling';
 import { useBillingPlans } from '@/hooks/useBillingPlans';
 import { useCheckout } from '@/hooks/useBillingMutations';
+import { isFreeTier } from '@/lib/plans';
 import type { CheckoutProduct } from '@/models';
 
 export function BillingPage() {
@@ -64,15 +69,12 @@ export function BillingPage() {
           }
           error={checkout.error}
           onSelect={handleSelect}
+          currentTier={billing.data.tier}
           leadingCard={
             <PlanCardShell
               {...catalog.freePlan}
               action={
-                billing.data.tier === 'FREE' ? (
-                  <Typography variant="body2" color="text.secondary">
-                    Current plan
-                  </Typography>
-                ) : null
+                isFreeTier(billing.data.tier) ? <CurrentPlanButton /> : null
               }
             />
           }

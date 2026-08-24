@@ -94,6 +94,7 @@ export function PricingPage() {
           loadingProduct={checkout.isPending ? (checkout.variables ?? null) : null}
           error={checkout.error}
           onSelect={handleSelect}
+          currentTier={billing.data?.tier}
           leadingCard={
             <PlanCardShell
               {...catalog.freePlan}

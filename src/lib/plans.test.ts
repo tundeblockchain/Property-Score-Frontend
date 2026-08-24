@@ -1,7 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import {
+  CHECKOUT_PRODUCT,
   formatCreditCostLabel,
+  isFreeTier,
+  isSubscriptionUpgrade,
   perCreditValueLabel,
+  subscriptionProductForTier,
+  USER_TIER,
   tierLabel,
 } from '@/lib/plans';
 
@@ -12,9 +17,26 @@ describe('plan copy helpers', () => {
   });
 
   it('labels known tiers', () => {
-    expect(tierLabel('FREE')).toBe('Free');
-    expect(tierLabel('STARTER')).toBe('Starter');
-    expect(tierLabel('PRO')).toBe('Pro');
+    expect(tierLabel(USER_TIER.FREE)).toBe('Free');
+    expect(tierLabel(USER_TIER.STARTER)).toBe('Starter');
+    expect(tierLabel(USER_TIER.PRO)).toBe('Pro');
+  });
+
+  it('identifies the free tier without a string literal at the call site', () => {
+    expect(isFreeTier(USER_TIER.FREE)).toBe(true);
+    expect(isFreeTier(USER_TIER.STARTER)).toBe(false);
+  });
+
+  it('treats Pro as an upgrade from Starter', () => {
+    expect(
+      isSubscriptionUpgrade(USER_TIER.STARTER, CHECKOUT_PRODUCT.PRO_SUBSCRIPTION),
+    ).toBe(true);
+    expect(
+      isSubscriptionUpgrade(USER_TIER.PRO, CHECKOUT_PRODUCT.STARTER_SUBSCRIPTION),
+    ).toBe(false);
+    expect(subscriptionProductForTier(USER_TIER.STARTER)).toBe(
+      CHECKOUT_PRODUCT.STARTER_SUBSCRIPTION,
+    );
   });
 
   it('keeps only the per-credit rate on pack value labels', () => {
