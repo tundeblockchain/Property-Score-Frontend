@@ -4,6 +4,7 @@ import { Box, Button, Chip, Stack, Typography } from '@mui/material';
 import type { ReactNode } from 'react';
 import { ErrorAlert } from '@/components/common/Feedback';
 import {
+  isPaidSubscriptionProduct,
   isSubscriptionUpgrade,
   perCreditValueLabel,
   subscriptionProductForTier,
@@ -46,6 +47,14 @@ function PlanFeatureList({ title, items, variant }: PlanFeatureListProps) {
         ))}
       </Box>
     </Stack>
+  );
+}
+
+export function CurrentPlanButton() {
+  return (
+    <Button variant="outlined" disabled>
+      Current plan
+    </Button>
   );
 }
 
@@ -139,9 +148,7 @@ export function PlanCard({
   currentTier,
 }: PlanCardProps) {
   const isLoading = loadingProduct === plan.product;
-  const isSubscription =
-    plan.product === 'starter_subscription' ||
-    plan.product === 'pro_subscription';
+  const isSubscription = isPaidSubscriptionProduct(plan.product);
   const currentProduct = currentTier
     ? subscriptionProductForTier(currentTier)
     : undefined;
@@ -153,11 +160,7 @@ export function PlanCard({
 
   let action: ReactNode;
   if (isCurrent) {
-    action = (
-      <Typography variant="body2" color="text.secondary">
-        Current plan
-      </Typography>
-    );
+    action = <CurrentPlanButton />;
   } else if (isSubscription && !canUpgrade && currentProduct) {
     action = null;
   } else {
