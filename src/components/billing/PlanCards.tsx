@@ -1,10 +1,13 @@
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import { Box, Button, Chip, Stack, Typography } from '@mui/material';
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { ErrorAlert } from '@/components/common/Feedback';
+import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 import {
+  isPaidPlanSwitch,
   isPaidSubscriptionProduct,
+  isSubscriptionDowngrade,
   perCreditValueLabel,
   subscriptionProductForTier,
   type PlanSummary,
@@ -203,6 +206,22 @@ export function PlanCards({
   currentTier,
   leadingCard,
 }: PlanCardsProps) {
+  const [pendingSwitch, setPendingSwitch] =
+    useState<CheckoutPlanCatalogItem | null>(null);
+  const isDowngrade =
+    pendingSwitch != null &&
+    currentTier != null &&
+    isSubscriptionDowngrade(currentTier, pendingSwitch.product);
+
+  function handleSelect(product: CheckoutProduct): void {
+    const plan = plans.find((item) => item.product === product);
+    if (currentTier && plan && isPaidPlanSwitch(currentTier, product)) {
+      setPendingSwitch(plan);
+      return;
+    }
+    onSelect(product);
+  }
+
   return (
     <Stack spacing={2}>
       <Stack
@@ -216,13 +235,34 @@ export function PlanCards({
             <PlanCard
               plan={plan}
               loadingProduct={loadingProduct}
-              onSelect={onSelect}
+              onSelect={handleSelect}
               currentTier={currentTier}
             />
           </Stack>
         ))}
       </Stack>
       {error ? <ErrorAlert error={error} /> : null}
+      <ConfirmDialog
+        open={pendingSwitch != null}
+        title={`Switch to ${pendingSwitch?.title ?? 'this plan'}?`}
+        description={
+          isDowngrade
+            ? "You'll lose features that are only on your current plan. Credits already on your account stay with you, and Stripe will adjust your billing for the rest of the month."
+            : "You'll get the extra features on this plan. Credits already on your account stay with you, and Stripe will adjust your billing for the rest of the month."
+        }
+        confirmLabel={`Switch to ${pendingSwitch?.title ?? 'this plan'}`}
+        confirmColor="primary"
+        pending={
+          pendingSwitch != null && loadingProduct === pendingSwitch.product
+        }
+        pendingLabel="Redirecting…"
+        onClose={() => setPendingSwitch(null)}
+        onConfirm={() => {
+          if (pendingSwitch) {
+            onSelect(pendingSwitch.product);
+          }
+        }}
+      />
     </Stack>
   );
 }
