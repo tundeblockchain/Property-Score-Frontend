@@ -17,6 +17,7 @@ interface ConfirmDialogProps {
   pending?: boolean;
   pendingLabel?: string;
   confirmPhrase?: string;
+  confirmColor?: 'error' | 'primary';
   onClose: () => void;
   onConfirm: () => void;
 }
@@ -29,6 +30,7 @@ export function ConfirmDialog({
   pending = false,
   pendingLabel = 'Please wait…',
   confirmPhrase,
+  confirmColor = 'error',
   onClose,
   onConfirm,
 }: ConfirmDialogProps) {
@@ -76,7 +78,7 @@ export function ConfirmDialog({
           Cancel
         </Button>
         <Button
-          color="error"
+          color={confirmColor}
           variant="contained"
           disabled={confirmDisabled}
           onClick={onConfirm}

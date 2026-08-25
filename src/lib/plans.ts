@@ -100,3 +100,37 @@ export function isPaidSubscriptionChange(
   }
   return subscriptionProductForTier(currentTier) !== product;
 }
+
+/** True when switching between existing paid plans (Starter ↔ Pro). */
+export function isPaidPlanSwitch(
+  currentTier: UserTier,
+  product: CheckoutProduct,
+): boolean {
+  const currentProduct = subscriptionProductForTier(currentTier);
+  return (
+    currentProduct != null &&
+    isPaidSubscriptionProduct(product) &&
+    currentProduct !== product
+  );
+}
+
+const TIER_RANK: Record<UserTier, number> = {
+  [USER_TIER.FREE]: 0,
+  [USER_TIER.STARTER]: 1,
+  [USER_TIER.PRO]: 2,
+  [USER_TIER.ENTERPRISE]: 3,
+};
+
+export function isSubscriptionDowngrade(
+  currentTier: UserTier,
+  product: CheckoutProduct,
+): boolean {
+  if (!isPaidSubscriptionProduct(product)) {
+    return false;
+  }
+  const nextTier =
+    product === CHECKOUT_PRODUCT.STARTER_SUBSCRIPTION
+      ? USER_TIER.STARTER
+      : USER_TIER.PRO;
+  return TIER_RANK[nextTier] < TIER_RANK[currentTier];
+}

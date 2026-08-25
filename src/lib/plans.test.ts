@@ -3,7 +3,9 @@ import {
   CHECKOUT_PRODUCT,
   formatCreditCostLabel,
   isFreeTier,
+  isPaidPlanSwitch,
   isPaidSubscriptionChange,
+  isSubscriptionDowngrade,
   perCreditValueLabel,
   subscriptionProductForTier,
   USER_TIER,
@@ -40,6 +42,31 @@ describe('plan copy helpers', () => {
     expect(subscriptionProductForTier(USER_TIER.STARTER)).toBe(
       CHECKOUT_PRODUCT.STARTER_SUBSCRIPTION,
     );
+  });
+
+  it('treats Starter as a downgrade from Pro', () => {
+    expect(
+      isSubscriptionDowngrade(USER_TIER.PRO, CHECKOUT_PRODUCT.STARTER_SUBSCRIPTION),
+    ).toBe(true);
+    expect(
+      isSubscriptionDowngrade(USER_TIER.STARTER, CHECKOUT_PRODUCT.PRO_SUBSCRIPTION),
+    ).toBe(false);
+    expect(
+      isSubscriptionDowngrade(USER_TIER.PRO, 'credits_5'),
+    ).toBe(false);
+  });
+
+  it('confirms only when switching between paid plans', () => {
+    expect(
+      isPaidPlanSwitch(USER_TIER.STARTER, CHECKOUT_PRODUCT.PRO_SUBSCRIPTION),
+    ).toBe(true);
+    expect(
+      isPaidPlanSwitch(USER_TIER.PRO, CHECKOUT_PRODUCT.STARTER_SUBSCRIPTION),
+    ).toBe(true);
+    expect(
+      isPaidPlanSwitch(USER_TIER.FREE, CHECKOUT_PRODUCT.STARTER_SUBSCRIPTION),
+    ).toBe(false);
+    expect(isPaidPlanSwitch(USER_TIER.PRO, 'credits_5')).toBe(false);
   });
 
   it('keeps only the per-credit rate on pack value labels', () => {
