@@ -66,6 +66,51 @@ function lockBadge(plan: UpgradePlan): ReactNode {
   );
 }
 
+function recommendedBadge(): ReactNode {
+  return <Chip label="Recommended" color="success" size="small" />;
+}
+
+function sectionBadges(...nodes: Array<ReactNode | undefined>): ReactNode {
+  const present = nodes.filter((node) => node != null);
+  if (present.length === 0) {
+    return undefined;
+  }
+  if (present.length === 1) {
+    return present[0];
+  }
+  return <>{present}</>;
+}
+
+function hmoOverviewLockPlan(access: DealDetail['tierAccess']): UpgradePlan | undefined {
+  if (isFeatureLocked(access?.fullHmoPlanner)) {
+    return 'Starter';
+  }
+  if (isFeatureLocked(access?.moneyComparison)) {
+    return 'Pro';
+  }
+  return undefined;
+}
+
+function studentHmoLockPlan(
+  access: DealDetail['tierAccess'],
+  scheme: { recommended: boolean },
+): UpgradePlan | undefined {
+  const overviewLock = hmoOverviewLockPlan(access);
+  if (!overviewLock) {
+    return undefined;
+  }
+  if (overviewLock === 'Starter' && scheme.recommended) {
+    return undefined;
+  }
+  return overviewLock;
+}
+
+function studentHmoLockDescription(plan: UpgradePlan): string {
+  return plan === 'Pro'
+    ? 'Upgrade to Pro to unlock the student HMO scheme.'
+    : 'Upgrade to Starter to unlock additional HMO schemes.';
+}
+
 /**
  * Placeholder for a check we run on every property but which returned nothing,
  * so its absence reads as a result rather than as a missing feature.
@@ -90,13 +135,14 @@ function lockedSection(
   icon: ComponentType<SvgIconProps>,
   plan: UpgradePlan,
   description: string,
+  extraBadge?: ReactNode,
 ): ReportSectionSpec {
   return {
     id,
     title,
     defaultExpanded: false,
     icon,
-    badge: lockBadge(plan),
+    badge: sectionBadges(lockBadge(plan), extraBadge),
     render: () => (
       <TierUpgradePrompt title={title} description={description} />
     ),
@@ -259,6 +305,7 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
 
   if (hmoPlanner) {
     const schemes = orderedHmoSchemes(hmoPlanner);
+    const overviewLock = hmoOverviewLockPlan(access);
 
     if (schemes.length > 0) {
       sections.push({
@@ -266,25 +313,65 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
         title: 'HMO overview',
         defaultExpanded: true,
         icon: HomeWorkOutlinedIcon,
+        badge: overviewLock ? lockBadge(overviewLock) : undefined,
         render: () => (
           <HmoOverviewSection planner={hmoPlanner} tierAccess={access} />
         ),
       });
 
+      const schemeSections: ReportSectionSpec[] = [];
+      let hasStudentSection = false;
+
       for (const scheme of schemes) {
-        sections.push({
+        const isStudent = scheme.useCase === 'students';
+        if (isStudent) {
+          hasStudentSection = true;
+        }
+
+        const schemeLock = isStudent
+          ? studentHmoLockPlan(access, scheme)
+          : undefined;
+        const recommended = scheme.recommended ? recommendedBadge() : undefined;
+
+        if (schemeLock) {
+          schemeSections.push(
+            lockedSection(
+              `hmo-scheme-${scheme.id}`,
+              scheme.title,
+              LayersOutlinedIcon,
+              schemeLock,
+              studentHmoLockDescription(schemeLock),
+              recommended,
+            ),
+          );
+          continue;
+        }
+
+        schemeSections.push({
           id: `hmo-scheme-${scheme.id}`,
           title: scheme.title,
           defaultExpanded: scheme.recommended,
           icon: LayersOutlinedIcon,
-          badge: scheme.recommended ? (
-            <Chip label="Recommended" color="success" size="small" />
-          ) : undefined,
+          badge: recommended,
           render: () => (
             <SchemeAccordion scheme={scheme} tierAccess={access} />
           ),
         });
       }
+
+      if (overviewLock && !hasStudentSection) {
+        schemeSections.unshift(
+          lockedSection(
+            'hmo-scheme-students',
+            'Student HMO',
+            LayersOutlinedIcon,
+            overviewLock,
+            studentHmoLockDescription(overviewLock),
+          ),
+        );
+      }
+
+      sections.push(...schemeSections);
     }
   }
 

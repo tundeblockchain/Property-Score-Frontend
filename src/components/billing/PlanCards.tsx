@@ -5,7 +5,6 @@ import type { ReactNode } from 'react';
 import { ErrorAlert } from '@/components/common/Feedback';
 import {
   isPaidSubscriptionProduct,
-  isSubscriptionUpgrade,
   perCreditValueLabel,
   subscriptionProductForTier,
   type PlanSummary,
@@ -153,28 +152,19 @@ export function PlanCard({
     ? subscriptionProductForTier(currentTier)
     : undefined;
   const isCurrent = isSubscription && currentProduct === plan.product;
-  const canUpgrade =
-    isSubscription && currentTier
-      ? isSubscriptionUpgrade(currentTier, plan.product)
-      : true;
 
   let action: ReactNode;
   if (isCurrent) {
     action = <CurrentPlanButton />;
-  } else if (isSubscription && !canUpgrade && currentProduct) {
-    action = null;
   } else {
     action = (
       <Button
         variant={plan.highlight ? 'contained' : 'outlined'}
         disabled={Boolean(loadingProduct)}
         onClick={() => onSelect(plan.product)}
+        aria-label={`Choose ${plan.title}`}
       >
-        {isLoading
-          ? 'Redirecting…'
-          : isSubscription && canUpgrade && currentProduct
-            ? 'Upgrade'
-            : 'Choose'}
+        {isLoading ? 'Redirecting…' : 'Choose'}
       </Button>
     );
   }

@@ -77,13 +77,6 @@ export function perCreditValueLabel(valueLabel: string): string {
     : valueLabel.slice(0, separatorIndex);
 }
 
-const TIER_RANK: Record<UserTier, number> = {
-  [USER_TIER.FREE]: 0,
-  [USER_TIER.STARTER]: 1,
-  [USER_TIER.PRO]: 2,
-  [USER_TIER.ENTERPRISE]: 3,
-};
-
 export function subscriptionProductForTier(
   tier: UserTier,
 ): Extract<CheckoutProduct, 'starter_subscription' | 'pro_subscription'> | undefined {
@@ -98,15 +91,12 @@ export function subscriptionProductForTier(
   }
 }
 
-export function isSubscriptionUpgrade(
+export function isPaidSubscriptionChange(
   currentTier: UserTier,
   product: CheckoutProduct,
 ): boolean {
-  if (product === CHECKOUT_PRODUCT.STARTER_SUBSCRIPTION) {
-    return TIER_RANK[USER_TIER.STARTER] > TIER_RANK[currentTier];
+  if (!isPaidSubscriptionProduct(product)) {
+    return false;
   }
-  if (product === CHECKOUT_PRODUCT.PRO_SUBSCRIPTION) {
-    return TIER_RANK[USER_TIER.PRO] > TIER_RANK[currentTier];
-  }
-  return false;
+  return subscriptionProductForTier(currentTier) !== product;
 }

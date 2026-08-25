@@ -3,7 +3,7 @@ import {
   CHECKOUT_PRODUCT,
   formatCreditCostLabel,
   isFreeTier,
-  isSubscriptionUpgrade,
+  isPaidSubscriptionChange,
   perCreditValueLabel,
   subscriptionProductForTier,
   USER_TIER,
@@ -27,12 +27,15 @@ describe('plan copy helpers', () => {
     expect(isFreeTier(USER_TIER.STARTER)).toBe(false);
   });
 
-  it('treats Pro as an upgrade from Starter', () => {
+  it('allows switching between Starter and Pro', () => {
     expect(
-      isSubscriptionUpgrade(USER_TIER.STARTER, CHECKOUT_PRODUCT.PRO_SUBSCRIPTION),
+      isPaidSubscriptionChange(USER_TIER.STARTER, CHECKOUT_PRODUCT.PRO_SUBSCRIPTION),
     ).toBe(true);
     expect(
-      isSubscriptionUpgrade(USER_TIER.PRO, CHECKOUT_PRODUCT.STARTER_SUBSCRIPTION),
+      isPaidSubscriptionChange(USER_TIER.PRO, CHECKOUT_PRODUCT.STARTER_SUBSCRIPTION),
+    ).toBe(true);
+    expect(
+      isPaidSubscriptionChange(USER_TIER.STARTER, CHECKOUT_PRODUCT.STARTER_SUBSCRIPTION),
     ).toBe(false);
     expect(subscriptionProductForTier(USER_TIER.STARTER)).toBe(
       CHECKOUT_PRODUCT.STARTER_SUBSCRIPTION,

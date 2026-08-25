@@ -74,7 +74,7 @@ describe('BillingPage', () => {
     expect(screen.getByText('£14 one-time')).toBeInTheDocument();
   });
 
-  it('lets a paid starter subscriber upgrade to Pro', async () => {
+  it('lets a paid starter subscriber choose Pro', async () => {
     vi.mocked(getBilling).mockResolvedValue(
       buildBillingSummary({
         tier: USER_TIER.STARTER,
@@ -87,6 +87,21 @@ describe('BillingPage', () => {
 
     const currentPlan = await screen.findByRole('button', { name: 'Current plan' });
     expect(currentPlan).toBeDisabled();
-    expect(screen.getByRole('button', { name: 'Upgrade' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Choose Pro' })).toBeEnabled();
+  });
+
+  it('lets a paid pro subscriber choose Starter', async () => {
+    vi.mocked(getBilling).mockResolvedValue(
+      buildBillingSummary({
+        tier: USER_TIER.PRO,
+        stripeSubscriptionId: 'sub_456',
+        stripeSubscriptionStatus: 'active',
+      }),
+    );
+
+    renderBillingPage();
+
+    expect(await screen.findByRole('button', { name: 'Current plan' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Choose Starter' })).toBeEnabled();
   });
 });
