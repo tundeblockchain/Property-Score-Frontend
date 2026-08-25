@@ -235,6 +235,75 @@ describe('buildReportSections', () => {
     expect(other?.defaultExpanded).toBe(false);
   });
 
+  it('badges HMO overview and locks the student scheme when money comparison is gated', () => {
+    const sections = buildReportSections(
+      buildDealDetail({
+        status: 'PROCESSING',
+        tierAccess: buildTierAccess({ moneyComparison: false }),
+        hmoPlanner: buildHmoPlanner({
+          schemes: [
+            buildHmoScheme({
+              id: 'students',
+              useCase: 'students',
+              title: 'Students · 3-bed student HMO',
+              recommended: false,
+            }),
+            buildHmoScheme({
+              id: 'workers',
+              useCase: 'workers',
+              title: 'Workers · 3-bed workers HMO',
+              recommended: true,
+            }),
+          ],
+        }),
+      }),
+    );
+
+    const overview = sections.find((section) => section.id === 'hmo-overview');
+    const students = sections.find(
+      (section) => section.id === 'hmo-scheme-students',
+    );
+    const workers = sections.find(
+      (section) => section.id === 'hmo-scheme-workers',
+    );
+
+    expect(overview?.badge).toBeDefined();
+    expect(students?.badge).toBeDefined();
+    expect(students?.defaultExpanded).toBe(false);
+    expect(workers?.badge).toBeDefined();
+
+    renderWithProviders(<>{students?.render()}</>);
+
+    expect(
+      screen.getByText('Upgrade to Pro to unlock the student HMO scheme.'),
+    ).toBeInTheDocument();
+  });
+
+  it('inserts a locked student HMO card when overview is locked and that scheme is missing', () => {
+    const sections = buildReportSections(
+      buildDealDetail({
+        status: 'PROCESSING',
+        tierAccess: buildTierAccess({ moneyComparison: false }),
+        hmoPlanner: buildHmoPlanner({
+          schemes: [
+            buildHmoScheme({
+              id: 'workers',
+              useCase: 'workers',
+              title: 'Workers · 3-bed workers HMO',
+              recommended: true,
+            }),
+          ],
+        }),
+      }),
+    );
+
+    expect(sections.map((section) => section.id)).toEqual([
+      'hmo-overview',
+      'hmo-scheme-students',
+      'hmo-scheme-workers',
+    ]);
+  });
+
   it('skips the HMO sections when the planner returned no usable schemes', () => {
     const sections = buildReportSections(
       buildDealDetail({
