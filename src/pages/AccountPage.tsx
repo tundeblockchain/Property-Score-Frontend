@@ -19,7 +19,7 @@ import {
   useSubmitTestimonial,
 } from '@/hooks/useAccountMutations';
 import { useBilling } from '@/hooks/useBilling';
-import { tierLabel } from '@/lib/plans';
+import { remainingAnalysesLabel, tierLabel } from '@/lib/plans';
 
 export function AccountPage() {
   const { signOut } = useAuth();
@@ -81,8 +81,8 @@ export function AccountPage() {
             Signed in as <strong>{billing.data.email}</strong>
           </Typography>
           <Typography color="text.secondary">
-            Plan: {tierLabel(billing.data.tier)}. {billing.data.creditsRemaining}{' '}
-            credits remaining
+            Plan: {tierLabel(billing.data.tier)}.{' '}
+            {remainingAnalysesLabel(billing.data.creditsRemaining, 'remaining')}
             {billing.data.stripeSubscriptionStatus
               ? `. Subscription: ${billing.data.stripeSubscriptionStatus}`
               : '.'}
@@ -98,7 +98,7 @@ export function AccountPage() {
           <Typography color="text.secondary">
             {hasSubscription
               ? 'Update payment details or cancel through the Stripe billing portal.'
-              : 'You are on the free plan. Choose a paid plan or credit top-up on the billing page.'}
+              : 'You are on the free plan. Choose a paid plan or extra analyses on the billing page.'}
           </Typography>
           <Stack direction="row" spacing={1.5} flexWrap="wrap" useFlexGap>
             <ManageSubscriptionButton hasSubscription={hasSubscription} />
@@ -161,7 +161,7 @@ export function AccountPage() {
           </Typography>
           <Typography color="text.secondary">
             Permanently delete every analysed property, report, and proposed
-            layout. Credits and your subscription are not affected.
+            layout. Remaining analyses and your subscription are not affected.
           </Typography>
           {clearDeals.isSuccess ? (
             <Alert severity="success">

@@ -22,7 +22,7 @@ const FAQS = [
   {
     question: 'What does an analysis cost?',
     answer:
-      'One credit per listing analysis. AI proposed layouts use three credits. New accounts start on the Free plan with 5 credits, and paid plans add more credits each month.',
+      'Each listing uses one analysis. Proposed layouts use three analyses from the same balance. New accounts start on the Free plan with 5 listing analyses, and paid plans add more each month.',
   },
   {
     question: 'How long does a report take?',

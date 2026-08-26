@@ -5,7 +5,7 @@ import { ErrorAlert } from '@/components/common/Feedback';
 import { ImageLightbox } from '@/components/deals/common/ImageLightbox';
 import { useBilling } from '@/hooks/useBilling';
 import { schemeRenderImageUrls, useSchemeRender } from '@/hooks/useSchemeRender';
-import { PROPOSED_LAYOUT_CREDIT_COST } from '@/lib/plans';
+import { analysisCountLabel, PROPOSED_LAYOUT_CREDIT_COST } from '@/lib/plans';
 import { ApiError, getUserFacingErrorMessage } from '@/lib/errors';
 import type { DealDetail, HmoSchemeRendering } from '@/models';
 import { hmoRenderSkipReasonLabel } from './labels';
@@ -105,16 +105,16 @@ export function GenerateProposedLayoutButton({
             {liveRendering ? 'Try again' : 'Generate proposed layout'}
           </Button>
           <Typography variant="caption" color="text.secondary">
-            Uses {layoutCreditCost} credits.
+            Uses {analysisCountLabel(layoutCreditCost)}.
           </Typography>
         </>
       ) : null}
 
       {outOfCredits && showGenerate ? (
         <Alert severity="warning">
-          You are out of credits.{' '}
+          You are out of analyses.{' '}
           <Button component={RouterLink} to="/billing" size="small">
-            Upgrade or buy credits
+            Upgrade or buy more
           </Button>
         </Alert>
       ) : null}

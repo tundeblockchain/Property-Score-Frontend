@@ -77,7 +77,7 @@ export function LandingHero() {
 
         {user ? null : (
           <Typography variant="body2" color="text.secondary">
-            5 free credits on sign-up. No card required.
+            5 free listing analyses on sign-up. No card required.
           </Typography>
         )}
       </Stack>
@@ -94,7 +94,7 @@ export function LandingHero() {
           navigate(PROPERTIES_PATH);
         }}
         initialMode="signUp"
-        description="Create an account to start scoring listings with 5 free credits."
+        description="Create an account to start scoring listings with 5 free analyses."
       />
     </Stack>
   );

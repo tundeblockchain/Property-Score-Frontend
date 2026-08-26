@@ -46,7 +46,7 @@ export function BillingPage() {
     <Stack spacing={3}>
       <PageHeader
         title="Billing"
-        subtitle="Manage credits and subscription."
+        subtitle="Manage your plan and extra analyses."
         action={
           <ManageSubscriptionButton
             hasSubscription={Boolean(billing.data.stripeSubscriptionId)}
@@ -83,7 +83,7 @@ export function BillingPage() {
 
       <Stack spacing={1.5}>
         <Typography variant="h5" component="h2">
-          Credit top-ups
+          Extra analyses
         </Typography>
         <PlanCards
           plans={catalog.creditPacks}

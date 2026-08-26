@@ -8,6 +8,10 @@ import {
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { useBilling } from '@/hooks/useBilling';
+import {
+  isLowAnalysisBalance,
+  remainingAnalysesBadgeLabel,
+} from '@/lib/plans';
 
 export function CreditsBadge() {
   const { data, isLoading, isError } = useBilling();
@@ -15,7 +19,7 @@ export function CreditsBadge() {
   if (isLoading) {
     return (
       <Chip
-        label="Credits…"
+        label="Analyses…"
         variant="outlined"
         sx={{ fontSize: '0.95rem', height: 36 }}
       />
@@ -31,8 +35,8 @@ export function CreditsBadge() {
       component={RouterLink}
       to="/billing"
       clickable
-      color={data.creditsRemaining > 0 ? 'primary' : 'warning'}
-      label={`${data.creditsRemaining} credits`}
+      color={isLowAnalysisBalance(data.creditsRemaining) ? 'warning' : 'primary'}
+      label={remainingAnalysesBadgeLabel(data.creditsRemaining)}
       variant="outlined"
       sx={{ fontSize: '0.95rem', height: 36 }}
     />
@@ -59,7 +63,7 @@ export function InsufficientCreditsBanner({
         </Button>
       }
     >
-      You have no credits left. Upgrade or buy a top-up to analyse listings.
+      You have no analyses left. Upgrade or buy a top-up to analyse listings.
     </Alert>
   );
 }
