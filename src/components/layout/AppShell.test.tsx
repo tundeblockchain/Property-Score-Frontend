@@ -78,6 +78,12 @@ describe('AppHeader', () => {
     signInWithGoogle.mockClear();
   });
 
+  it('shows remaining listing analyses in the header', async () => {
+    renderHeader('/analyse');
+
+    expect(await screen.findByText('4 analyses')).toBeInTheDocument();
+  });
+
   it('takes a signed-in user to the landing page after sign out', async () => {
     const user = userEvent.setup({ delay: null });
     renderHeader('/analyse');

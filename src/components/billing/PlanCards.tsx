@@ -247,8 +247,8 @@ export function PlanCards({
         title={`Switch to ${pendingSwitch?.title ?? 'this plan'}?`}
         description={
           isDowngrade
-            ? "You'll lose features that are only on your current plan. Credits already on your account stay with you, and Stripe will adjust your billing for the rest of the month."
-            : "You'll get the extra features on this plan. Credits already on your account stay with you, and Stripe will adjust your billing for the rest of the month."
+            ? "You'll lose features that are only on your current plan. Analyses already on your account stay with you, and Stripe will adjust your billing for the rest of the month."
+            : "You'll get the extra features on this plan. Analyses already on your account stay with you, and Stripe will adjust your billing for the rest of the month."
         }
         confirmLabel={`Switch to ${pendingSwitch?.title ?? 'this plan'}`}
         confirmColor="primary"

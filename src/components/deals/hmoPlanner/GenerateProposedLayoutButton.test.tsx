@@ -74,6 +74,8 @@ describe('GenerateProposedLayoutButton', () => {
 
     renderButton(<GenerateProposedLayoutButton deal={completedDeal()} />);
 
+    expect(screen.getByText('Uses 3 analyses.')).toBeInTheDocument();
+
     await user.click(
       screen.getByRole('button', { name: 'Generate proposed layout' }),
     );

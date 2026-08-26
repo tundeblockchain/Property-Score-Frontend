@@ -76,7 +76,7 @@ export function AuthForm({
           {description ??
             (isSignIn
               ? 'Use Google or your Property Score account to continue.'
-              : 'New accounts start on the Free plan with 5 credits.')}
+              : 'New accounts start on the Free plan with 5 listing analyses.')}
         </Typography>
       </Stack>
 

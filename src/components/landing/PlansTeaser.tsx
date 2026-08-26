@@ -28,7 +28,7 @@ export function PlansTeaser() {
       <SectionHeading
         eyebrow="Pricing"
         title="Start free, scale when you are screening more"
-        subtitle="One credit per analysis. Proposed layouts use three credits from the same balance."
+        subtitle="One analysis per listing. Proposed layouts use three from the same balance."
       />
       <Paper sx={{ p: { xs: 2.5, sm: 3.5 } }}>
         <Stack spacing={2.5}>

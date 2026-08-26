@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { LoadingState, PageHeader } from '@/components/common/Feedback';
 import { useBilling } from '@/hooks/useBilling';
+import { remainingAnalysesLabel } from '@/lib/plans';
 
 const POLL_MS = 2500;
 const MAX_POLLS = 24;
@@ -45,14 +46,14 @@ export function BillingSuccessPage() {
     <Stack spacing={3}>
       <PageHeader title="Payment successful" />
       <Alert severity="success">
-        Thanks — your payment went through. Your credits and plan will appear
+        Thanks — your payment went through. Your analyses and plan will appear
         here in a moment. You can start analysing listings as soon as they
         show.
       </Alert>
       {billing.data ? (
         <Typography>
-          Current plan: {billing.data.tier} · {billing.data.creditsRemaining}{' '}
-          credits remaining
+          Current plan: {billing.data.tier} ·{' '}
+          {remainingAnalysesLabel(billing.data.creditsRemaining, 'remaining')}
           {!updated && shouldPoll ? ' (refreshing…)' : ''}
         </Typography>
       ) : null}

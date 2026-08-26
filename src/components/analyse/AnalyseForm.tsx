@@ -110,15 +110,15 @@ export function AnalyseForm({
         helperText={
           localError ??
           (user
-            ? 'Each analysis uses 1 credit.'
-            : 'New accounts start with 5 free credits — no card required.')
+            ? 'Each listing uses 1 analysis.'
+            : 'New accounts start with 5 free analyses — no card required.')
         }
       />
       {outOfCredits ? (
         <Alert severity="warning">
-          You are out of credits.{' '}
+          You are out of analyses.{' '}
           <Button component={RouterLink} to="/billing" size="small">
-            Upgrade or buy credits
+            Upgrade or buy more
           </Button>
         </Alert>
       ) : null}

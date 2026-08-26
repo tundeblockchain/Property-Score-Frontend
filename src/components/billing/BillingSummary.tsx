@@ -1,5 +1,10 @@
 import { Chip, Stack, Typography } from '@mui/material';
-import { formatCreditCostLabel, tierLabel } from '@/lib/plans';
+import {
+  analysisCountLabel,
+  formatCreditCostLabel,
+  remainingAnalysesLabel,
+  tierLabel,
+} from '@/lib/plans';
 import type { BillingSummaryResponse } from '@/models';
 
 interface BillingSummaryProps {
@@ -12,7 +17,7 @@ export function BillingSummary({ billing }: BillingSummaryProps) {
       <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap>
         <Chip label={tierLabel(billing.tier)} color="primary" />
         <Chip
-          label={`${billing.creditsRemaining} credits left`}
+          label={remainingAnalysesLabel(billing.creditsRemaining)}
           variant="outlined"
         />
         {billing.stripeSubscriptionStatus ? (
@@ -25,7 +30,7 @@ export function BillingSummary({ billing }: BillingSummaryProps) {
       </Stack>
       <Typography color="text.secondary">
         Signed in as {billing.email}. Monthly allowance:{' '}
-        {billing.monthlyAllowance} credits.
+        {analysisCountLabel(billing.monthlyAllowance)}.
       </Typography>
       <Typography variant="body2" color="text.secondary">
         {formatCreditCostLabel(billing.analysisCreditCost, 'analysis')} ·{' '}

@@ -8,7 +8,7 @@ import { ErrorAlert, LoadingState, PageHeader } from '@/components/common/Feedba
 import { useBilling } from '@/hooks/useBilling';
 import { useBillingPlans } from '@/hooks/useBillingPlans';
 import { useCheckout } from '@/hooks/useBillingMutations';
-import { formatCreditCostLabel, tierLabel } from '@/lib/plans';
+import { formatCreditCostLabel, remainingAnalysesLabel, tierLabel } from '@/lib/plans';
 import { PROPERTIES_PATH } from '@/lib/paths';
 import type { CheckoutProduct, PlanCatalogItem } from '@/models';
 
@@ -68,7 +68,7 @@ export function PricingPage() {
     <Stack spacing={4} pb={{ xs: 4, md: 6 }}>
       <PageHeader
         title="Pricing"
-        subtitle={`${formatCreditCostLabel(catalog.analysisCreditCost, 'analysis')}. Proposed layouts use ${formatCreditCostLabel(catalog.proposedLayoutCreditCost, 'layout')}.`}
+        subtitle={`${formatCreditCostLabel(catalog.analysisCreditCost, 'analysis')}. ${formatCreditCostLabel(catalog.proposedLayoutCreditCost, 'layout')}.`}
       />
 
       {user && billing.data ? (
@@ -81,7 +81,7 @@ export function PricingPage() {
           }
         >
           You are on the {tierLabel(billing.data.tier)} plan with{' '}
-          {billing.data.creditsRemaining} credits remaining.
+          {remainingAnalysesLabel(billing.data.creditsRemaining).toLowerCase()}.
         </Alert>
       ) : null}
 
@@ -119,11 +119,11 @@ export function PricingPage() {
 
       <Stack spacing={1.5}>
         <Typography variant="h5" component="h2">
-          Credit top-ups
+          Extra analyses
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          One credit pool for analyses and proposed layouts. Top-ups never expire
-          while your account is active.
+          One shared balance for listing analyses and proposed layouts. Top-ups
+          never expire while your account is active.
         </Typography>
         <PlanCards
           plans={catalog.creditPacks}

@@ -61,15 +61,44 @@ export function tierLabel(tier: UserTier): string {
   }
 }
 
+/** Remaining analyses at or below this count show as a warning in the header. */
+export const LOW_ANALYSIS_BALANCE = 2;
+
+export function analysisCountLabel(amount: number): string {
+  const count = Math.max(0, amount);
+  return count === 1 ? '1 analysis' : `${count} analyses`;
+}
+
 export function formatCreditCostLabel(
   amount: number,
   noun: 'analysis' | 'layout',
 ): string {
-  const unit = amount === 1 ? 'credit' : 'credits';
-  return `${amount} ${unit} per ${noun}`;
+  const unit = analysisCountLabel(amount);
+  return noun === 'analysis' ? `${unit} per listing` : `${unit} per layout`;
 }
 
-/** Keep only the per-credit rate; drop catalog comparison copy. */
+export function remainingAnalysesLabel(
+  amount: number,
+  wording: 'left' | 'remaining' = 'left',
+): string {
+  if (amount <= 0) {
+    return `No analyses ${wording}`;
+  }
+  return `${analysisCountLabel(amount)} ${wording}`;
+}
+
+export function remainingAnalysesBadgeLabel(amount: number): string {
+  if (amount <= 0) {
+    return 'No analyses left';
+  }
+  return analysisCountLabel(amount);
+}
+
+export function isLowAnalysisBalance(amount: number): boolean {
+  return amount <= LOW_ANALYSIS_BALANCE;
+}
+
+/** Keep only the per-analysis rate; drop catalog comparison copy. */
 export function perCreditValueLabel(valueLabel: string): string {
   const separatorIndex = valueLabel.indexOf(' · ');
   return separatorIndex === -1

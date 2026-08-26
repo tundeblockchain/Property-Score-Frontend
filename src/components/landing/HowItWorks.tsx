@@ -26,7 +26,7 @@ export function HowItWorks() {
       <SectionHeading
         eyebrow="How it works"
         title="From listing link to investment view"
-        subtitle="One credit, one report. No spreadsheets to maintain."
+        subtitle="One listing, one report. No spreadsheets to maintain."
       />
       <Stack direction={{ xs: 'column', md: 'row' }} spacing={2.5}>
         {STEPS.map((step, index) => (
