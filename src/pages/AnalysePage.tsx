@@ -22,7 +22,7 @@ export function AnalysePage() {
     <Stack spacing={3}>
       <PageHeader
         title="Analyse"
-        subtitle="Paste a Rightmove or OnTheMarket listing URL to generate a property score and report."
+        subtitle="Paste a Rightmove, OnTheMarket, or Zoopla listing URL to generate a property score and report."
       />
       <InsufficientCreditsBanner
         show={(billing.data?.creditsRemaining ?? 0) <= 0}

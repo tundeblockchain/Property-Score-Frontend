@@ -6,7 +6,7 @@ const STEPS = [
   {
     title: 'Paste the listing',
     description:
-      'Copy a Rightmove or OnTheMarket listing link into the box above and start the analysis.',
+      'Copy a Rightmove, OnTheMarket, or Zoopla listing link into the box above and start the analysis.',
   },
   {
     title: 'We gather the evidence',

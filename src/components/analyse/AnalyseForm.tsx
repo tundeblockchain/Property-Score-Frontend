@@ -19,7 +19,7 @@ import {
 import { isValidListingUrl } from '@/lib/listingUrl';
 
 const INVALID_URL_MESSAGE =
-  'Enter a valid Rightmove or OnTheMarket property URL (e.g. https://www.rightmove.co.uk/properties/123).';
+  'Enter a valid Rightmove, OnTheMarket, or Zoopla property URL (e.g. https://www.rightmove.co.uk/properties/123).';
 
 interface AnalyseFormProps {
   creditsRemaining: number | undefined;
@@ -102,7 +102,7 @@ export function AnalyseForm({
         name="listing_url"
         value={url}
         onChange={(event) => setUrl(event.target.value)}
-        placeholder="https://www.rightmove.co.uk/properties/173188025 or https://www.onthemarket.com/details/19498710"
+        placeholder="https://www.rightmove.co.uk/properties/173188025"
         fullWidth
         required
         disabled={start.isPending || outOfCredits}

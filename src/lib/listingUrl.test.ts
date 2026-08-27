@@ -3,6 +3,7 @@ import {
   isValidListingUrl,
   isValidOnthemarketUrl,
   isValidRightmoveUrl,
+  isValidZooplaUrl,
   normalizeListingUrl,
 } from '@/lib/listingUrl';
 
@@ -25,9 +26,21 @@ describe('listingUrl helpers', () => {
     );
   });
 
-  it('rejects Zoopla and search URLs', () => {
+  it('accepts Zoopla sale and rent details URLs', () => {
     expect(
-      isValidListingUrl('https://www.zoopla.co.uk/for-sale/details/123'),
+      isValidZooplaUrl('https://www.zoopla.co.uk/for-sale/details/71153465'),
+    ).toBe(true);
+    expect(
+      isValidZooplaUrl('https://zoopla.co.uk/to-rent/details/12345678/'),
+    ).toBe(true);
+    expect(
+      isValidListingUrl('https://www.zoopla.co.uk/for-sale/details/71153465'),
+    ).toBe(true);
+  });
+
+  it('rejects Zoopla search URLs', () => {
+    expect(
+      isValidListingUrl('https://www.zoopla.co.uk/for-sale/property/london/'),
     ).toBe(false);
     expect(
       isValidOnthemarketUrl(
