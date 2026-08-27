@@ -21,7 +21,8 @@ export interface TierAccess {
 }
 
 export interface AnalyseRequest {
-  rightmove_url: string;
+  listing_url?: string;
+  rightmove_url?: string;
 }
 
 export interface AnalyseAcceptedResponse {
@@ -40,7 +41,7 @@ export interface ScoreBreakdown {
 
 export interface PropertyListingSummary {
   url: string;
-  source: 'rightmove' | 'zoopla' | 'other';
+  source: 'rightmove' | 'zoopla' | 'onthemarket' | 'other';
   address?: string;
   postcode?: string;
   price?: number;

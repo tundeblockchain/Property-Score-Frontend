@@ -31,7 +31,7 @@ export function LandingHero() {
           component="h1"
           sx={{ fontSize: { xs: '2.25rem', sm: '2.75rem', md: '3.25rem' } }}
         >
-          Score any Rightmove listing in seconds.
+          Score a Rightmove or OnTheMarket listing in seconds.
         </Typography>
         <Typography variant="h6" component="p" color="text.secondary" fontWeight={400}>
           Paste a listing link and get an investor-grade score with the

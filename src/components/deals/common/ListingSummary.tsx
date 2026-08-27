@@ -2,6 +2,35 @@ import { Box, Chip, Stack, Typography } from '@mui/material';
 import { formatCurrency } from '@/lib/format';
 import type { PropertyListingSummary } from '@/models';
 
+function listingLinkLabel(listing: PropertyListingSummary, href?: string): string {
+  if (listing.source === 'onthemarket') {
+    return 'View on OnTheMarket';
+  }
+  if (listing.source === 'zoopla') {
+    return 'View on Zoopla';
+  }
+  if (listing.source === 'rightmove') {
+    return 'View on Rightmove';
+  }
+
+  try {
+    const host = new URL(href ?? listing.url).hostname.toLowerCase();
+    if (host.includes('onthemarket.com')) {
+      return 'View on OnTheMarket';
+    }
+    if (host.includes('zoopla.co.uk')) {
+      return 'View on Zoopla';
+    }
+    if (host.includes('rightmove.co.uk')) {
+      return 'View on Rightmove';
+    }
+  } catch {
+    // Fall through to the generic label when the URL cannot be parsed.
+  }
+
+  return 'View listing';
+}
+
 interface ListingSummaryProps {
   listing: PropertyListingSummary;
   listingUrl?: string;
@@ -88,7 +117,7 @@ export function ListingSummary({
             variant="body2"
             color="primary"
           >
-            View on Rightmove
+            {listingLinkLabel(listing, href)}
           </Typography>
         ) : null}
       </Stack>

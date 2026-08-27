@@ -25,7 +25,7 @@ export function DealsPage() {
         title="Properties"
         subtitle={
           showAnalyseForm
-            ? 'Paste a Rightmove listing to create your first report.'
+            ? 'Paste a Rightmove or OnTheMarket listing to create your first report.'
             : 'Your 25 most recent analyses, newest first.'
         }
       />

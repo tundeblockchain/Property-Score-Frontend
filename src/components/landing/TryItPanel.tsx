@@ -32,8 +32,8 @@ export function TryItPanel() {
           heading="Try it now — score a listing"
           description={
             user
-              ? 'Paste a Rightmove property link and we will score it straight away.'
-              : 'Paste a Rightmove property link. We will ask you to sign in or create an account just before the analysis runs, then show the result here.'
+              ? 'Paste a Rightmove or OnTheMarket property link and we will score it straight away.'
+              : 'Paste a Rightmove or OnTheMarket property link. We will ask you to sign in or create an account just before the analysis runs, then show the result here.'
           }
           submitLabel="Analyse listing"
         />
