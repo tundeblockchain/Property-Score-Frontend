@@ -16,6 +16,7 @@ export type {
   ConversionStep,
   CreateCheckoutRequest,
   CreateCheckoutResponse,
+  CreatePortalRequest,
   CreatePortalResponse,
   CrimeEnrichment,
   DealDetail,

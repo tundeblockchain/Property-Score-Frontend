@@ -25,5 +25,7 @@ export function createCheckout(
 }
 
 export function createPortal(): Promise<CreatePortalResponse> {
-  return apiClient.post<CreatePortalResponse>('/api/billing/portal');
+  return apiClient.post<CreatePortalResponse>('/api/billing/portal', {
+    returnOrigin: window.location.origin,
+  });
 }
