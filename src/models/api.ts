@@ -595,6 +595,10 @@ export interface CreateCheckoutResponse {
   sessionId: string;
 }
 
+export interface CreatePortalRequest {
+  returnOrigin?: string;
+}
+
 export interface CreatePortalResponse {
   portalUrl: string;
 }
