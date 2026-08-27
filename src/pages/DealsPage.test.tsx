@@ -74,10 +74,12 @@ describe('DealsPage', () => {
       await screen.findByRole('heading', { name: 'Analyse a listing' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText('Paste a Rightmove listing to create your first report.'),
+      screen.getByText(
+        'Paste a Rightmove or OnTheMarket listing to create your first report.',
+      ),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('textbox', { name: /rightmove url/i }),
+      screen.getByRole('textbox', { name: /listing url/i }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: 'Start analysis' }),
@@ -110,7 +112,7 @@ describe('DealsPage', () => {
       screen.queryByRole('heading', { name: 'Analyse a listing' }),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByRole('textbox', { name: /rightmove url/i }),
+      screen.queryByRole('textbox', { name: /listing url/i }),
     ).not.toBeInTheDocument();
   });
 });

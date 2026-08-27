@@ -16,10 +16,10 @@ import {
   getUserFacingErrorMessage,
   logError,
 } from '@/lib/errors';
-import { isValidRightmoveUrl } from '@/lib/rightmoveUrl';
+import { isValidListingUrl } from '@/lib/listingUrl';
 
 const INVALID_URL_MESSAGE =
-  'Enter a valid Rightmove property URL (e.g. https://www.rightmove.co.uk/properties/123).';
+  'Enter a valid Rightmove or OnTheMarket property URL (e.g. https://www.rightmove.co.uk/properties/123).';
 
 interface AnalyseFormProps {
   creditsRemaining: number | undefined;
@@ -45,8 +45,8 @@ export function AnalyseForm({
   const outOfCredits =
     creditsRemaining !== undefined && creditsRemaining <= 0;
 
-  function startAnalysis(rightmoveUrl: string) {
-    start.mutate(rightmoveUrl, {
+  function startAnalysis(listingUrl: string) {
+    start.mutate(listingUrl, {
       onSuccess: (data) => onAccepted(data.jobId),
     });
   }
@@ -55,7 +55,7 @@ export function AnalyseForm({
     event.preventDefault();
     setLocalError(null);
 
-    if (!isValidRightmoveUrl(url)) {
+    if (!isValidListingUrl(url)) {
       setLocalError(INVALID_URL_MESSAGE);
       return;
     }
@@ -70,7 +70,7 @@ export function AnalyseForm({
 
   function handleAuthenticated() {
     setAuthDialogOpen(false);
-    if (isValidRightmoveUrl(url)) {
+    if (isValidListingUrl(url)) {
       startAnalysis(url);
     }
   }
@@ -98,11 +98,11 @@ export function AnalyseForm({
         ) : null}
       </Stack>
       <TextField
-        label="Rightmove URL"
-        name="rightmove_url"
+        label="Listing URL"
+        name="listing_url"
         value={url}
         onChange={(event) => setUrl(event.target.value)}
-        placeholder="https://www.rightmove.co.uk/properties/173188025"
+        placeholder="https://www.rightmove.co.uk/properties/173188025 or https://www.onthemarket.com/details/19498710"
         fullWidth
         required
         disabled={start.isPending || outOfCredits}

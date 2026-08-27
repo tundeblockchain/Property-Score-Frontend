@@ -5,9 +5,9 @@ import { useAuth } from '@/auth/AuthContext';
 import { queryKeys } from '@/hooks/queryKeys';
 import { AnalysisSocket } from '@/lib/websocket';
 import {
-  isValidRightmoveUrl,
-  normalizeRightmoveUrl,
-} from '@/lib/rightmoveUrl';
+  isValidListingUrl,
+  normalizeListingUrl,
+} from '@/lib/listingUrl';
 import type { AnalyseStatusResponse, JobSocketMessage } from '@/models';
 
 const POLL_INTERVAL_MS = 4000;
@@ -17,14 +17,14 @@ export function useStartAnalysis() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (rightmoveUrl: string) => {
-      if (!isValidRightmoveUrl(rightmoveUrl)) {
+    mutationFn: async (listingUrl: string) => {
+      if (!isValidListingUrl(listingUrl)) {
         throw new Error(
-          'Enter a valid Rightmove property URL (e.g. https://www.rightmove.co.uk/properties/123).',
+          'Enter a valid Rightmove or OnTheMarket property URL (e.g. https://www.rightmove.co.uk/properties/123).',
         );
       }
       return startAnalysis({
-        rightmove_url: normalizeRightmoveUrl(rightmoveUrl),
+        listing_url: normalizeListingUrl(listingUrl),
       });
     },
     onSuccess: () => {
