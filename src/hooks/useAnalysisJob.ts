@@ -8,7 +8,7 @@ import {
   isValidListingUrl,
   normalizeListingUrl,
 } from '@/lib/listingUrl';
-import type { AnalyseStatusResponse, JobSocketMessage } from '@/models';
+import type { AnalyseStatusResponse, AnalysisStrategy, JobSocketMessage } from '@/models';
 
 const POLL_INTERVAL_MS = 4000;
 const MAX_POLL_MS = 5 * 60 * 1000;
@@ -17,14 +17,18 @@ export function useStartAnalysis() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (listingUrl: string) => {
-      if (!isValidListingUrl(listingUrl)) {
+    mutationFn: async (input: {
+      listingUrl: string;
+      strategy: AnalysisStrategy;
+    }) => {
+      if (!isValidListingUrl(input.listingUrl)) {
         throw new Error(
           'Enter a valid Rightmove, OnTheMarket, or Zoopla property URL (e.g. https://www.rightmove.co.uk/properties/123).',
         );
       }
       return startAnalysis({
-        listing_url: normalizeListingUrl(listingUrl),
+        listing_url: normalizeListingUrl(input.listingUrl),
+        strategy: input.strategy,
       });
     },
     onSuccess: () => {

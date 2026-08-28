@@ -36,6 +36,7 @@ import { PropertyImages } from '@/components/deals/panels/PropertyImages';
 import { SchoolsPanel } from '@/components/deals/panels/SchoolsPanel';
 import { TransportPanel } from '@/components/deals/panels/TransportPanel';
 import { SectionUnavailable } from '@/components/deals/report/SectionUnavailable';
+import { resolveAnalysisStrategy } from '@/lib/analysisStrategy';
 import type { DealDetail } from '@/models';
 
 type UpgradePlan = 'Starter' | 'Pro';
@@ -286,12 +287,22 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
   }
 
   if (financialModel) {
+    const isBuyToLet = resolveAnalysisStrategy(deal.strategy) === 'buy_to_let';
+    const occupancyBasis =
+      isBuyToLet && listing?.bedrooms != null
+        ? `${listing.bedrooms}-bed AST`
+        : undefined;
     sections.push({
       id: 'financial-model',
-      title: 'Financial model',
+      title: isBuyToLet ? 'Buy-to-let financials' : 'Financial model',
       defaultExpanded: true,
       icon: PaymentsOutlinedIcon,
-      render: () => <FinancialModelPanel model={financialModel} />,
+      render: () => (
+        <FinancialModelPanel
+          model={financialModel}
+          occupancyBasis={occupancyBasis}
+        />
+      ),
     });
   } else if (isComplete) {
     sections.push(

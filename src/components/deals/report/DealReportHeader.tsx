@@ -2,13 +2,16 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Link, Stack, Typography } from '@mui/material';
 import type { ReactNode } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import { AnalysisStrategyChip } from '@/components/deals/common/AnalysisStrategyChip';
 import { DealStatusChip } from '@/components/deals/common/DealStatusChip';
+import { analysisStrategyLabel } from '@/lib/analysisStrategy';
 import { formatDate } from '@/lib/format';
-import type { DealStatus } from '@/models';
+import type { AnalysisStrategy, DealStatus } from '@/models';
 
 interface DealReportHeaderProps {
   address: string;
   status: DealStatus;
+  strategy?: AnalysisStrategy;
   updatedAt?: string;
   action?: ReactNode;
 }
@@ -16,6 +19,7 @@ interface DealReportHeaderProps {
 export function DealReportHeader({
   address,
   status,
+  strategy,
   updatedAt,
   action,
 }: DealReportHeaderProps) {
@@ -49,7 +53,7 @@ export function DealReportHeader({
             color="text.secondary"
             lineHeight={1.4}
           >
-            Property report
+            {analysisStrategyLabel(strategy)} report
           </Typography>
           <Typography variant="h4" component="h1">
             {address}
@@ -62,6 +66,7 @@ export function DealReportHeader({
             useFlexGap
           >
             <DealStatusChip status={status} />
+            <AnalysisStrategyChip strategy={strategy} />
             <Typography variant="body2" color="text.secondary">
               Updated {formatDate(updatedAt)}
             </Typography>

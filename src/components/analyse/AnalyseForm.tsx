@@ -1,8 +1,11 @@
 import {
   Alert,
   Button,
+  FormLabel,
   Stack,
   TextField,
+  ToggleButton,
+  ToggleButtonGroup,
   Typography,
 } from '@mui/material';
 import { useEffect, useState, type FormEvent } from 'react';
@@ -11,12 +14,14 @@ import { useAuth } from '@/auth/AuthContext';
 import { AuthDialog } from '@/components/auth/AuthDialog';
 import { ErrorAlert } from '@/components/common/Feedback';
 import { useStartAnalysis } from '@/hooks/useAnalysisJob';
+import { DEFAULT_ANALYSIS_STRATEGY } from '@/lib/analysisStrategy';
 import {
   ApiError,
   getUserFacingErrorMessage,
   logError,
 } from '@/lib/errors';
 import { isValidListingUrl } from '@/lib/listingUrl';
+import type { AnalysisStrategy } from '@/models';
 
 const INVALID_URL_MESSAGE =
   'Enter a valid Rightmove, OnTheMarket, or Zoopla property URL (e.g. https://www.rightmove.co.uk/properties/123).';
@@ -38,6 +43,9 @@ export function AnalyseForm({
 }: AnalyseFormProps) {
   const { user } = useAuth();
   const [url, setUrl] = useState('');
+  const [strategy, setStrategy] = useState<AnalysisStrategy>(
+    DEFAULT_ANALYSIS_STRATEGY,
+  );
   const [localError, setLocalError] = useState<string | null>(null);
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const start = useStartAnalysis();
@@ -46,9 +54,12 @@ export function AnalyseForm({
     creditsRemaining !== undefined && creditsRemaining <= 0;
 
   function startAnalysis(listingUrl: string) {
-    start.mutate(listingUrl, {
-      onSuccess: (data) => onAccepted(data.jobId),
-    });
+    start.mutate(
+      { listingUrl, strategy },
+      {
+        onSuccess: (data) => onAccepted(data.jobId),
+      },
+    );
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -96,6 +107,29 @@ export function AnalyseForm({
             {description}
           </Typography>
         ) : null}
+      </Stack>
+      <Stack spacing={1}>
+        <FormLabel id="analysis-strategy-label">Analysis type</FormLabel>
+        <ToggleButtonGroup
+          exclusive
+          fullWidth
+          value={strategy}
+          onChange={(_event, next: AnalysisStrategy | null) => {
+            if (next) {
+              setStrategy(next);
+            }
+          }}
+          aria-labelledby="analysis-strategy-label"
+          disabled={start.isPending || outOfCredits}
+        >
+          <ToggleButton value="hmo">HMO conversion</ToggleButton>
+          <ToggleButton value="buy_to_let">Buy to let</ToggleButton>
+        </ToggleButtonGroup>
+        <Typography variant="caption" color="text.secondary">
+          {strategy === 'buy_to_let'
+            ? 'Scores a whole-house family AST. Skips HMO conversion schemes.'
+            : 'Scores room-by-room HMO schemes against the listing.'}
+        </Typography>
       </Stack>
       <TextField
         label="Listing URL"

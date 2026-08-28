@@ -1,6 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import { formatCurrency, formatPercent } from '@/lib/format';
-import type { FinancialModel, HmoPlannerResult } from '@/models';
+import { resolveAnalysisStrategy } from '@/lib/analysisStrategy';
+import type { AnalysisStrategy, FinancialModel, HmoPlannerResult } from '@/models';
 
 interface Kpi {
   readonly label: string;
@@ -14,6 +15,8 @@ interface Kpi {
 interface DealKpiStripProps {
   financialModel?: FinancialModel;
   hmoPlanner?: HmoPlannerResult;
+  strategy?: AnalysisStrategy;
+  bedrooms?: number;
 }
 
 function recommendedLettingRooms(
@@ -28,7 +31,12 @@ function recommendedLettingRooms(
   return recommended?.lettingRooms;
 }
 
-function buildKpis({ financialModel, hmoPlanner }: DealKpiStripProps): Kpi[] {
+function buildKpis({
+  financialModel,
+  hmoPlanner,
+  strategy,
+  bedrooms,
+}: DealKpiStripProps): Kpi[] {
   const netCashFlow = financialModel?.netCashFlowAnnual;
   const lettingRooms = recommendedLettingRooms(hmoPlanner);
 
@@ -57,7 +65,14 @@ function buildKpis({ financialModel, hmoPlanner }: DealKpiStripProps): Kpi[] {
     },
   ];
 
-  if (lettingRooms != null) {
+  if (resolveAnalysisStrategy(strategy) === 'buy_to_let' && bedrooms != null) {
+    kpis.push({
+      label: 'Occupancy',
+      value: `${bedrooms}-bed AST`,
+      hint: 'family let',
+      targetId: 'financial-model',
+    });
+  } else if (lettingRooms != null) {
     kpis.push({
       label: 'HMO rooms',
       value: String(lettingRooms),
@@ -72,8 +87,10 @@ function buildKpis({ financialModel, hmoPlanner }: DealKpiStripProps): Kpi[] {
 export function DealKpiStrip({
   financialModel,
   hmoPlanner,
+  strategy,
+  bedrooms,
 }: DealKpiStripProps) {
-  const kpis = buildKpis({ financialModel, hmoPlanner });
+  const kpis = buildKpis({ financialModel, hmoPlanner, strategy, bedrooms });
 
   return (
     <Box

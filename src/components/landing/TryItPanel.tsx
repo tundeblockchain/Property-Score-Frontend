@@ -32,8 +32,8 @@ export function TryItPanel() {
           heading="Try it now — score a listing"
           description={
             user
-              ? 'Paste a Rightmove, OnTheMarket, or Zoopla property link and we will score it straight away.'
-              : 'Paste a Rightmove, OnTheMarket, or Zoopla property link. We will ask you to sign in or create an account just before the analysis runs, then show the result here.'
+              ? 'Choose HMO conversion or buy to let, paste a Rightmove, OnTheMarket, or Zoopla property link, and we will score it straight away.'
+              : 'Choose HMO conversion or buy to let, then paste a Rightmove, OnTheMarket, or Zoopla property link. We will ask you to sign in or create an account just before the analysis runs, then show the result here.'
           }
           submitLabel="Analyse listing"
         />

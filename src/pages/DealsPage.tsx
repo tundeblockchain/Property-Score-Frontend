@@ -25,7 +25,7 @@ export function DealsPage() {
         title="Properties"
         subtitle={
           showAnalyseForm
-            ? 'Paste a Rightmove, OnTheMarket, or Zoopla listing to create your first report.'
+            ? 'Paste a Rightmove, OnTheMarket, or Zoopla listing and choose HMO conversion or buy to let to create your first report.'
             : 'Your 25 most recent analyses, newest first.'
         }
       />

@@ -3,6 +3,7 @@ import { ListingSummary } from '@/components/deals/common/ListingSummary';
 import { OverallScoreBadge } from '@/components/deals/common/OverallScoreBadge';
 import { DealKpiStrip } from '@/components/deals/report/DealKpiStrip';
 import type {
+  AnalysisStrategy,
   FinancialModel,
   HmoPlannerResult,
   PropertyListingSummary,
@@ -15,6 +16,7 @@ interface DealHeroCardProps {
   scores?: ScoreBreakdown;
   financialModel?: FinancialModel;
   hmoPlanner?: HmoPlannerResult;
+  strategy?: AnalysisStrategy;
 }
 
 export function DealHeroCard({
@@ -23,6 +25,7 @@ export function DealHeroCard({
   scores,
   financialModel,
   hmoPlanner,
+  strategy,
 }: DealHeroCardProps) {
   return (
     <Paper sx={{ p: 3 }}>
@@ -55,6 +58,8 @@ export function DealHeroCard({
         <DealKpiStrip
           financialModel={financialModel}
           hmoPlanner={hmoPlanner}
+          strategy={strategy}
+          bedrooms={listing?.bedrooms}
         />
       </Stack>
     </Paper>

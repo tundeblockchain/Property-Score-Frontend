@@ -15,6 +15,11 @@ const FAQS = [
       'Rightmove, OnTheMarket, and Zoopla property pages are supported — links like https://www.rightmove.co.uk/properties/173188025, https://www.onthemarket.com/details/19498710, or https://www.zoopla.co.uk/for-sale/details/71153465.',
   },
   {
+    question: 'Can I analyse a standard buy to let?',
+    answer:
+      'Yes. Choose Buy to let before you start. That scores a whole-house family AST instead of HMO conversion schemes. HMO conversion remains the default.',
+  },
+  {
     question: 'Do I need an account to try it?',
     answer:
       'You can paste a link first. We ask you to sign in or create an account just before the analysis runs, then the result appears on the same page.',

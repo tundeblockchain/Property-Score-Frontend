@@ -38,4 +38,17 @@ describe('FinancialModelPanel', () => {
     expect(screen.getByText('Est. ROI')).toBeInTheDocument();
     expect(screen.getByText('—')).toBeInTheDocument();
   });
+
+  it('adds occupancy when the analysis is a family AST', () => {
+    const { container } = renderWithProviders(
+      <FinancialModelPanel
+        model={buildFinancialModel()}
+        occupancyBasis="3-bed AST"
+      />,
+    );
+
+    expect(container.querySelectorAll('dt')).toHaveLength(6);
+    expect(screen.getByText('Occupancy')).toBeInTheDocument();
+    expect(screen.getByText('3-bed AST')).toBeInTheDocument();
+  });
 });

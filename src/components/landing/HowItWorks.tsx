@@ -4,9 +4,9 @@ import { SectionHeading } from '@/components/landing/SectionHeading';
 
 const STEPS = [
   {
-    title: 'Paste the listing',
+    title: 'Choose the product',
     description:
-      'Copy a Rightmove, OnTheMarket, or Zoopla listing link into the box above and start the analysis.',
+      'Pick HMO conversion or buy to let, then paste a Rightmove, OnTheMarket, or Zoopla listing link.',
   },
   {
     title: 'We gather the evidence',
