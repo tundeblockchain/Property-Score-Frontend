@@ -315,6 +315,26 @@ describe('buildReportSections', () => {
     expect(sections).toEqual([]);
   });
 
+  it('titles the money section as buy-to-let and omits HMO schemes', () => {
+    const sections = buildReportSections(
+      buildDealDetail({
+        strategy: 'buy_to_let',
+        listing: buildListing({ bedrooms: 3 }),
+        financialModel: buildFinancialModel(),
+      }),
+    );
+
+    expect(sections.map((section) => section.id)).toEqual([
+      ...ALWAYS_RUN_SECTION_IDS,
+    ]);
+    expect(
+      sections.find((section) => section.id === 'financial-model')?.title,
+    ).toBe('Buy-to-let financials');
+    expect(sections.some((section) => section.id.startsWith('hmo-'))).toBe(
+      false,
+    );
+  });
+
   it('shows area insights when any single area signal is present', () => {
     const sections = buildReportSections(
       buildDealDetail({

@@ -36,6 +36,7 @@ export function DealDetailPage() {
       <DealReportHeader
         address={headerAddress}
         status={data.status}
+        strategy={data.strategy}
         updatedAt={data.updatedAt}
         action={
           <Stack
@@ -72,6 +73,7 @@ export function DealDetailPage() {
         scores={data.scores}
         financialModel={data.financialModel}
         hmoPlanner={data.hmoPlanner}
+        strategy={data.strategy}
       />
 
       <DealReport deal={data} />

@@ -86,4 +86,18 @@ describe('DealKpiStrip', () => {
 
     expect(screen.queryByText('HMO rooms')).not.toBeInTheDocument();
   });
+
+  it('shows family AST occupancy on a buy-to-let analysis', () => {
+    renderWithProviders(
+      <DealKpiStrip
+        financialModel={buildFinancialModel()}
+        strategy="buy_to_let"
+        bedrooms={3}
+      />,
+    );
+
+    expect(screen.getByText('Occupancy')).toBeInTheDocument();
+    expect(screen.getByText('3-bed AST')).toBeInTheDocument();
+    expect(screen.queryByText('HMO rooms')).not.toBeInTheDocument();
+  });
 });

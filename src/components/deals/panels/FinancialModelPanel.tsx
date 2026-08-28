@@ -5,6 +5,7 @@ import type { FinancialModel } from '@/models';
 
 interface FinancialModelPanelProps {
   model: FinancialModel;
+  occupancyBasis?: string;
 }
 
 interface FinancialRow {
@@ -21,8 +22,14 @@ function cashFlowColor(value: number | undefined): string | undefined {
   return value > 0 ? 'success.dark' : 'error.dark';
 }
 
-export function FinancialModelPanel({ model }: FinancialModelPanelProps) {
+export function FinancialModelPanel({
+  model,
+  occupancyBasis,
+}: FinancialModelPanelProps) {
   const rows: FinancialRow[] = [
+    ...(occupancyBasis
+      ? [{ label: 'Occupancy', value: occupancyBasis }]
+      : []),
     { label: 'Asking price', value: formatCurrency(model.askingPrice) },
     {
       label: 'Est. monthly rent',

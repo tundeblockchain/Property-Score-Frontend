@@ -2,6 +2,8 @@ export type UserTier = 'FREE' | 'STARTER' | 'PRO' | 'ENTERPRISE';
 
 export type DealStatus = 'PROCESSING' | 'COMPLETED' | 'FAILED';
 
+export type AnalysisStrategy = 'hmo' | 'buy_to_let';
+
 export type CheckoutProduct =
   | 'starter_subscription'
   | 'pro_subscription'
@@ -23,6 +25,7 @@ export interface TierAccess {
 export interface AnalyseRequest {
   listing_url?: string;
   rightmove_url?: string;
+  strategy?: AnalysisStrategy;
 }
 
 export interface AnalyseAcceptedResponse {
@@ -59,6 +62,7 @@ export interface AnalyseStatusResponse {
   scores?: ScoreBreakdown;
   listing?: PropertyListingSummary;
   errorMessage?: string;
+  strategy?: AnalysisStrategy;
   createdAt: string;
   updatedAt: string;
 }
@@ -508,6 +512,7 @@ export interface DealSummary {
   dealId: string;
   status: DealStatus;
   listingUrl: string;
+  strategy?: AnalysisStrategy;
   scores?: ScoreBreakdown;
   listing?: PropertyListingSummary;
   createdAt: string;

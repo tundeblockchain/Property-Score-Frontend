@@ -1,5 +1,6 @@
 import { Box, CardActionArea, Stack, Typography } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
+import { AnalysisStrategyChip } from '@/components/deals/common/AnalysisStrategyChip';
 import { DealStatusChip } from '@/components/deals/common/DealStatusChip';
 import { OverallScoreBadge } from '@/components/deals/common/OverallScoreBadge';
 import { formatCurrency, formatDate } from '@/lib/format';
@@ -47,6 +48,7 @@ export function DealListItem({ deal }: DealListItemProps) {
               {address}
             </Typography>
             <DealStatusChip status={deal.status} />
+            <AnalysisStrategyChip strategy={deal.strategy} />
           </Stack>
           <Typography variant="body2" color="text.secondary" noWrap>
             {formatCurrency(price)} · {formatDate(deal.createdAt)}

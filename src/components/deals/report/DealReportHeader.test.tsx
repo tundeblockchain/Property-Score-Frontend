@@ -35,7 +35,21 @@ describe('DealReportHeader', () => {
     );
 
     expect(screen.getByText('Processing')).toBeInTheDocument();
+    expect(screen.getByText('HMO conversion')).toBeInTheDocument();
     expect(screen.getByText(/^Updated .*2026/)).toBeInTheDocument();
+  });
+
+  it('labels a buy-to-let report', () => {
+    renderWithProviders(
+      <DealReportHeader
+        address="12 Example Road"
+        status="COMPLETED"
+        strategy="buy_to_let"
+      />,
+    );
+
+    expect(screen.getByText('Buy to let report')).toBeInTheDocument();
+    expect(screen.getByText('Buy to let')).toBeInTheDocument();
   });
 
   it('falls back to a placeholder when there is no update time', () => {

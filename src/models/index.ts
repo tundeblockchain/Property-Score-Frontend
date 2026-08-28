@@ -2,6 +2,7 @@ export type {
   AnalyseAcceptedResponse,
   AnalyseRequest,
   AnalyseStatusResponse,
+  AnalysisStrategy,
   ApiErrorBody,
   BillingSummaryResponse,
   BillingPlansResponse,
