@@ -34,4 +34,22 @@ describe('ListingSummary', () => {
       screen.getByRole('link', { name: 'View on OnTheMarket' }),
     ).toHaveAttribute('href', 'https://www.onthemarket.com/details/19498710/');
   });
+
+  it('links to Zoopla for Zoopla listings', () => {
+    renderWithProviders(
+      <ListingSummary
+        listing={buildListing({
+          url: 'https://www.zoopla.co.uk/for-sale/details/71153465/',
+          source: 'zoopla',
+        })}
+      />,
+    );
+
+    expect(
+      screen.getByRole('link', { name: 'View on Zoopla' }),
+    ).toHaveAttribute(
+      'href',
+      'https://www.zoopla.co.uk/for-sale/details/71153465/',
+    );
+  });
 });

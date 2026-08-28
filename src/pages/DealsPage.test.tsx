@@ -75,7 +75,7 @@ describe('DealsPage', () => {
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        'Paste a Rightmove or OnTheMarket listing to create your first report.',
+        'Paste a Rightmove, OnTheMarket, or Zoopla listing to create your first report.',
       ),
     ).toBeInTheDocument();
     expect(

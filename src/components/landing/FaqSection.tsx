@@ -12,7 +12,7 @@ const FAQS = [
   {
     question: 'Which listings can I analyse?',
     answer:
-      'Rightmove and OnTheMarket property pages are supported — links like https://www.rightmove.co.uk/properties/173188025 or https://www.onthemarket.com/details/19498710.',
+      'Rightmove, OnTheMarket, and Zoopla property pages are supported — links like https://www.rightmove.co.uk/properties/173188025, https://www.onthemarket.com/details/19498710, or https://www.zoopla.co.uk/for-sale/details/71153465.',
   },
   {
     question: 'Do I need an account to try it?',

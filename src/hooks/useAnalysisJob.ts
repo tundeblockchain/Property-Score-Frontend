@@ -20,7 +20,7 @@ export function useStartAnalysis() {
     mutationFn: async (listingUrl: string) => {
       if (!isValidListingUrl(listingUrl)) {
         throw new Error(
-          'Enter a valid Rightmove or OnTheMarket property URL (e.g. https://www.rightmove.co.uk/properties/123).',
+          'Enter a valid Rightmove, OnTheMarket, or Zoopla property URL (e.g. https://www.rightmove.co.uk/properties/123).',
         );
       }
       return startAnalysis({
