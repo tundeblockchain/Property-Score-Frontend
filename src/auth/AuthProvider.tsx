@@ -15,6 +15,10 @@ import {
   signUp as firebaseSignUp,
   subscribeToAuth,
 } from '@/auth/firebase';
+import {
+  trackCompleteRegistration,
+  trackStartTrial,
+} from '@/lib/analytics';
 import type { User } from '@/models';
 
 interface AuthProviderProps {
@@ -47,10 +51,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const signUp = useCallback(async (email: string, password: string) => {
     await firebaseSignUp(email, password);
+    trackCompleteRegistration('email');
+    trackStartTrial();
   }, []);
 
   const signInWithGoogle = useCallback(async () => {
-    await firebaseSignInWithGoogle();
+    const { isNewUser } = await firebaseSignInWithGoogle();
+    if (isNewUser) {
+      trackCompleteRegistration('google');
+      trackStartTrial();
+    }
   }, []);
 
   const signOut = useCallback(async () => {

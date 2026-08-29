@@ -1,7 +1,11 @@
-import { Box, Container, Link, Stack, Typography } from '@mui/material';
+import { Box, Button, Container, Link, Stack, Typography } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import { Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '@/auth/AuthContext';
+
+interface SiteFooterProps {
+  onCookieSettings?: () => void;
+}
 
 const PUBLIC_LINKS = [
   { to: '/', label: 'Home' },
@@ -17,7 +21,7 @@ const SIGNED_IN_LINKS = [
   { to: '/account', label: 'Account' },
 ] as const;
 
-export function SiteFooter() {
+export function SiteFooter({ onCookieSettings }: SiteFooterProps) {
   const { user } = useAuth();
   const links = user ? SIGNED_IN_LINKS : PUBLIC_LINKS;
 
@@ -74,6 +78,22 @@ export function SiteFooter() {
                 {link.label}
               </Link>
             ))}
+            {onCookieSettings ? (
+              <Button
+                onClick={onCookieSettings}
+                variant="text"
+                size="small"
+                sx={{
+                  minWidth: 0,
+                  px: 0,
+                  py: 0,
+                  color: (theme) => alpha(theme.palette.primary.contrastText, 0.78),
+                  '&:hover': { color: 'primary.contrastText', bgcolor: 'transparent' },
+                }}
+              >
+                Cookie settings
+              </Button>
+            ) : null}
           </Stack>
         </Stack>
       </Container>

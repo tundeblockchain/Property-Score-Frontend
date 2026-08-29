@@ -77,4 +77,11 @@ describe('applySeoPlaceholders', () => {
     const webPage = jsonLd['@graph'].find((node) => node['@type'] === 'WebPage');
     expect(webPage?.url).toBe(`${SITE_ORIGIN}/pricing`);
   });
+
+  it('embeds Meta domain verification when a token is supplied', () => {
+    const html = applySeoPlaceholders(template, HOME_SEO, 'abc123');
+    expect(html).toContain(
+      'name="facebook-domain-verification" content="abc123"',
+    );
+  });
 });

@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getSchemeRender, postSchemeRender } from '@/api/deals';
 import { queryKeys } from '@/hooks/queryKeys';
+import { trackGenerateLayout } from '@/lib/analytics';
 import type { HmoSchemeRendering, RenderDealSchemeResponse } from '@/models';
 
 const PENDING_POLL_MS = 2500;
@@ -59,6 +60,7 @@ export function useSchemeRender(input: {
   const generate = useMutation({
     mutationFn: () => postSchemeRender(dealId, schemeId),
     onSuccess: (data) => {
+      trackGenerateLayout(schemeId);
       queryClient.setQueryData(queryKeys.schemeRender(dealId, schemeId), data);
       void queryClient.invalidateQueries({ queryKey: queryKeys.deal(dealId) });
       void queryClient.invalidateQueries({ queryKey: queryKeys.billing });

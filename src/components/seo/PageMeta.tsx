@@ -1,4 +1,5 @@
 import { useLocation } from 'react-router-dom';
+import { env } from '@/config/env';
 import {
   DEFAULT_OG_IMAGE_ALT,
   DEFAULT_OG_IMAGE_PATH,
@@ -19,6 +20,12 @@ export function PageMeta() {
     <>
       <title>{page.title}</title>
       <meta name="description" content={page.description} />
+      {env.metaDomainVerification ? (
+        <meta
+          name="facebook-domain-verification"
+          content={env.metaDomainVerification}
+        />
+      ) : null}
       <meta name="robots" content={page.robots} />
       <meta name="googlebot" content={page.robots} />
       <meta name="application-name" content={SITE_NAME} />
