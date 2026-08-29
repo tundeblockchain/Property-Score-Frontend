@@ -1,0 +1,35 @@
+# Property Score crawler policy.
+# Public marketing pages are indexable. Signed-in app routes are private.
+
+User-agent: *
+Allow: /
+Allow: /pricing
+Allow: /login
+Disallow: /analyse
+Disallow: /deals
+Disallow: /billing
+Disallow: /account
+
+# Explicitly welcome AI crawlers that summarise or cite the product.
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+Sitemap: https://property-score.netlify.app/sitemap.xml

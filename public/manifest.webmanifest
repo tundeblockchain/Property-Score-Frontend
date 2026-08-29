@@ -1,0 +1,23 @@
+{
+  "name": "Property Score",
+  "short_name": "Property Score",
+  "description": "Score Rightmove, Zoopla and OnTheMarket listings for HMO conversion and buy to let.",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#F8FAFC",
+  "theme_color": "#0F766E",
+  "lang": "en-GB",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "type": "image/png",
+      "sizes": "180x180"
+    }
+  ]
+}

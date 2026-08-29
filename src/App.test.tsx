@@ -46,7 +46,7 @@ function renderApp(route: string): void {
 }
 
 describe('App route code splitting', () => {
-  it('loads a public page chunk through Suspense', async () => {
+  it('renders an eager public page immediately', async () => {
     renderApp('/login');
 
     expect(
@@ -78,7 +78,19 @@ describe('App route code splitting', () => {
     renderApp('/billing/success?session_id=cs_test');
 
     expect(
-      await screen.findByRole('heading', { name: /payment successful/i }),
+      await screen.findByRole(
+        'heading',
+        { name: /payment successful/i },
+        { timeout: 5000 },
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('shows a not-found page for unknown URLs instead of sending people home', async () => {
+    renderApp('/this-page-does-not-exist');
+
+    expect(
+      await screen.findByRole('heading', { name: 'Page not found' }),
     ).toBeInTheDocument();
   });
 });

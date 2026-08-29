@@ -1,8 +1,10 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-GB">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -10,10 +12,32 @@
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
       rel="stylesheet"
     />
-    <title>Property Score</title>
+    <!--seo-head-->
+    <title>Property Score | Score UK listings from Rightmove, Zoopla and OnTheMarket</title>
+    <meta
+      name="description"
+      content="Paste a Rightmove, Zoopla or OnTheMarket link and get an investor-grade score with yields, HMO licensing, floor plans and area data in seconds. 5 free analyses."
+    />
+    <!--/seo-head-->
+    <script type="application/ld+json" id="json-ld">{}</script>
   </head>
   <body>
     <div id="root"></div>
+    <noscript id="seo-noscript">
+      <article>
+        <h1>Score a Rightmove, OnTheMarket, or Zoopla listing in seconds.</h1>
+        <p>
+          Paste a Rightmove, Zoopla or OnTheMarket link and get an investor-grade
+          score with yields, HMO licensing, floor plans and area data in seconds.
+          5 free analyses on sign-up.
+        </p>
+        <p>
+          <a href="/pricing">Compare plans</a>
+          ·
+          <a href="/login">Sign in</a>
+        </p>
+      </article>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

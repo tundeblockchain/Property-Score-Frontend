@@ -1,24 +1,13 @@
 import { lazy, Suspense } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { LoadingState } from '@/components/common/Feedback';
 import { AppShell } from '@/components/layout/AppShell';
 import { ProtectedRoute } from '@/components/layout/ProtectedRoute';
+import { LandingPage } from '@/pages/LandingPage';
+import { LoginPage } from '@/pages/LoginPage';
+import { NotFoundPage } from '@/pages/NotFoundPage';
+import { PricingPage } from '@/pages/PricingPage';
 
-const LandingPage = lazy(() =>
-  import('@/pages/LandingPage').then((module) => ({
-    default: module.LandingPage,
-  })),
-);
-const PricingPage = lazy(() =>
-  import('@/pages/PricingPage').then((module) => ({
-    default: module.PricingPage,
-  })),
-);
-const LoginPage = lazy(() =>
-  import('@/pages/LoginPage').then((module) => ({
-    default: module.LoginPage,
-  })),
-);
 const AnalysePage = lazy(() =>
   import('@/pages/AnalysePage').then((module) => ({
     default: module.AnalysePage,
@@ -72,7 +61,7 @@ export function App() {
           </Route>
           <Route path="/billing/success" element={<BillingSuccessPage />} />
           <Route path="/billing/cancel" element={<BillingCancelPage />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>
     </AppShell>

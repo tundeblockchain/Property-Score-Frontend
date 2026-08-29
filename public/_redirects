@@ -1,2 +1,12 @@
 # SPA fallback: serve index.html for client-side routes (refresh, deep links, Stripe return URLs).
-/*    /index.html   200
+# /pricing and /login are emitted as real HTML files at build time for crawlers.
+/analyse              /index.html   200
+/deals                /index.html   200
+/deals/*              /index.html   200
+/billing              /index.html   200
+/billing/success      /index.html   200
+/billing/cancel       /index.html   200
+/account              /index.html   200
+
+# Unknown URLs still load the app so React can show the 404 page, with an HTTP 404 for crawlers.
+/*                    /index.html   404
