@@ -42,9 +42,7 @@ interface FailedAnalysisAlertProps {
 
 export function FailedAnalysisAlert({ errorMessage }: FailedAnalysisAlertProps) {
   useEffect(() => {
-    if (errorMessage) {
-      logError(errorMessage, 'Analysis failed');
-    }
+    logError(errorMessage, 'Analysis failed');
   }, [errorMessage]);
 
   return (

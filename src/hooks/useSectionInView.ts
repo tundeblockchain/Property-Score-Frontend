@@ -11,6 +11,12 @@ export function useSectionInView(ids: readonly string[]): string | null {
   const [activeId, setActiveId] = useState<string | null>(null);
   // Ids are rebuilt each render; the joined form gives the effect a stable dep.
   const idKey = ids.join('|');
+  const [trackedIdKey, setTrackedIdKey] = useState(idKey);
+
+  if (idKey !== trackedIdKey) {
+    setTrackedIdKey(idKey);
+    setActiveId(null);
+  }
 
   useEffect(() => {
     if (typeof IntersectionObserver === 'undefined') {
@@ -23,7 +29,6 @@ export function useSectionInView(ids: readonly string[]): string | null {
       .filter((element): element is HTMLElement => element != null);
 
     if (elements.length === 0) {
-      setActiveId(null);
       return;
     }
 

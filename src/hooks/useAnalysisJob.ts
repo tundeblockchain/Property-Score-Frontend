@@ -41,21 +41,28 @@ export function useStartAnalysis() {
 export function useAnalysisJob(jobId: string | null) {
   const { getIdToken } = useAuth();
   const queryClient = useQueryClient();
-  const [socketCompleted, setSocketCompleted] = useState(false);
-  const startedAtRef = useRef<number | null>(null);
+  const [completedJobId, setCompletedJobId] = useState<string | null>(null);
+  const startedAtRef = useRef<{ jobId: string | null; at: number | null }>({
+    jobId: null,
+    at: null,
+  });
   const socketRef = useRef<AnalysisSocket | null>(null);
 
-  useEffect(() => {
-    setSocketCompleted(false);
-    startedAtRef.current = jobId ? Date.now() : null;
-  }, [jobId]);
+  if (startedAtRef.current.jobId !== jobId) {
+    startedAtRef.current = {
+      jobId,
+      at: jobId ? Date.now() : null,
+    };
+  }
+
+  const socketCompleted = jobId !== null && completedJobId === jobId;
 
   const handleSocketUpdate = useCallback(
     (message: JobSocketMessage) => {
       if (message.type !== 'DEAL_UPDATE' || !jobId || message.jobId !== jobId) {
         return;
       }
-      setSocketCompleted(true);
+      setCompletedJobId(jobId);
       queryClient.setQueryData<AnalyseStatusResponse>(
         queryKeys.analysis(jobId),
         (current) =>
@@ -123,7 +130,7 @@ export function useAnalysisJob(jobId: string | null) {
       if (status === 'COMPLETED' || status === 'FAILED') {
         return false;
       }
-      const startedAt = startedAtRef.current;
+      const startedAt = startedAtRef.current.at;
       if (startedAt && Date.now() - startedAt > MAX_POLL_MS) {
         return false;
       }

@@ -106,6 +106,8 @@ describe('DealReport', () => {
     renderWithProviders(<DealReport deal={deal} />);
 
     const link = screen.getByRole('link', { name: 'Score breakdown' });
+    // Hash targets are DOM ids, not accessible names.
+    // eslint-disable-next-line testing-library/no-node-access
     const target = document.getElementById('score-breakdown');
 
     expect(link).toHaveAttribute('href', '#score-breakdown');

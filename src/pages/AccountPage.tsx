@@ -47,7 +47,7 @@ export function AccountPage() {
       await deleteAccount.mutateAsync();
       setDeleteOpen(false);
       await signOut();
-      navigate('/', { replace: true });
+      void navigate('/', { replace: true });
     } catch {
       // Error is shown via the mutation state.
     }
