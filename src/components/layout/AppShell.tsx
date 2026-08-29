@@ -11,6 +11,8 @@ import { Link as RouterLink, NavLink, useLocation, useNavigate } from 'react-rou
 import { useAuth } from '@/auth/AuthContext';
 import { AuthDialog } from '@/components/auth/AuthDialog';
 import { BrandMark, CreditsBadge } from '@/components/layout/BrandAndCredits';
+import { SiteFooter } from '@/components/layout/SiteFooter';
+import { PageMeta } from '@/components/seo/PageMeta';
 import { PROPERTIES_PATH } from '@/lib/paths';
 
 const NAV_LINKS = [
@@ -60,7 +62,13 @@ export function AppHeader() {
         <BrandMark to={user ? PROPERTIES_PATH : '/'} />
         <Box flex={1} />
         {user ? (
-          <Stack direction="row" spacing={1.5} alignItems="center">
+          <Stack
+            component="nav"
+            aria-label="Account"
+            direction="row"
+            spacing={1.5}
+            alignItems="center"
+          >
             {NAV_LINKS.map((link) => (
               <Button
                 key={link.to}
@@ -85,7 +93,13 @@ export function AppHeader() {
           </Stack>
         ) : null}
         {showPublicNav ? (
-          <Stack direction="row" spacing={1} alignItems="center">
+          <Stack
+            component="nav"
+            aria-label="Primary"
+            direction="row"
+            spacing={1}
+            alignItems="center"
+          >
             <Button
               component={NavLink}
               to="/pricing"
@@ -132,21 +146,49 @@ export function AppShell({ children }: AppShellProps) {
   return (
     <Box
       minHeight="100vh"
+      display="flex"
+      flexDirection="column"
       sx={{
         background:
           'radial-gradient(ellipse at top left, rgba(20,184,166,0.12), transparent 45%), linear-gradient(180deg, #F8FAFC 0%, #F1F5F9 100%)',
       }}
     >
+      <PageMeta />
+      <Box
+        component="a"
+        href="#main-content"
+        sx={{
+          position: 'absolute',
+          left: -10000,
+          top: 8,
+          zIndex: (theme) => theme.zIndex.tooltip,
+          px: 2,
+          py: 1,
+          bgcolor: 'background.paper',
+          color: 'text.primary',
+          borderRadius: 1,
+          boxShadow: 2,
+          '&:focus': {
+            left: 8,
+          },
+        }}
+      >
+        Skip to content
+      </Box>
       <AppHeader />
       <Container
+        component="main"
+        id="main-content"
         maxWidth={isWide ? 'lg' : 'md'}
         sx={{
+          flex: 1,
           py: { xs: 3, md: 5 },
           '@media print': { py: 0, maxWidth: '100%' },
         }}
       >
         {children}
       </Container>
+      <SiteFooter />
     </Box>
   );
 }

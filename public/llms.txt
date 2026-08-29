@@ -1,0 +1,31 @@
+# Property Score
+
+> Property Score scores UK property listings from Rightmove, Zoopla and OnTheMarket for HMO conversion and buy-to-let investors.
+
+Property Score turns a listing URL into an investor-grade report in 15–40 seconds. Each report includes a financial model (estimated rent, gross yield, cash flow and ROI), HMO licensing and compliance checks, floor-plan reading, and area data (EPC, planning history, sold prices, crime, schools, transport and broadband). New accounts get 5 free listing analyses. Proposed HMO layouts use three analyses from the same balance. Subscriptions are billed through Stripe and can be cancelled at any time.
+
+## Pages
+
+- [Home](https://property-score.netlify.app/): Product overview, how it works, features, FAQ, and a form to paste a listing URL.
+- [Pricing](https://property-score.netlify.app/pricing): Free plan, paid subscriptions, and analysis top-up packs.
+- [Sign in](https://property-score.netlify.app/login): Sign in or create an account.
+
+## Supported listings
+
+- Rightmove property pages
+- OnTheMarket property pages
+- Zoopla for-sale detail pages
+
+## FAQ
+
+- Which listings can I analyse? Rightmove, OnTheMarket, and Zoopla property pages.
+- Can I analyse a standard buy to let? Yes. Choose Buy to let before you start. HMO conversion is the default.
+- Do I need an account to try it? You can paste a link first. Sign-in is requested just before the analysis runs.
+- What does an analysis cost? Each listing uses one analysis. Proposed layouts use three from the same balance. New accounts start with 5 listing analyses.
+- How long does a report take? Most analyses finish in 15–40 seconds.
+- Can I share a report? Starter plans and above can export a completed analysis as a PDF.
+
+## Optional
+
+- [Sitemap](https://property-score.netlify.app/sitemap.xml)
+- [robots.txt](https://property-score.netlify.app/robots.txt)
