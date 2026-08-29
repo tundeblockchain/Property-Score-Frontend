@@ -43,7 +43,7 @@ export function AppHeader() {
   const showPublicNav = !user && pathname !== '/login';
 
   async function handleSignOut() {
-    navigate('/', { replace: true });
+    void navigate('/', { replace: true });
     await signOut();
   }
 
@@ -127,7 +127,7 @@ export function AppHeader() {
         onClose={() => setAuthDialogOpen(false)}
         onAuthenticated={() => {
           setAuthDialogOpen(false);
-          navigate(PROPERTIES_PATH);
+          void navigate(PROPERTIES_PATH);
         }}
         initialMode="signIn"
       />

@@ -91,7 +91,7 @@ export function LandingHero() {
         onClose={() => setAuthDialogOpen(false)}
         onAuthenticated={() => {
           setAuthDialogOpen(false);
-          navigate(PROPERTIES_PATH);
+          void navigate(PROPERTIES_PATH);
         }}
         initialMode="signUp"
         description="Create an account to start scoring listings with 5 free analyses."

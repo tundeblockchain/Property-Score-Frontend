@@ -1,3 +1,5 @@
+/* Head tags and JSON-LD are not in the accessibility tree. */
+/* eslint-disable testing-library/no-node-access */
 import { render } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';

@@ -6,12 +6,12 @@ import { renderWithProviders } from '@/test/renderWithProviders';
 
 describe('FinancialModelPanel', () => {
   it('pairs each metric with its figure as a definition list', () => {
-    const { container } = renderWithProviders(
+    renderWithProviders(
       <FinancialModelPanel model={buildFinancialModel()} />,
     );
 
-    expect(container.querySelectorAll('dt')).toHaveLength(5);
-    expect(container.querySelectorAll('dd')).toHaveLength(5);
+    expect(screen.getAllByRole('term')).toHaveLength(5);
+    expect(screen.getAllByRole('definition')).toHaveLength(5);
     expect(screen.getByText('Asking price')).toBeInTheDocument();
     expect(screen.getByText('£250,000')).toBeInTheDocument();
     expect(screen.getByText('Gross yield')).toBeInTheDocument();
@@ -40,14 +40,14 @@ describe('FinancialModelPanel', () => {
   });
 
   it('adds occupancy when the analysis is a family AST', () => {
-    const { container } = renderWithProviders(
+    renderWithProviders(
       <FinancialModelPanel
         model={buildFinancialModel()}
         occupancyBasis="3-bed AST"
       />,
     );
 
-    expect(container.querySelectorAll('dt')).toHaveLength(6);
+    expect(screen.getAllByRole('term')).toHaveLength(6);
     expect(screen.getByText('Occupancy')).toBeInTheDocument();
     expect(screen.getByText('3-bed AST')).toBeInTheDocument();
   });

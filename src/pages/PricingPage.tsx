@@ -47,7 +47,7 @@ export function PricingPage() {
       checkout.mutate(action.product);
       return;
     }
-    navigate(PROPERTIES_PATH);
+    void navigate(PROPERTIES_PATH);
   }
 
   if (plans.isLoading) {
