@@ -340,16 +340,20 @@ export function resolvePageSeo(pathname: string): PageSeo {
 const SEO_HEAD_START = '<!--seo-head-->';
 const SEO_HEAD_END = '<!--/seo-head-->';
 
-export function renderSeoHead(page: PageSeo): string {
+export function renderSeoHead(page: PageSeo, domainVerification = ''): string {
   const url = canonicalUrl(page.path);
   const image = absoluteUrl(DEFAULT_OG_IMAGE_PATH);
   const title = escapeHtml(page.title);
   const description = escapeHtml(page.description);
   const robots = escapeHtml(page.robots);
+  const verification = domainVerification.trim();
+  const domainVerificationTag = verification
+    ? `\n    <meta name="facebook-domain-verification" content="${escapeHtml(verification)}" />`
+    : '';
 
   return `${SEO_HEAD_START}
     <title>${title}</title>
-    <meta name="description" content="${description}" />
+    <meta name="description" content="${description}" />${domainVerificationTag}
     <meta name="robots" content="${robots}" />
     <meta name="googlebot" content="${robots}" />
     <meta name="application-name" content="${escapeHtml(SITE_NAME)}" />
@@ -376,8 +380,12 @@ export function renderSeoHead(page: PageSeo): string {
     ${SEO_HEAD_END}`;
 }
 
-export function applySeoPlaceholders(html: string, page: PageSeo): string {
-  const head = renderSeoHead(page);
+export function applySeoPlaceholders(
+  html: string,
+  page: PageSeo,
+  domainVerification = '',
+): string {
+  const head = renderSeoHead(page, domainVerification);
   const jsonLd = JSON.stringify(page.jsonLd);
   const noscript = page.noscriptHtml;
 

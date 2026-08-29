@@ -37,7 +37,7 @@ function renderFooter(auth: AuthContextValue): void {
     );
   }
 
-  render(<SiteFooter />, { wrapper: Wrapper });
+  render(<SiteFooter onCookieSettings={() => undefined} />, { wrapper: Wrapper });
 }
 
 describe('SiteFooter', () => {
@@ -49,6 +49,9 @@ describe('SiteFooter', () => {
     expect(nav).toHaveTextContent('Pricing');
     expect(nav).toHaveTextContent('FAQ');
     expect(nav).toHaveTextContent('Sign in');
+    expect(
+      screen.getByRole('button', { name: 'Cookie settings' }),
+    ).toBeInTheDocument();
   });
 
   it('points signed-in users at app pages instead of sign in', () => {

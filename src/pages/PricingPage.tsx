@@ -8,6 +8,7 @@ import { ErrorAlert, LoadingState, PageHeader } from '@/components/common/Feedba
 import { useBilling } from '@/hooks/useBilling';
 import { useBillingPlans } from '@/hooks/useBillingPlans';
 import { useCheckout } from '@/hooks/useBillingMutations';
+import { trackLeadOnce } from '@/lib/analytics';
 import { formatCreditCostLabel, remainingAnalysesLabel, tierLabel } from '@/lib/plans';
 import { PROPERTIES_PATH } from '@/lib/paths';
 import type { CheckoutProduct, PlanCatalogItem } from '@/models';
@@ -34,6 +35,7 @@ export function PricingPage() {
 
   function handleSelect(product: CheckoutProduct) {
     if (!user) {
+      trackLeadOnce({ content_name: 'sign_up' });
       setPendingAction({ kind: 'checkout', product });
       return;
     }
@@ -106,7 +108,10 @@ export function PricingPage() {
                 ) : (
                   <Button
                     variant="outlined"
-                    onClick={() => setPendingAction({ kind: 'startFree' })}
+                    onClick={() => {
+                      trackLeadOnce({ content_name: 'sign_up' });
+                      setPendingAction({ kind: 'startFree' });
+                    }}
                   >
                     Start free
                   </Button>

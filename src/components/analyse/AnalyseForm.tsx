@@ -21,6 +21,7 @@ import {
   logError,
 } from '@/lib/errors';
 import { isValidListingUrl } from '@/lib/listingUrl';
+import { trackLeadOnce } from '@/lib/analytics';
 import type { AnalysisStrategy } from '@/models';
 
 const INVALID_URL_MESSAGE =
@@ -72,6 +73,7 @@ export function AnalyseForm({
     }
 
     if (!user) {
+      trackLeadOnce({ content_name: 'sign_up' });
       setAuthDialogOpen(true);
       return;
     }

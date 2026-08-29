@@ -8,6 +8,7 @@ import {
   isValidListingUrl,
   normalizeListingUrl,
 } from '@/lib/listingUrl';
+import { trackAnalysisCompleteOnce, trackStartAnalysis } from '@/lib/analytics';
 import type { AnalyseStatusResponse, AnalysisStrategy, JobSocketMessage } from '@/models';
 
 const POLL_INTERVAL_MS = 4000;
@@ -31,7 +32,8 @@ export function useStartAnalysis() {
         strategy: input.strategy,
       });
     },
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
+      trackStartAnalysis(variables.strategy);
       void queryClient.invalidateQueries({ queryKey: queryKeys.billing });
       void queryClient.invalidateQueries({ queryKey: queryKeys.deals });
     },
@@ -63,16 +65,20 @@ export function useAnalysisJob(jobId: string | null) {
         return;
       }
       setCompletedJobId(jobId);
+      const current = queryClient.getQueryData<AnalyseStatusResponse>(
+        queryKeys.analysis(jobId),
+      );
+      trackAnalysisCompleteOnce(jobId, current?.strategy);
       queryClient.setQueryData<AnalyseStatusResponse>(
         queryKeys.analysis(jobId),
-        (current) =>
-          current
+        (existing) =>
+          existing
             ? {
-                ...current,
+                ...existing,
                 status: 'COMPLETED',
                 scores: message.scores,
               }
-            : current,
+            : existing,
       );
       void queryClient.invalidateQueries({ queryKey: queryKeys.analysis(jobId) });
       void queryClient.invalidateQueries({ queryKey: queryKeys.deals });
@@ -116,6 +122,9 @@ export function useAnalysisJob(jobId: string | null) {
     queryKey: queryKeys.analysis(jobId ?? ''),
     queryFn: async () => {
       const result = await getAnalysisStatus(jobId!);
+      if (result.status === 'COMPLETED') {
+        trackAnalysisCompleteOnce(jobId!, result.strategy);
+      }
       if (result.status === 'FAILED') {
         void queryClient.invalidateQueries({ queryKey: queryKeys.billing });
       }

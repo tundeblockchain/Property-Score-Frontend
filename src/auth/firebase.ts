@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import {
   createUserWithEmailAndPassword,
+  getAdditionalUserInfo,
   getAuth,
   GoogleAuthProvider,
   onAuthStateChanged,
@@ -49,9 +50,15 @@ export async function signUp(email: string, password: string): Promise<User> {
   return result.user;
 }
 
-export async function signInWithGoogle(): Promise<User> {
+export async function signInWithGoogle(): Promise<{
+  user: User;
+  isNewUser: boolean;
+}> {
   const result = await signInWithPopup(firebaseAuth, googleProvider);
-  return result.user;
+  return {
+    user: result.user,
+    isNewUser: getAdditionalUserInfo(result)?.isNewUser === true,
+  };
 }
 
 export async function signOutUser(): Promise<void> {

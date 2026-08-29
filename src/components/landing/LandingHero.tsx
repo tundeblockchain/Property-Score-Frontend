@@ -4,6 +4,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/auth/AuthContext';
 import { AuthDialog } from '@/components/auth/AuthDialog';
 import { ReportPreviewCard } from '@/components/landing/ReportPreviewCard';
+import { trackLeadOnce } from '@/lib/analytics';
 import { PROPERTIES_PATH } from '@/lib/paths';
 
 export function LandingHero() {
@@ -56,7 +57,10 @@ export function LandingHero() {
             <Button
               variant="outlined"
               size="large"
-              onClick={() => setAuthDialogOpen(true)}
+              onClick={() => {
+                trackLeadOnce({ content_name: 'sign_up' });
+                setAuthDialogOpen(true);
+              }}
             >
               Get started
             </Button>

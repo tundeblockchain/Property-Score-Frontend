@@ -12,6 +12,8 @@ import { useAuth } from '@/auth/AuthContext';
 import { AuthDialog } from '@/components/auth/AuthDialog';
 import { BrandMark, CreditsBadge } from '@/components/layout/BrandAndCredits';
 import { SiteFooter } from '@/components/layout/SiteFooter';
+import { AnalyticsTracker } from '@/components/analytics/AnalyticsTracker';
+import { CookieConsentBanner } from '@/components/analytics/CookieConsentBanner';
 import { PageMeta } from '@/components/seo/PageMeta';
 import { PROPERTIES_PATH } from '@/lib/paths';
 
@@ -142,6 +144,7 @@ interface AppShellProps {
 export function AppShell({ children }: AppShellProps) {
   const { pathname } = useLocation();
   const isWide = WIDE_ROUTES.some((pattern) => pattern.test(pathname));
+  const [cookieSettingsOpen, setCookieSettingsOpen] = useState(false);
 
   return (
     <Box
@@ -154,6 +157,7 @@ export function AppShell({ children }: AppShellProps) {
       }}
     >
       <PageMeta />
+      <AnalyticsTracker />
       <Box
         component="a"
         href="#main-content"
@@ -188,7 +192,11 @@ export function AppShell({ children }: AppShellProps) {
       >
         {children}
       </Container>
-      <SiteFooter />
+      <SiteFooter onCookieSettings={() => setCookieSettingsOpen(true)} />
+      <CookieConsentBanner
+        forceOpen={cookieSettingsOpen}
+        onClose={() => setCookieSettingsOpen(false)}
+      />
     </Box>
   );
 }

@@ -9,6 +9,7 @@ import {
 import { useState, type FormEvent } from 'react';
 import { GoogleIcon } from '@/components/auth/GoogleIcon';
 import { getAuthErrorMessage } from '@/lib/authErrors';
+import { trackLeadOnce } from '@/lib/analytics';
 
 interface AuthFormProps {
   mode: 'signIn' | 'signUp';
@@ -144,7 +145,15 @@ export function AuthForm({
               ? 'Sign in'
               : 'Create account'}
         </Button>
-        <Button onClick={onToggleMode} disabled={busy}>
+        <Button
+          onClick={() => {
+            if (isSignIn) {
+              trackLeadOnce({ content_name: 'sign_up' });
+            }
+            onToggleMode();
+          }}
+          disabled={busy}
+        >
           {isSignIn
             ? 'Need an account? Sign up'
             : 'Already have an account? Sign in'}
