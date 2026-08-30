@@ -12,6 +12,27 @@ const architectureSyntax = [
     message: 'Use named exports.',
   },
   {
+    selector: "ImportSpecifier[imported.name='useEffect']",
+    message:
+      'Do not use useEffect. Derive during render, handle the event, or subscribe with useSyncExternalStore.',
+  },
+  {
+    selector: "ImportSpecifier[imported.name='useLayoutEffect']",
+    message:
+      'Do not use useLayoutEffect. Derive during render, handle the event, or subscribe with useSyncExternalStore.',
+  },
+  {
+    selector: "MemberExpression[object.name='React'][property.name='useEffect']",
+    message:
+      'Do not use useEffect. Derive during render, handle the event, or subscribe with useSyncExternalStore.',
+  },
+  {
+    selector:
+      "MemberExpression[object.name='React'][property.name='useLayoutEffect']",
+    message:
+      'Do not use useLayoutEffect. Derive during render, handle the event, or subscribe with useSyncExternalStore.',
+  },
+  {
     selector: "Property[key.name='queryKey'][value.type='ArrayExpression']",
     message: 'Use queryKeys from src/hooks/queryKeys.ts.',
   },

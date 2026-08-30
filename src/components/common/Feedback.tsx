@@ -1,5 +1,5 @@
 import { Alert, CircularProgress, Stack, Typography } from '@mui/material';
-import { useEffect, type ReactNode } from 'react';
+import { useRef, type ReactNode } from 'react';
 import {
   getUserFacingAnalysisFailureMessage,
   getUserFacingErrorMessage,
@@ -25,9 +25,11 @@ interface ErrorAlertProps {
 }
 
 export function ErrorAlert({ error, fallback }: ErrorAlertProps) {
-  useEffect(() => {
+  const loggedError = useRef<unknown>(undefined);
+  if (loggedError.current !== error) {
+    loggedError.current = error;
     logError(error);
-  }, [error]);
+  }
 
   return (
     <Alert severity="error" role="alert">
@@ -41,9 +43,11 @@ interface FailedAnalysisAlertProps {
 }
 
 export function FailedAnalysisAlert({ errorMessage }: FailedAnalysisAlertProps) {
-  useEffect(() => {
+  const loggedMessage = useRef<string | null | undefined>(undefined);
+  if (loggedMessage.current !== errorMessage) {
+    loggedMessage.current = errorMessage;
     logError(errorMessage, 'Analysis failed');
-  }, [errorMessage]);
+  }
 
   return (
     <Alert severity="error" role="alert">

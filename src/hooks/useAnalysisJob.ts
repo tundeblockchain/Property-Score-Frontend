@@ -1,15 +1,15 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getAnalysisStatus, startAnalysis } from '@/api/analyse';
 import { useAuth } from '@/auth/AuthContext';
 import { queryKeys } from '@/hooks/queryKeys';
-import { AnalysisSocket } from '@/lib/websocket';
+import { useJobSocket } from '@/hooks/useJobSocket';
 import {
   isValidListingUrl,
   normalizeListingUrl,
 } from '@/lib/listingUrl';
 import { trackAnalysisCompleteOnce, trackStartAnalysis } from '@/lib/analytics';
-import type { AnalyseStatusResponse, AnalysisStrategy, JobSocketMessage } from '@/models';
+import type { AnalyseStatusResponse, AnalysisStrategy } from '@/models';
 
 const POLL_INTERVAL_MS = 4000;
 const MAX_POLL_MS = 5 * 60 * 1000;
@@ -43,80 +43,44 @@ export function useStartAnalysis() {
 export function useAnalysisJob(jobId: string | null) {
   const { getIdToken } = useAuth();
   const queryClient = useQueryClient();
-  const [completedJobId, setCompletedJobId] = useState<string | null>(null);
   const startedAtRef = useRef<{ jobId: string | null; at: number | null }>({
     jobId: null,
     at: null,
   });
-  const socketRef = useRef<AnalysisSocket | null>(null);
+  const socketCompletedRef = useRef(false);
 
   if (startedAtRef.current.jobId !== jobId) {
     startedAtRef.current = {
       jobId,
       at: jobId ? Date.now() : null,
     };
+    socketCompletedRef.current = false;
   }
 
-  const socketCompleted = jobId !== null && completedJobId === jobId;
-
-  const handleSocketUpdate = useCallback(
-    (message: JobSocketMessage) => {
-      if (message.type !== 'DEAL_UPDATE' || !jobId || message.jobId !== jobId) {
-        return;
-      }
-      setCompletedJobId(jobId);
-      const current = queryClient.getQueryData<AnalyseStatusResponse>(
-        queryKeys.analysis(jobId),
-      );
-      trackAnalysisCompleteOnce(jobId, current?.strategy);
-      queryClient.setQueryData<AnalyseStatusResponse>(
-        queryKeys.analysis(jobId),
-        (existing) =>
-          existing
-            ? {
-                ...existing,
-                status: 'COMPLETED',
-                scores: message.scores,
-              }
-            : existing,
-      );
-      void queryClient.invalidateQueries({ queryKey: queryKeys.analysis(jobId) });
-      void queryClient.invalidateQueries({ queryKey: queryKeys.deals });
-      void queryClient.invalidateQueries({ queryKey: queryKeys.deal(jobId) });
-    },
-    [jobId, queryClient],
-  );
-
-  useEffect(() => {
-    if (!jobId) {
+  useJobSocket(jobId, getIdToken, (message) => {
+    if (message.type !== 'DEAL_UPDATE' || !jobId || message.jobId !== jobId) {
       return;
     }
-
-    let cancelled = false;
-    const socket = new AnalysisSocket(handleSocketUpdate);
-    socketRef.current = socket;
-
-    void (async () => {
-      const token = await getIdToken();
-      if (!token || cancelled) {
-        return;
-      }
-      try {
-        await socket.connect(token);
-        if (!cancelled) {
-          socket.subscribe(jobId);
-        }
-      } catch {
-        // HTTP polling remains the fallback when the socket fails.
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-      socket.close();
-      socketRef.current = null;
-    };
-  }, [getIdToken, handleSocketUpdate, jobId]);
+    socketCompletedRef.current = true;
+    const current = queryClient.getQueryData<AnalyseStatusResponse>(
+      queryKeys.analysis(jobId),
+    );
+    trackAnalysisCompleteOnce(jobId, current?.strategy);
+    queryClient.setQueryData<AnalyseStatusResponse>(
+      queryKeys.analysis(jobId),
+      (existing) =>
+        existing
+          ? {
+              ...existing,
+              status: 'COMPLETED',
+              scores: message.scores,
+            }
+          : existing,
+    );
+    void queryClient.invalidateQueries({ queryKey: queryKeys.analysis(jobId) });
+    void queryClient.invalidateQueries({ queryKey: queryKeys.deals });
+    void queryClient.invalidateQueries({ queryKey: queryKeys.deal(jobId) });
+  });
 
   return useQuery({
     queryKey: queryKeys.analysis(jobId ?? ''),
@@ -132,7 +96,7 @@ export function useAnalysisJob(jobId: string | null) {
     },
     enabled: Boolean(jobId),
     refetchInterval: (query) => {
-      if (socketCompleted) {
+      if (socketCompletedRef.current) {
         return false;
       }
       const status = query.state.data?.status;

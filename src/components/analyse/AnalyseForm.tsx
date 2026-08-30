@@ -8,7 +8,7 @@ import {
   ToggleButtonGroup,
   Typography,
 } from '@mui/material';
-import { useEffect, useState, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '@/auth/AuthContext';
 import { AuthDialog } from '@/components/auth/AuthDialog';
@@ -59,6 +59,11 @@ export function AnalyseForm({
       { listingUrl, strategy },
       {
         onSuccess: (data) => onAccepted(data.jobId),
+        onError: (error) => {
+          if (error instanceof ApiError && error.isInsufficientCredits) {
+            logError(error);
+          }
+        },
       },
     );
   }
@@ -91,12 +96,6 @@ export function AnalyseForm({
   const mutationError = start.error;
   const showUpgrade =
     mutationError instanceof ApiError && mutationError.isInsufficientCredits;
-
-  useEffect(() => {
-    if (mutationError && showUpgrade) {
-      logError(mutationError);
-    }
-  }, [mutationError, showUpgrade]);
 
   return (
     <Stack component="form" spacing={2} onSubmit={handleSubmit} noValidate>
