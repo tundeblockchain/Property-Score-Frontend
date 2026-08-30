@@ -9,7 +9,7 @@ import {
   type SxProps,
   type Theme,
 } from '@mui/material';
-import { useEffect } from 'react';
+import type { KeyboardEvent } from 'react';
 
 interface ImageLightboxProps {
   images: readonly string[];
@@ -36,31 +36,24 @@ export function ImageLightbox({
   const count = images.length;
   const canNavigate = count > 1;
 
-  useEffect(() => {
-    if (!isOpen || !canNavigate) {
+  function handleDialogKeyDown(event: KeyboardEvent) {
+    if (!canNavigate) {
       return;
     }
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === 'ArrowLeft') {
-        event.preventDefault();
-        onIndexChange((index - 1 + count) % count);
-      } else if (event.key === 'ArrowRight') {
-        event.preventDefault();
-        onIndexChange((index + 1) % count);
-      }
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      onIndexChange((index - 1 + count) % count);
+    } else if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      onIndexChange((index + 1) % count);
     }
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [canNavigate, count, index, isOpen, onIndexChange]);
+  }
 
   return (
     <Dialog
       open={isOpen}
       onClose={onClose}
+      onKeyDown={handleDialogKeyDown}
       maxWidth="lg"
       fullWidth
       slotProps={{

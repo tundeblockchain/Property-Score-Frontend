@@ -1,8 +1,8 @@
 import {
   useCallback,
-  useEffect,
   useMemo,
-  useState,
+  useRef,
+  useSyncExternalStore,
   type ReactNode,
 } from 'react';
 import { setTokenProvider } from '@/api/client';
@@ -21,29 +21,38 @@ import {
 } from '@/lib/analytics';
 import type { User } from '@/models';
 
+setTokenProvider(() => getFirebaseIdToken(false));
+
+interface AuthSnapshot {
+  user: User | null;
+  loading: boolean;
+}
+
+const INITIAL_AUTH: AuthSnapshot = { user: null, loading: true };
+
 interface AuthProviderProps {
   children: ReactNode;
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const snapshotRef = useRef<AuthSnapshot>(INITIAL_AUTH);
 
-  useEffect(() => {
-    const unsubscribe = subscribeToAuth((nextUser) => {
-      setUser(nextUser);
-      setLoading(false);
+  const subscribe = useCallback((onStoreChange: () => void) => {
+    return subscribeToAuth((nextUser) => {
+      snapshotRef.current = { user: nextUser, loading: false };
+      onStoreChange();
     });
-    return unsubscribe;
   }, []);
+
+  const { user, loading } = useSyncExternalStore(
+    subscribe,
+    () => snapshotRef.current,
+    () => INITIAL_AUTH,
+  );
 
   const getIdToken = useCallback(async (forceRefresh = false) => {
     return getFirebaseIdToken(forceRefresh);
   }, []);
-
-  useEffect(() => {
-    setTokenProvider(() => getIdToken(false));
-  }, [getIdToken]);
 
   const signIn = useCallback(async (email: string, password: string) => {
     await firebaseSignIn(email, password);

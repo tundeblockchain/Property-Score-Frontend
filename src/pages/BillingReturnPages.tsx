@@ -1,5 +1,5 @@
 import { Alert, Button, Stack, Typography } from '@mui/material';
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { Link as RouterLink, useSearchParams } from 'react-router-dom';
 import { LoadingState, PageHeader } from '@/components/common/Feedback';
 import { useBilling } from '@/hooks/useBilling';
@@ -18,44 +18,35 @@ export function BillingSuccessPage() {
   const sessionId = searchParams.get('session_id') ?? undefined;
   const purchaseTracked = useRef(false);
   const initialCredits = useRef<number | null>(null);
-  const [pollCount, setPollCount] = useState(0);
-  const shouldPoll = pollCount < MAX_POLLS;
-  const billing = useBilling({
-    refetchInterval: shouldPoll ? POLL_MS : false,
-  });
+  const lastUpdatedAt = useRef(0);
+  const updateCount = useRef(0);
 
-  useEffect(() => {
-    if (purchaseTracked.current) {
-      return;
-    }
+  if (!purchaseTracked.current) {
     purchaseTracked.current = true;
     trackPurchaseOnce({
       sessionId,
       pending: consumePendingCheckout(),
     });
-  }, [sessionId]);
+  }
 
-  useEffect(() => {
-    if (billing.data && initialCredits.current === null) {
+  const billing = useBilling({
+    refetchInterval: (query) =>
+      query.state.dataUpdateCount >= MAX_POLLS ? false : POLL_MS,
+  });
+
+  if (billing.data && billing.dataUpdatedAt !== lastUpdatedAt.current) {
+    lastUpdatedAt.current = billing.dataUpdatedAt;
+    updateCount.current += 1;
+    if (initialCredits.current === null) {
       initialCredits.current = billing.data.creditsRemaining;
     }
-  }, [billing.data]);
-
-  useEffect(() => {
-    if (!shouldPoll) {
-      return;
-    }
-    const id = window.setInterval(() => {
-      setPollCount((count) => count + 1);
-    }, POLL_MS);
-    return () => window.clearInterval(id);
-  }, [shouldPoll]);
+  }
 
   const updated =
     billing.data != null &&
     initialCredits.current != null &&
     (billing.data.creditsRemaining !== initialCredits.current ||
-      pollCount >= 2);
+      updateCount.current >= 2);
 
   if (billing.isLoading && !billing.data) {
     return <LoadingState label="Confirming payment…" />;
@@ -73,7 +64,7 @@ export function BillingSuccessPage() {
         <Typography>
           Current plan: {billing.data.tier} ·{' '}
           {remainingAnalysesLabel(billing.data.creditsRemaining, 'remaining')}
-          {!updated && shouldPoll ? ' (refreshing…)' : ''}
+          {!updated ? ' (refreshing…)' : ''}
         </Typography>
       ) : null}
       <Stack direction="row" spacing={1}>
@@ -91,13 +82,10 @@ export function BillingSuccessPage() {
 export function BillingCancelPage() {
   const cancelTracked = useRef(false);
 
-  useEffect(() => {
-    if (cancelTracked.current) {
-      return;
-    }
+  if (!cancelTracked.current) {
     cancelTracked.current = true;
     trackCheckoutCancelled(consumePendingCheckout());
-  }, []);
+  }
 
   return (
     <Stack spacing={3}>

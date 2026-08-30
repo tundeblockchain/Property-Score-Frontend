@@ -1,14 +1,14 @@
 import UnfoldLessOutlinedIcon from '@mui/icons-material/UnfoldLessOutlined';
 import UnfoldMoreOutlinedIcon from '@mui/icons-material/UnfoldMoreOutlined';
 import { Box, Button, Stack } from '@mui/material';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { flushSync } from 'react-dom';
+import { useMemo, useState } from 'react';
 import { ReportNav } from '@/components/deals/report/ReportNav';
 import { ReportSection } from '@/components/deals/report/ReportSection';
 import {
   buildReportSections,
   type ReportSectionSpec,
 } from '@/components/deals/report/reportSections';
+import { useIsPrinting } from '@/hooks/useIsPrinting';
 import type { DealDetail } from '@/models';
 
 interface DealReportProps {
@@ -17,6 +17,7 @@ interface DealReportProps {
 
 export function DealReport({ deal }: DealReportProps) {
   const sections = useMemo(() => buildReportSections(deal), [deal]);
+  const isPrinting = useIsPrinting();
   /**
    * Only the sections the reader has touched are recorded, so a section that
    * arrives later still opens according to its own default.
@@ -24,45 +25,9 @@ export function DealReport({ deal }: DealReportProps) {
   const [expandedOverrides, setExpandedOverrides] = useState<
     Record<string, boolean>
   >({});
-  const expandedOverridesRef = useRef(expandedOverrides);
-  const printRestoreRef = useRef<Record<string, boolean> | null>(null);
-
-  useEffect(() => {
-    expandedOverridesRef.current = expandedOverrides;
-  }, [expandedOverrides]);
-
-  /**
-   * Closed sections unmount their content, so a print needs every section open
-   * first. flushSync commits that before the browser captures the page.
-   */
-  useEffect(() => {
-    function handleBeforePrint() {
-      printRestoreRef.current = expandedOverridesRef.current;
-      flushSync(() => {
-        setExpandedOverrides(
-          Object.fromEntries(sections.map((section) => [section.id, true])),
-        );
-      });
-    }
-
-    function handleAfterPrint() {
-      if (printRestoreRef.current == null) {
-        return;
-      }
-      setExpandedOverrides(printRestoreRef.current);
-      printRestoreRef.current = null;
-    }
-
-    window.addEventListener('beforeprint', handleBeforePrint);
-    window.addEventListener('afterprint', handleAfterPrint);
-    return () => {
-      window.removeEventListener('beforeprint', handleBeforePrint);
-      window.removeEventListener('afterprint', handleAfterPrint);
-    };
-  }, [sections]);
 
   const isExpanded = (section: ReportSectionSpec) =>
-    expandedOverrides[section.id] ?? section.defaultExpanded;
+    isPrinting || (expandedOverrides[section.id] ?? section.defaultExpanded);
 
   const allExpanded = sections.length > 0 && sections.every(isExpanded);
 

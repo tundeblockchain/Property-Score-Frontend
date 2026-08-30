@@ -1,9 +1,9 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { getDeal } from '@/api/deals';
 import { useAuth } from '@/auth/AuthContext';
 import { queryKeys } from '@/hooks/queryKeys';
-import { AnalysisSocket } from '@/lib/websocket';
+import { useJobSocket } from '@/hooks/useJobSocket';
 import type { DealStatus } from '@/models';
 
 const POLL_INTERVAL_MS = 5000;
@@ -31,11 +31,17 @@ export function dealPollInterval(
 export function useDealDetail(dealId: string | undefined) {
   const { user, getIdToken } = useAuth();
   const queryClient = useQueryClient();
-  const watchingSinceRef = useRef<number | null>(null);
+  const watchingSinceRef = useRef<{
+    dealId: string | undefined;
+    at: number | null;
+  }>({ dealId: undefined, at: null });
 
-  useEffect(() => {
-    watchingSinceRef.current = dealId ? Date.now() : null;
-  }, [dealId]);
+  if (watchingSinceRef.current.dealId !== dealId) {
+    watchingSinceRef.current = {
+      dealId,
+      at: dealId ? Date.now() : null,
+    };
+  }
 
   const query = useQuery({
     queryKey: queryKeys.deal(dealId ?? ''),
@@ -44,51 +50,20 @@ export function useDealDetail(dealId: string | undefined) {
     refetchInterval: (currentQuery) =>
       dealPollInterval(
         currentQuery.state.data?.status,
-        watchingSinceRef.current,
+        watchingSinceRef.current.at,
         Date.now(),
       ),
   });
 
-  useEffect(() => {
-    if (!dealId) {
+  useJobSocket(dealId, getIdToken, (message) => {
+    if (!dealId || message.jobId !== dealId) {
       return;
     }
-
-    let cancelled = false;
-    /**
-     * Subscribe for analysis completion and proposed-layout render updates.
-     * HTTP polling remains the fallback while status is PROCESSING.
-     */
-    const socket = new AnalysisSocket((message) => {
-      if (message.jobId !== dealId) {
-        return;
-      }
-      void queryClient.invalidateQueries({ queryKey: queryKeys.deal(dealId) });
-      if (message.type === 'DEAL_UPDATE') {
-        void queryClient.invalidateQueries({ queryKey: queryKeys.deals });
-      }
-    });
-
-    void (async () => {
-      const token = await getIdToken();
-      if (!token || cancelled) {
-        return;
-      }
-      try {
-        await socket.connect(token);
-        if (!cancelled) {
-          socket.subscribe(dealId);
-        }
-      } catch {
-        // Polling remains the fallback when the socket cannot connect.
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-      socket.close();
-    };
-  }, [dealId, getIdToken, queryClient]);
+    void queryClient.invalidateQueries({ queryKey: queryKeys.deal(dealId) });
+    if (message.type === 'DEAL_UPDATE') {
+      void queryClient.invalidateQueries({ queryKey: queryKeys.deals });
+    }
+  });
 
   return query;
 }
