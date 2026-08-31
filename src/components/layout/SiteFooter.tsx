@@ -2,6 +2,7 @@ import { Box, Button, Container, Link, Stack, Typography } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import { Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '@/auth/AuthContext';
+import { SITE_NAME } from '@/lib/seo';
 
 interface SiteFooterProps {
   onCookieSettings?: () => void;
@@ -45,7 +46,7 @@ export function SiteFooter({ onCookieSettings }: SiteFooterProps) {
         >
           <Stack spacing={0.5} maxWidth={520}>
             <Typography variant="subtitle2" fontWeight={700}>
-              Property Score
+              {SITE_NAME}
             </Typography>
             <Typography
               variant="body2"

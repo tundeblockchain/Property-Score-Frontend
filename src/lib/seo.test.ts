@@ -4,11 +4,19 @@ import {
   LOGIN_SEO,
   NOT_FOUND_SEO,
   PRICING_SEO,
+  SITE_NAME,
   SITE_ORIGIN,
   applySeoPlaceholders,
   canonicalUrl,
   resolvePageSeo,
 } from '@/lib/seo';
+
+describe('site brand', () => {
+  it('uses the public Zola Check domain', () => {
+    expect(SITE_NAME).toBe('Zola Check');
+    expect(SITE_ORIGIN).toBe('https://zolacheck.com');
+  });
+});
 
 describe('canonicalUrl', () => {
   it('uses a trailing slash only on the homepage', () => {

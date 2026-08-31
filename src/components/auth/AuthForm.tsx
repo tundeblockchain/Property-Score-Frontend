@@ -8,8 +8,9 @@ import {
 } from '@mui/material';
 import { useState, type FormEvent } from 'react';
 import { GoogleIcon } from '@/components/auth/GoogleIcon';
-import { getAuthErrorMessage } from '@/lib/authErrors';
 import { trackLeadOnce } from '@/lib/analytics';
+import { getAuthErrorMessage } from '@/lib/authErrors';
+import { SITE_NAME } from '@/lib/seo';
 
 interface AuthFormProps {
   mode: 'signIn' | 'signUp';
@@ -76,7 +77,7 @@ export function AuthForm({
         <Typography color="text.secondary">
           {description ??
             (isSignIn
-              ? 'Use Google or your Property Score account to continue.'
+              ? `Use Google or your ${SITE_NAME} account to continue.`
               : 'New accounts start on the Free plan with 5 listing analyses.')}
         </Typography>
       </Stack>

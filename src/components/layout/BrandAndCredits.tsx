@@ -12,6 +12,7 @@ import {
   isLowAnalysisBalance,
   remainingAnalysesBadgeLabel,
 } from '@/lib/plans';
+import { SITE_NAME } from '@/lib/seo';
 
 export function CreditsBadge() {
   const { data, isLoading, isError } = useBilling();
@@ -80,7 +81,7 @@ export function BrandMark({ to = '/' }: BrandMarkProps) {
       alignItems="center"
       component={RouterLink}
       to={to}
-      aria-label="Property Score home"
+      aria-label={`${SITE_NAME} home`}
       sx={{ textDecoration: 'none', color: 'inherit' }}
     >
       <Box
@@ -101,7 +102,7 @@ export function BrandMark({ to = '/' }: BrandMarkProps) {
           letterSpacing: '-0.01em',
         }}
       >
-        Property Score
+        {SITE_NAME}
       </Typography>
     </Stack>
   );

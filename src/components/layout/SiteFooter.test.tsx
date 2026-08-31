@@ -44,6 +44,7 @@ describe('SiteFooter', () => {
   it('exposes public marketing links for visitors', () => {
     renderFooter(signedOutAuth);
 
+    expect(screen.getByText('Zola Check')).toBeInTheDocument();
     const nav = screen.getByRole('navigation', { name: 'Footer' });
     expect(nav).toHaveTextContent('Home');
     expect(nav).toHaveTextContent('Pricing');

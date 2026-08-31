@@ -1,4 +1,4 @@
-# Property Score crawler policy.
+# Zola Check crawler policy.
 # Public marketing pages are indexable. Signed-in app routes are private.
 
 User-agent: *
@@ -32,4 +32,4 @@ Allow: /
 User-agent: Applebot-Extended
 Allow: /
 
-Sitemap: https://property-score.netlify.app/sitemap.xml
+Sitemap: https://zolacheck.com/sitemap.xml

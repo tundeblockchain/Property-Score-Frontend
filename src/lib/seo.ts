@@ -1,10 +1,10 @@
 import { LANDING_FAQS } from '../content/faqs';
 
-export const SITE_NAME = 'Property Score';
-export const SITE_ORIGIN = 'https://property-score.netlify.app';
+export const SITE_NAME = 'Zola Check';
+export const SITE_ORIGIN = 'https://zolacheck.com';
 export const DEFAULT_OG_IMAGE_PATH = '/og-image.png';
 export const DEFAULT_OG_IMAGE_ALT =
-  'Property Score — investor reports for Rightmove, Zoopla and OnTheMarket listings';
+  'Zola Check — investor reports for Rightmove, Zoopla and OnTheMarket listings';
 
 export type RobotsDirective = 'index, follow' | 'noindex, nofollow';
 
@@ -18,21 +18,21 @@ export interface PageSeo {
 }
 
 const HOME_TITLE =
-  'Property Score | Score UK listings from Rightmove, Zoopla and OnTheMarket';
+  'Zola Check | Score UK listings from Rightmove, Zoopla and OnTheMarket';
 const HOME_DESCRIPTION =
   'Paste a Rightmove, Zoopla or OnTheMarket link and get an investor-grade score with yields, HMO licensing, floor plans and area data in seconds. 5 free analyses.';
 
-const PRICING_TITLE = 'Pricing and plans | Property Score';
+const PRICING_TITLE = 'Pricing and plans | Zola Check';
 const PRICING_DESCRIPTION =
-  'Start free with 5 listing analyses. Paid Property Score plans add more monthly analyses, proposed HMO layouts and PDF reports. Cancel any time.';
+  'Start free with 5 listing analyses. Paid Zola Check plans add more monthly analyses, proposed HMO layouts and PDF reports. Cancel any time.';
 
-const LOGIN_TITLE = 'Sign in | Property Score';
+const LOGIN_TITLE = 'Sign in | Zola Check';
 const LOGIN_DESCRIPTION =
-  'Sign in or create a Property Score account to score Rightmove, Zoopla and OnTheMarket listings for HMO conversion or buy to let.';
+  'Sign in or create a Zola Check account to score Rightmove, Zoopla and OnTheMarket listings for HMO conversion or buy to let.';
 
-const NOT_FOUND_TITLE = 'Page not found | Property Score';
+const NOT_FOUND_TITLE = 'Page not found | Zola Check';
 const NOT_FOUND_DESCRIPTION =
-  'This page does not exist. Go back to Property Score to analyse a UK property listing.';
+  'This page does not exist. Go back to Zola Check to analyse a UK property listing.';
 
 export function canonicalUrl(path: string): string {
   if (path === '/') {
@@ -237,7 +237,7 @@ export const LOGIN_SEO: PageSeo = {
   }),
   noscriptHtml: `
     <article>
-      <h1>Sign in to Property Score</h1>
+      <h1>Sign in to Zola Check</h1>
       <p>${escapeHtml(LOGIN_DESCRIPTION)}</p>
       <p><a href="${SITE_ORIGIN}/">Back to home</a></p>
     </article>
@@ -258,7 +258,7 @@ export const NOT_FOUND_SEO: PageSeo = {
     <article>
       <h1>Page not found</h1>
       <p>${escapeHtml(NOT_FOUND_DESCRIPTION)}</p>
-      <p><a href="${SITE_ORIGIN}/">Go to Property Score</a></p>
+      <p><a href="${SITE_ORIGIN}/">Go to Zola Check</a></p>
     </article>
   `.trim(),
 };
@@ -266,38 +266,38 @@ export const NOT_FOUND_SEO: PageSeo = {
 const APP_PAGES: PageSeo[] = [
   appPage(
     '/analyse',
-    'Analyse a listing | Property Score',
+    'Analyse a listing | Zola Check',
     'Paste a Rightmove, OnTheMarket or Zoopla URL and choose HMO conversion or buy to let.',
   ),
   appPage(
     '/deals',
-    'Your properties | Property Score',
-    'Your recent Property Score listing analyses.',
+    'Your properties | Zola Check',
+    'Your recent Zola Check listing analyses.',
   ),
   appPage(
     '/deals/:dealId',
-    'Property report | Property Score',
-    'Private Property Score investment report.',
+    'Property report | Zola Check',
+    'Private Zola Check investment report.',
   ),
   appPage(
     '/billing',
-    'Billing | Property Score',
-    'Manage your Property Score plan, analyses and top-ups.',
+    'Billing | Zola Check',
+    'Manage your Zola Check plan, analyses and top-ups.',
   ),
   appPage(
     '/billing/success',
-    'Payment successful | Property Score',
-    'Your Property Score payment was successful.',
+    'Payment successful | Zola Check',
+    'Your Zola Check payment was successful.',
   ),
   appPage(
     '/billing/cancel',
-    'Checkout cancelled | Property Score',
-    'Property Score checkout was cancelled. No charge was made.',
+    'Checkout cancelled | Zola Check',
+    'Zola Check checkout was cancelled. No charge was made.',
   ),
   appPage(
     '/account',
-    'Account | Property Score',
-    'Manage your Property Score account, testimonials and support messages.',
+    'Account | Zola Check',
+    'Manage your Zola Check account, testimonials and support messages.',
   ),
 ];
 
