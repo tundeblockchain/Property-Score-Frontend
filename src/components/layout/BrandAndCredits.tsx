@@ -6,7 +6,7 @@ import {
   Typography,
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
-import { ZMarkIcon } from '@/components/common/icons';
+import { HouseMarkIcon } from '@/components/common/icons';
 import { useBilling } from '@/hooks/useBilling';
 import {
   isLowAnalysisBalance,
@@ -84,7 +84,7 @@ export function BrandMark({ to = '/' }: BrandMarkProps) {
       aria-label={`${SITE_NAME} home`}
       sx={{ textDecoration: 'none', color: 'inherit' }}
     >
-      <ZMarkIcon width={28} height={28} />
+      <HouseMarkIcon width={28} height={28} />
       <Typography
         variant="h6"
         component="span"
