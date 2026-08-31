@@ -1,5 +1,21 @@
 import type { SVGProps } from 'react';
 
+export const Z_MARK_PATH = 'M8 8h16v4H13.5l10.5 12H8v-4h10.5L8 8z';
+
+export function ZMarkIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 32 32"
+      aria-hidden="true"
+      focusable="false"
+      {...props}
+    >
+      <rect width="32" height="32" rx="6" fill="#0F766E" />
+      <path d={Z_MARK_PATH} fill="#F8FAFC" />
+    </svg>
+  );
+}
+
 export function CloseIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg

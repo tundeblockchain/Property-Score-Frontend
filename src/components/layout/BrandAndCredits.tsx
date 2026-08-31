@@ -1,12 +1,12 @@
 import {
   Alert,
-  Box,
   Button,
   Chip,
   Stack,
   Typography,
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
+import { ZMarkIcon } from '@/components/common/icons';
 import { useBilling } from '@/hooks/useBilling';
 import {
   isLowAnalysisBalance,
@@ -84,15 +84,7 @@ export function BrandMark({ to = '/' }: BrandMarkProps) {
       aria-label={`${SITE_NAME} home`}
       sx={{ textDecoration: 'none', color: 'inherit' }}
     >
-      <Box
-        sx={{
-          width: 28,
-          height: 28,
-          borderRadius: 1,
-          bgcolor: 'primary.main',
-        }}
-        aria-hidden
-      />
+      <ZMarkIcon width={28} height={28} />
       <Typography
         variant="h6"
         component="span"
