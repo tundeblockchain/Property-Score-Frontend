@@ -1,17 +1,18 @@
 import {
   Alert,
-  Box,
   Button,
   Chip,
   Stack,
   Typography,
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
+import { HouseMarkIcon } from '@/components/common/icons';
 import { useBilling } from '@/hooks/useBilling';
 import {
   isLowAnalysisBalance,
   remainingAnalysesBadgeLabel,
 } from '@/lib/plans';
+import { SITE_NAME } from '@/lib/seo';
 
 export function CreditsBadge() {
   const { data, isLoading, isError } = useBilling();
@@ -80,18 +81,10 @@ export function BrandMark({ to = '/' }: BrandMarkProps) {
       alignItems="center"
       component={RouterLink}
       to={to}
-      aria-label="Property Score home"
+      aria-label={`${SITE_NAME} home`}
       sx={{ textDecoration: 'none', color: 'inherit' }}
     >
-      <Box
-        sx={{
-          width: 28,
-          height: 28,
-          borderRadius: 1,
-          bgcolor: 'primary.main',
-        }}
-        aria-hidden
-      />
+      <HouseMarkIcon width={28} height={28} />
       <Typography
         variant="h6"
         component="span"
@@ -101,7 +94,7 @@ export function BrandMark({ to = '/' }: BrandMarkProps) {
           letterSpacing: '-0.01em',
         }}
       >
-        Property Score
+        {SITE_NAME}
       </Typography>
     </Stack>
   );

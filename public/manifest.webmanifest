@@ -1,6 +1,6 @@
 {
-  "name": "Property Score",
-  "short_name": "Property Score",
+  "name": "Zola Check",
+  "short_name": "Zola Check",
   "description": "Score Rightmove, Zoopla and OnTheMarket listings for HMO conversion and buy to let.",
   "start_url": "/",
   "display": "browser",

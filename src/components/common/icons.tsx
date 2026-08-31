@@ -1,5 +1,21 @@
 import type { SVGProps } from 'react';
 
+export const HOUSE_MARK_PATH = 'M8 22V12l8-5 8 5v10h-5v-6h-6v6H8z';
+
+export function HouseMarkIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 32 32"
+      aria-hidden="true"
+      focusable="false"
+      {...props}
+    >
+      <rect width="32" height="32" rx="6" fill="#0F766E" />
+      <path d={HOUSE_MARK_PATH} fill="#F8FAFC" />
+    </svg>
+  );
+}
+
 export function CloseIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg

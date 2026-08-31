@@ -1,5 +1,6 @@
 import { Button, Stack, Typography } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
+import { SITE_NAME } from '@/lib/seo';
 
 export function NotFoundPage() {
   return (
@@ -8,7 +9,7 @@ export function NotFoundPage() {
         Page not found
       </Typography>
       <Typography color="text.secondary">
-        That address is not a Property Score page. Head home to score a
+        That address is not a {SITE_NAME} page. Head home to score a
         Rightmove, Zoopla or OnTheMarket listing.
       </Typography>
       <Stack direction="row" spacing={1.5} flexWrap="wrap" useFlexGap>

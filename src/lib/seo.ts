@@ -1,10 +1,9 @@
 import { LANDING_FAQS } from '../content/faqs';
 
-export const SITE_NAME = 'Property Score';
-export const SITE_ORIGIN = 'https://property-score.netlify.app';
+export const SITE_NAME = 'Zola Check';
+export const SITE_ORIGIN = 'https://zolacheck.com';
 export const DEFAULT_OG_IMAGE_PATH = '/og-image.png';
-export const DEFAULT_OG_IMAGE_ALT =
-  'Property Score — investor reports for Rightmove, Zoopla and OnTheMarket listings';
+export const DEFAULT_OG_IMAGE_ALT = `${SITE_NAME} — investor reports for Rightmove, Zoopla and OnTheMarket listings`;
 
 export type RobotsDirective = 'index, follow' | 'noindex, nofollow';
 
@@ -17,22 +16,18 @@ export interface PageSeo {
   noscriptHtml: string;
 }
 
-const HOME_TITLE =
-  'Property Score | Score UK listings from Rightmove, Zoopla and OnTheMarket';
+const HOME_TITLE = `${SITE_NAME} | Score UK listings from Rightmove, Zoopla and OnTheMarket`;
 const HOME_DESCRIPTION =
   'Paste a Rightmove, Zoopla or OnTheMarket link and get an investor-grade score with yields, HMO licensing, floor plans and area data in seconds. 5 free analyses.';
 
-const PRICING_TITLE = 'Pricing and plans | Property Score';
-const PRICING_DESCRIPTION =
-  'Start free with 5 listing analyses. Paid Property Score plans add more monthly analyses, proposed HMO layouts and PDF reports. Cancel any time.';
+const PRICING_TITLE = `Pricing and plans | ${SITE_NAME}`;
+const PRICING_DESCRIPTION = `Start free with 5 listing analyses. Paid ${SITE_NAME} plans add more monthly analyses, proposed HMO layouts and PDF reports. Cancel any time.`;
 
-const LOGIN_TITLE = 'Sign in | Property Score';
-const LOGIN_DESCRIPTION =
-  'Sign in or create a Property Score account to score Rightmove, Zoopla and OnTheMarket listings for HMO conversion or buy to let.';
+const LOGIN_TITLE = `Sign in | ${SITE_NAME}`;
+const LOGIN_DESCRIPTION = `Sign in or create a ${SITE_NAME} account to score Rightmove, Zoopla and OnTheMarket listings for HMO conversion or buy to let.`;
 
-const NOT_FOUND_TITLE = 'Page not found | Property Score';
-const NOT_FOUND_DESCRIPTION =
-  'This page does not exist. Go back to Property Score to analyse a UK property listing.';
+const NOT_FOUND_TITLE = `Page not found | ${SITE_NAME}`;
+const NOT_FOUND_DESCRIPTION = `This page does not exist. Go back to ${SITE_NAME} to analyse a UK property listing.`;
 
 export function canonicalUrl(path: string): string {
   if (path === '/') {
@@ -237,7 +232,7 @@ export const LOGIN_SEO: PageSeo = {
   }),
   noscriptHtml: `
     <article>
-      <h1>Sign in to Property Score</h1>
+      <h1>Sign in to ${SITE_NAME}</h1>
       <p>${escapeHtml(LOGIN_DESCRIPTION)}</p>
       <p><a href="${SITE_ORIGIN}/">Back to home</a></p>
     </article>
@@ -258,7 +253,7 @@ export const NOT_FOUND_SEO: PageSeo = {
     <article>
       <h1>Page not found</h1>
       <p>${escapeHtml(NOT_FOUND_DESCRIPTION)}</p>
-      <p><a href="${SITE_ORIGIN}/">Go to Property Score</a></p>
+      <p><a href="${SITE_ORIGIN}/">Go to ${SITE_NAME}</a></p>
     </article>
   `.trim(),
 };
@@ -266,38 +261,38 @@ export const NOT_FOUND_SEO: PageSeo = {
 const APP_PAGES: PageSeo[] = [
   appPage(
     '/analyse',
-    'Analyse a listing | Property Score',
+    `Analyse a listing | ${SITE_NAME}`,
     'Paste a Rightmove, OnTheMarket or Zoopla URL and choose HMO conversion or buy to let.',
   ),
   appPage(
     '/deals',
-    'Your properties | Property Score',
-    'Your recent Property Score listing analyses.',
+    `Your properties | ${SITE_NAME}`,
+    `Your recent ${SITE_NAME} listing analyses.`,
   ),
   appPage(
     '/deals/:dealId',
-    'Property report | Property Score',
-    'Private Property Score investment report.',
+    `Property report | ${SITE_NAME}`,
+    `Private ${SITE_NAME} investment report.`,
   ),
   appPage(
     '/billing',
-    'Billing | Property Score',
-    'Manage your Property Score plan, analyses and top-ups.',
+    `Billing | ${SITE_NAME}`,
+    `Manage your ${SITE_NAME} plan, analyses and top-ups.`,
   ),
   appPage(
     '/billing/success',
-    'Payment successful | Property Score',
-    'Your Property Score payment was successful.',
+    `Payment successful | ${SITE_NAME}`,
+    `Your ${SITE_NAME} payment was successful.`,
   ),
   appPage(
     '/billing/cancel',
-    'Checkout cancelled | Property Score',
-    'Property Score checkout was cancelled. No charge was made.',
+    `Checkout cancelled | ${SITE_NAME}`,
+    `${SITE_NAME} checkout was cancelled. No charge was made.`,
   ),
   appPage(
     '/account',
-    'Account | Property Score',
-    'Manage your Property Score account, testimonials and support messages.',
+    `Account | ${SITE_NAME}`,
+    `Manage your ${SITE_NAME} account, testimonials and support messages.`,
   ),
 ];
 

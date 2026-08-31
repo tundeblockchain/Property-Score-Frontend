@@ -1,14 +1,14 @@
-# Property Score
+# Zola Check
 
-> Property Score scores UK property listings from Rightmove, Zoopla and OnTheMarket for HMO conversion and buy-to-let investors.
+> Zola Check scores UK property listings from Rightmove, Zoopla and OnTheMarket for HMO conversion and buy-to-let investors.
 
-Property Score turns a listing URL into an investor-grade report in 15–40 seconds. Each report includes a financial model (estimated rent, gross yield, cash flow and ROI), HMO licensing and compliance checks, floor-plan reading, and area data (EPC, planning history, sold prices, crime, schools, transport and broadband). New accounts get 5 free listing analyses. Proposed HMO layouts use three analyses from the same balance. Subscriptions are billed through Stripe and can be cancelled at any time.
+Zola Check turns a listing URL into an investor-grade report in 15–40 seconds. Each report includes a financial model (estimated rent, gross yield, cash flow and ROI), HMO licensing and compliance checks, floor-plan reading, and area data (EPC, planning history, sold prices, crime, schools, transport and broadband). New accounts get 5 free listing analyses. Proposed HMO layouts use three analyses from the same balance. Subscriptions are billed through Stripe and can be cancelled at any time.
 
 ## Pages
 
-- [Home](https://property-score.netlify.app/): Product overview, how it works, features, FAQ, and a form to paste a listing URL.
-- [Pricing](https://property-score.netlify.app/pricing): Free plan, paid subscriptions, and analysis top-up packs.
-- [Sign in](https://property-score.netlify.app/login): Sign in or create an account.
+- [Home](https://zolacheck.com/): Product overview, how it works, features, FAQ, and a form to paste a listing URL.
+- [Pricing](https://zolacheck.com/pricing): Free plan, paid subscriptions, and analysis top-up packs.
+- [Sign in](https://zolacheck.com/login): Sign in or create an account.
 
 ## Supported listings
 
@@ -27,5 +27,5 @@ Property Score turns a listing URL into an investor-grade report in 15–40 seco
 
 ## Optional
 
-- [Sitemap](https://property-score.netlify.app/sitemap.xml)
-- [robots.txt](https://property-score.netlify.app/robots.txt)
+- [Sitemap](https://zolacheck.com/sitemap.xml)
+- [robots.txt](https://zolacheck.com/robots.txt)

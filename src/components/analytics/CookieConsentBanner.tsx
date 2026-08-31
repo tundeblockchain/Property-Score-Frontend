@@ -1,6 +1,7 @@
 import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 import { useAnalyticsConsent } from '@/hooks/useAnalyticsConsent';
 import { setAnalyticsConsent } from '@/lib/analyticsConsent';
+import { SITE_NAME } from '@/lib/seo';
 
 interface CookieConsentBannerProps {
   forceOpen?: boolean;
@@ -65,7 +66,7 @@ export function CookieConsentBanner({
               variant="body2"
               color="text.secondary"
             >
-              Optional cookies help us understand how Property Score is used
+              Optional cookies help us understand how {SITE_NAME} is used
               and measure our marketing. Necessary sign-in cookies are always
               on.
             </Typography>
