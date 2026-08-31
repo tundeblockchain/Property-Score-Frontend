@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  DEFAULT_OG_IMAGE_ALT,
   HOME_SEO,
   LOGIN_SEO,
   NOT_FOUND_SEO,
@@ -15,6 +16,28 @@ describe('site brand', () => {
   it('uses the public Zola Check domain', () => {
     expect(SITE_NAME).toBe('Zola Check');
     expect(SITE_ORIGIN).toBe('https://zolacheck.com');
+  });
+
+  it('templates SEO titles with SITE_NAME', () => {
+    expect(HOME_SEO.title).toContain(SITE_NAME);
+    expect(PRICING_SEO.title).toContain(SITE_NAME);
+    expect(LOGIN_SEO.title).toContain(SITE_NAME);
+    expect(NOT_FOUND_SEO.title).toContain(SITE_NAME);
+  });
+
+  it('templates SEO descriptions with SITE_NAME where applicable', () => {
+    expect(PRICING_SEO.description).toContain(SITE_NAME);
+    expect(LOGIN_SEO.description).toContain(SITE_NAME);
+    expect(NOT_FOUND_SEO.description).toContain(SITE_NAME);
+  });
+
+  it('templates DEFAULT_OG_IMAGE_ALT with SITE_NAME', () => {
+    expect(DEFAULT_OG_IMAGE_ALT).toContain(SITE_NAME);
+  });
+
+  it('templates noscript HTML with SITE_NAME where applicable', () => {
+    expect(LOGIN_SEO.noscriptHtml).toContain(SITE_NAME);
+    expect(NOT_FOUND_SEO.noscriptHtml).toContain(SITE_NAME);
   });
 });
 
