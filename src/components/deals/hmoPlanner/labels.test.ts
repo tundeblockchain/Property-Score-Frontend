@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { hmoRenderSkipReasonLabel } from '@/components/deals/hmoPlanner/labels';
-import type { HmoRenderSkipReason } from '@/models';
+import {
+  conversionActionLabel,
+  hmoRenderSkipReasonLabel,
+} from '@/components/deals/hmoPlanner/labels';
+import type { ConversionAction, HmoRenderSkipReason } from '@/models';
 
-const cases: Array<[HmoRenderSkipReason, string]> = [
+const skipCases: Array<[HmoRenderSkipReason, string]> = [
   [
     'no_conversion_plan',
     'This scheme has no conversion plan to illustrate.',
@@ -21,8 +24,23 @@ const cases: Array<[HmoRenderSkipReason, string]> = [
   ],
 ];
 
+const conversionCases: Array<[ConversionAction, string]> = [
+  ['keep_bedroom', 'Keep bedroom'],
+  ['convert_to_bedroom', 'Convert to bedroom'],
+  ['add_ensuite', 'Add ensuite'],
+  ['keep_communal', 'Keep communal'],
+  ['combine_kitchen_dining', 'Kitchen / lounge'],
+  ['staff_room', 'Staff room'],
+];
+
 describe('hmoRenderSkipReasonLabel', () => {
-  it.each(cases)('explains %s', (reason, label) => {
+  it.each(skipCases)('explains %s', (reason, label) => {
     expect(hmoRenderSkipReasonLabel(reason)).toBe(label);
+  });
+});
+
+describe('conversionActionLabel', () => {
+  it.each(conversionCases)('labels %s', (action, label) => {
+    expect(conversionActionLabel(action)).toBe(label);
   });
 });

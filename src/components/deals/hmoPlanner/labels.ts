@@ -18,6 +18,8 @@ export function conversionActionLabel(action: ConversionAction): string {
       return 'Add ensuite';
     case 'keep_communal':
       return 'Keep communal';
+    case 'combine_kitchen_dining':
+      return 'Kitchen / lounge';
     case 'staff_room':
       return 'Staff room';
   }

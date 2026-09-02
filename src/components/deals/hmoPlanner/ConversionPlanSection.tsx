@@ -13,7 +13,8 @@ export function ConversionPlanSection({ plan }: ConversionPlanSectionProps) {
       step.action === 'convert_to_bedroom' ||
       step.action === 'add_ensuite' ||
       step.action === 'staff_room' ||
-      step.action === 'keep_communal',
+      step.action === 'keep_communal' ||
+      step.action === 'combine_kitchen_dining',
   );
 
   return (
