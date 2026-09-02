@@ -157,6 +157,7 @@ export type ConversionAction =
   | 'convert_to_bedroom'
   | 'add_ensuite'
   | 'keep_communal'
+  | 'combine_kitchen_dining'
   | 'staff_room';
 
 export interface ConversionStep {
