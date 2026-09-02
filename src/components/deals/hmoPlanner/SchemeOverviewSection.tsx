@@ -20,11 +20,6 @@ export function SchemeOverviewSection({ scheme }: SchemeOverviewSectionProps) {
           info="Number of rooms intended for letting under this scheme, after any conversion plan."
         />
         <Fact
-          label="Area fit"
-          value={`${scheme.fitScore}/100`}
-          info="How well the layout and room sizes fit this use case. Higher scores mean a better match to space and scheme goals."
-        />
-        <Fact
           label="Est. monthly rent"
           value={formatCurrency(scheme.financials.estimatedRentMonthly)}
           info="Indicative total monthly rent from all letting rooms in this scheme."
