@@ -4,9 +4,23 @@ import type {
   FireRiskBand,
   HmoPlannerResult,
   HmoRenderSkipReason,
+  HmoUseCase,
   LicensingRequirementStatus,
   RefurbBoqCategory,
 } from '@/models';
+
+export const FAMILY_LET_HEADLINE_LABEL = 'Family let (as listed)';
+
+export function hmoUseCaseLabel(useCase: HmoUseCase): string {
+  switch (useCase) {
+    case 'students':
+      return 'Students HMO';
+    case 'workers':
+      return 'Workers HMO';
+    case 'social_care':
+      return 'Social care HMO';
+  }
+}
 
 export function conversionActionLabel(action: ConversionAction): string {
   switch (action) {

@@ -82,7 +82,7 @@ export function MoneyComparisonSection({
   return (
     <Stack spacing={2}>
       <Typography variant="subtitle2">
-        Money: family let vs recommended HMO
+        Money: family let vs recommended (best fit)
       </Typography>
 
       <Stack
@@ -92,7 +92,7 @@ export function MoneyComparisonSection({
       >
         <SnapshotColumn title="As-listed family let" snapshot={asListedFamily} />
         <SnapshotColumn
-          title="Recommended HMO"
+          title="Recommended (best fit)"
           snapshot={bestHmo}
           emphasize
         />

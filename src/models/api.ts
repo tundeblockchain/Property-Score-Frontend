@@ -359,6 +359,32 @@ export interface HmoMoneyComparison {
   notes: string[];
 }
 
+export type HmoHeadlineBasis = 'scheme' | 'family_let';
+
+interface HmoHeadlineMoney {
+  label: string;
+  estimatedRentMonthly: number;
+  grossYield: number;
+  netCashFlowAnnual: number;
+  estimatedRoi: number;
+}
+
+export interface HmoSchemeHeadlineReturns extends HmoHeadlineMoney {
+  basis: 'scheme';
+  schemeId: string;
+  lettingRooms: number;
+  refurbEstimateLowGbp?: number;
+  refurbEstimateHighGbp?: number;
+}
+
+export interface HmoFamilyLetHeadlineReturns extends HmoHeadlineMoney {
+  basis: 'family_let';
+}
+
+export type HmoHeadlineReturns =
+  | HmoSchemeHeadlineReturns
+  | HmoFamilyLetHeadlineReturns;
+
 export interface HmoPlannerResult {
   source: 'listing_beds' | 'floor_plan_vision';
   floorPlanCount: number;
@@ -368,6 +394,8 @@ export interface HmoPlannerResult {
   schemes: HmoLayoutScheme[];
   recommendedSchemeId: string;
   moneyComparison?: HmoMoneyComparison;
+  /** Best-return strategy among HMO schemes and the as-listed family let. */
+  headline?: HmoHeadlineReturns;
   disclaimer: string;
 }
 

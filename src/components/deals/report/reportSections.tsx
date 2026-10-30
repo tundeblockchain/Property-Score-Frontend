@@ -68,7 +68,7 @@ function lockBadge(plan: UpgradePlan): ReactNode {
 }
 
 function recommendedBadge(): ReactNode {
-  return <Chip label="Recommended" color="success" size="small" />;
+  return <Chip label="Recommended (best fit)" color="success" size="small" />;
 }
 
 function sectionBadges(...nodes: Array<ReactNode | undefined>): ReactNode {
