@@ -230,6 +230,8 @@ describe('buildReportSections', () => {
 
     expect(recommended?.title).toBe('Student share');
     expect(recommended?.badge).toBeDefined();
+    renderWithProviders(<>{recommended?.badge}</>);
+    expect(screen.getByText('Recommended (best fit)')).toBeInTheDocument();
     expect(recommended?.defaultExpanded).toBe(true);
     expect(other?.badge).toBeUndefined();
     expect(other?.defaultExpanded).toBe(false);

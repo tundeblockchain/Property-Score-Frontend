@@ -6,8 +6,11 @@ import type {
   EpcEnrichment,
   FinancialModel,
   GeometryConversionPlan,
+  HmoFamilyLetHeadlineReturns,
   HmoLayoutScheme,
+  HmoSchemeHeadlineReturns,
   HmoLicensingPath,
+  HmoMoneySnapshot,
   HmoPlannerResult,
   HmoSchemeRendering,
   LicensingCheck,
@@ -130,6 +133,48 @@ export function buildHmoScheme(
     licensing: buildLicensingPath(),
     fitScore: 78,
     recommended: true,
+    ...overrides,
+  };
+}
+
+export function buildHmoMoneySnapshot(
+  overrides: Partial<HmoMoneySnapshot> = {},
+): HmoMoneySnapshot {
+  return {
+    label: 'Family let (as listed)',
+    ...buildFinancialModel(),
+    voidRateAssumed: 0.04,
+    occupancyBasis: '4-bed AST',
+    ...overrides,
+  };
+}
+
+export function buildHmoHeadline(
+  overrides: Partial<Omit<HmoSchemeHeadlineReturns, 'basis'>> = {},
+): HmoSchemeHeadlineReturns {
+  return {
+    basis: 'scheme',
+    schemeId: 'workers',
+    label: 'Workers HMO',
+    lettingRooms: 6,
+    estimatedRentMonthly: 2400,
+    grossYield: 11.2,
+    netCashFlowAnnual: 9800,
+    estimatedRoi: 14.1,
+    ...overrides,
+  };
+}
+
+export function buildFamilyLetHeadline(
+  overrides: Partial<Omit<HmoFamilyLetHeadlineReturns, 'basis'>> = {},
+): HmoFamilyLetHeadlineReturns {
+  return {
+    basis: 'family_let',
+    label: 'Family let (as listed)',
+    estimatedRentMonthly: 850,
+    grossYield: 6.4,
+    netCashFlowAnnual: 3100,
+    estimatedRoi: 7.2,
     ...overrides,
   };
 }

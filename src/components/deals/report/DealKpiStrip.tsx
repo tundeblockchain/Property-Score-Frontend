@@ -1,7 +1,13 @@
-import { Box, Typography } from '@mui/material';
-import { formatCurrency, formatPercent } from '@/lib/format';
+import { Box, Chip, Stack, Typography } from '@mui/material';
 import { resolveAnalysisStrategy } from '@/lib/analysisStrategy';
-import type { AnalysisStrategy, FinancialModel, HmoPlannerResult } from '@/models';
+import { formatCurrency, formatPercent } from '@/lib/format';
+import { resolveHmoHeadline } from '@/lib/hmoHeadline';
+import type {
+  AnalysisStrategy,
+  FinancialModel,
+  HmoHeadlineReturns,
+  HmoPlannerResult,
+} from '@/models';
 
 interface Kpi {
   readonly label: string;
@@ -19,16 +25,13 @@ interface DealKpiStripProps {
   bedrooms?: number;
 }
 
-function recommendedLettingRooms(
-  planner: HmoPlannerResult | undefined,
-): number | undefined {
-  if (!planner) {
-    return undefined;
-  }
-  const recommended =
-    planner.schemes.find((scheme) => scheme.id === planner.recommendedSchemeId) ??
-    planner.schemes.find((scheme) => scheme.recommended);
-  return recommended?.lettingRooms;
+function occupancyKpi(bedrooms: number, targetId: string): Kpi {
+  return {
+    label: 'Occupancy',
+    value: `${bedrooms}-bed AST`,
+    hint: 'family let',
+    targetId,
+  };
 }
 
 function buildKpis({
@@ -36,19 +39,20 @@ function buildKpis({
   hmoPlanner,
   strategy,
   bedrooms,
-}: DealKpiStripProps): Kpi[] {
-  const netCashFlow = financialModel?.netCashFlowAnnual;
-  const lettingRooms = recommendedLettingRooms(hmoPlanner);
+  headline,
+}: DealKpiStripProps & { headline?: HmoHeadlineReturns }): Kpi[] {
+  const money = headline ?? financialModel;
+  const netCashFlow = money?.netCashFlowAnnual;
 
   const kpis: Kpi[] = [
     {
       label: 'Gross yield',
-      value: formatPercent(financialModel?.grossYield),
+      value: formatPercent(money?.grossYield),
       targetId: 'financial-model',
     },
     {
       label: 'Est. monthly rent',
-      value: formatCurrency(financialModel?.estimatedRentMonthly),
+      value: formatCurrency(money?.estimatedRentMonthly),
       targetId: 'financial-model',
     },
     {
@@ -60,25 +64,29 @@ function buildKpis({
     },
     {
       label: 'Est. ROI',
-      value: formatPercent(financialModel?.estimatedRoi),
+      value: formatPercent(money?.estimatedRoi),
       targetId: 'financial-model',
     },
   ];
 
-  if (resolveAnalysisStrategy(strategy) === 'buy_to_let' && bedrooms != null) {
-    kpis.push({
-      label: 'Occupancy',
-      value: `${bedrooms}-bed AST`,
-      hint: 'family let',
-      targetId: 'financial-model',
-    });
-  } else if (lettingRooms != null) {
+  if (headline?.basis === 'family_let') {
+    const occupancyBeds = hmoPlanner?.asListedBedrooms ?? bedrooms;
+    if (occupancyBeds != null) {
+      kpis.push(occupancyKpi(occupancyBeds, 'hmo-overview'));
+    }
+  } else if (headline?.basis === 'scheme') {
     kpis.push({
       label: 'HMO rooms',
-      value: String(lettingRooms),
-      hint: 'recommended scheme',
+      value: String(headline.lettingRooms),
+      hint: 'best return',
       targetId: 'hmo-overview',
     });
+  } else if (
+    !hmoPlanner &&
+    resolveAnalysisStrategy(strategy) === 'buy_to_let' &&
+    bedrooms != null
+  ) {
+    kpis.push(occupancyKpi(bedrooms, 'financial-model'));
   }
 
   return kpis;
@@ -90,65 +98,83 @@ export function DealKpiStrip({
   strategy,
   bedrooms,
 }: DealKpiStripProps) {
-  const kpis = buildKpis({ financialModel, hmoPlanner, strategy, bedrooms });
+  const headline = resolveHmoHeadline(hmoPlanner);
+  const kpis = buildKpis({
+    financialModel,
+    hmoPlanner,
+    strategy,
+    bedrooms,
+    headline,
+  });
 
   return (
-    <Box
-      component="ul"
-      aria-label="Key figures"
-      sx={{
-        listStyle: 'none',
-        m: 0,
-        p: 0,
-        display: 'grid',
-        gap: 2,
-        gridTemplateColumns: {
-          xs: 'repeat(2, minmax(0, 1fr))',
-          sm: 'repeat(3, minmax(0, 1fr))',
-          md: `repeat(${kpis.length}, minmax(0, 1fr))`,
-        },
-      }}
-    >
-      {kpis.map((kpi) => (
-        <Box component="li" key={kpi.label} sx={{ minWidth: 0 }}>
-          <Box
-            component="a"
-            href={`#${kpi.targetId}`}
-            sx={{
-              display: 'block',
-              textDecoration: 'none',
-              borderRadius: 1,
-              '&:hover .DealKpi-value': {
-                textDecoration: 'underline',
-              },
-              '&:focus-visible': {
-                outline: '2px solid',
-                outlineColor: 'primary.main',
-                outlineOffset: 2,
-              },
-            }}
-          >
-            <Typography variant="body2" color="text.secondary" noWrap>
-              {kpi.label}
-            </Typography>
-            <Typography
-              className="DealKpi-value"
-              variant="h6"
-              component="p"
-              fontWeight={700}
-              color={kpi.negative ? 'error.dark' : 'text.primary'}
-              sx={{ fontVariantNumeric: 'tabular-nums' }}
+    <Stack spacing={1.5}>
+      {headline ? (
+        <Chip
+          size="small"
+          color="success"
+          variant="outlined"
+          label={`Best return: ${headline.label}`}
+          sx={{ alignSelf: 'flex-start' }}
+        />
+      ) : null}
+      <Box
+        component="ul"
+        aria-label="Key figures"
+        sx={{
+          listStyle: 'none',
+          m: 0,
+          p: 0,
+          display: 'grid',
+          gap: 2,
+          gridTemplateColumns: {
+            xs: 'repeat(2, minmax(0, 1fr))',
+            sm: 'repeat(3, minmax(0, 1fr))',
+            md: `repeat(${kpis.length}, minmax(0, 1fr))`,
+          },
+        }}
+      >
+        {kpis.map((kpi) => (
+          <Box component="li" key={kpi.label} sx={{ minWidth: 0 }}>
+            <Box
+              component="a"
+              href={`#${kpi.targetId}`}
+              sx={{
+                display: 'block',
+                textDecoration: 'none',
+                borderRadius: 1,
+                '&:hover .DealKpi-value': {
+                  textDecoration: 'underline',
+                },
+                '&:focus-visible': {
+                  outline: '2px solid',
+                  outlineColor: 'primary.main',
+                  outlineOffset: 2,
+                },
+              }}
             >
-              {kpi.value}
-            </Typography>
-            {kpi.hint ? (
-              <Typography variant="caption" color="text.secondary">
-                {kpi.hint}
+              <Typography variant="body2" color="text.secondary" noWrap>
+                {kpi.label}
               </Typography>
-            ) : null}
+              <Typography
+                className="DealKpi-value"
+                variant="h6"
+                component="p"
+                fontWeight={700}
+                color={kpi.negative ? 'error.dark' : 'text.primary'}
+                sx={{ fontVariantNumeric: 'tabular-nums' }}
+              >
+                {kpi.value}
+              </Typography>
+              {kpi.hint ? (
+                <Typography variant="caption" color="text.secondary">
+                  {kpi.hint}
+                </Typography>
+              ) : null}
+            </Box>
           </Box>
-        </Box>
-      ))}
-    </Box>
+        ))}
+      </Box>
+    </Stack>
   );
 }
