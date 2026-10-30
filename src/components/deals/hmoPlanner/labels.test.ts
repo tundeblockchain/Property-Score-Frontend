@@ -2,8 +2,9 @@ import { describe, expect, it } from 'vitest';
 import {
   conversionActionLabel,
   hmoRenderSkipReasonLabel,
+  hmoUseCaseLabel,
 } from '@/components/deals/hmoPlanner/labels';
-import type { ConversionAction, HmoRenderSkipReason } from '@/models';
+import type { ConversionAction, HmoRenderSkipReason, HmoUseCase } from '@/models';
 
 const skipCases: Array<[HmoRenderSkipReason, string]> = [
   [
@@ -42,5 +43,17 @@ describe('hmoRenderSkipReasonLabel', () => {
 describe('conversionActionLabel', () => {
   it.each(conversionCases)('labels %s', (action, label) => {
     expect(conversionActionLabel(action)).toBe(label);
+  });
+});
+
+const useCaseCases: Array<[HmoUseCase, string]> = [
+  ['students', 'Students HMO'],
+  ['workers', 'Workers HMO'],
+  ['social_care', 'Social care HMO'],
+];
+
+describe('hmoUseCaseLabel', () => {
+  it.each(useCaseCases)('labels %s', (useCase, label) => {
+    expect(hmoUseCaseLabel(useCase)).toBe(label);
   });
 });

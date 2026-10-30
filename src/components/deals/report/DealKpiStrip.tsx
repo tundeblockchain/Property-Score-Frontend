@@ -7,6 +7,7 @@ import type {
   FinancialModel,
   HmoHeadlineReturns,
   HmoPlannerResult,
+  HmoSchemeHeadlineReturns,
 } from '@/models';
 
 interface Kpi {
@@ -32,6 +33,33 @@ function occupancyKpi(bedrooms: number, targetId: string): Kpi {
     hint: 'family let',
     targetId,
   };
+}
+
+function recommendedLettingRooms(
+  planner: HmoPlannerResult | undefined,
+): number | undefined {
+  if (!planner) {
+    return undefined;
+  }
+  const recommended =
+    planner.schemes.find((scheme) => scheme.id === planner.recommendedSchemeId) ??
+    planner.schemes.find((scheme) => scheme.recommended);
+  return recommended?.lettingRooms;
+}
+
+function isFiniteNumber(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value);
+}
+
+function schemeRefurbNote(headline: HmoSchemeHeadlineReturns): string {
+  const { refurbEstimateLowGbp, refurbEstimateHighGbp } = headline;
+  if (
+    isFiniteNumber(refurbEstimateLowGbp) &&
+    isFiniteNumber(refurbEstimateHighGbp)
+  ) {
+    return `Refurb est. ${formatCurrency(refurbEstimateLowGbp)}–${formatCurrency(refurbEstimateHighGbp)}`;
+  }
+  return 'before conversion costs';
 }
 
 function buildKpis({
@@ -81,8 +109,17 @@ function buildKpis({
       hint: 'best return',
       targetId: 'hmo-overview',
     });
+  } else if (hmoPlanner) {
+    const lettingRooms = recommendedLettingRooms(hmoPlanner);
+    if (lettingRooms != null) {
+      kpis.push({
+        label: 'HMO rooms',
+        value: String(lettingRooms),
+        hint: 'best fit',
+        targetId: 'hmo-overview',
+      });
+    }
   } else if (
-    !hmoPlanner &&
     resolveAnalysisStrategy(strategy) === 'buy_to_let' &&
     bedrooms != null
   ) {
@@ -106,17 +143,34 @@ export function DealKpiStrip({
     bedrooms,
     headline,
   });
+  const refurbNote =
+    headline?.basis === 'scheme' ? schemeRefurbNote(headline) : undefined;
 
   return (
     <Stack spacing={1.5}>
       {headline ? (
-        <Chip
-          size="small"
-          color="success"
-          variant="outlined"
-          label={`Best return: ${headline.label}`}
+        <Stack
+          direction="row"
+          spacing={1}
+          alignItems="baseline"
+          flexWrap="wrap"
+          useFlexGap
           sx={{ alignSelf: 'flex-start' }}
-        />
+        >
+          <Chip
+            size="small"
+            color="success"
+            variant="outlined"
+            label={`Best return: ${headline.label}`}
+            title="Highest annual cash flow"
+            sx={{ alignSelf: 'flex-start' }}
+          />
+          {refurbNote ? (
+            <Typography variant="caption" color="text.secondary">
+              {refurbNote}
+            </Typography>
+          ) : null}
+        </Stack>
       ) : null}
       <Box
         component="ul"

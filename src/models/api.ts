@@ -373,8 +373,8 @@ export interface HmoSchemeHeadlineReturns extends HmoHeadlineMoney {
   basis: 'scheme';
   schemeId: string;
   lettingRooms: number;
-  estimatedRefurbLowGbp?: number;
-  estimatedRefurbHighGbp?: number;
+  refurbEstimateLowGbp?: number;
+  refurbEstimateHighGbp?: number;
 }
 
 export interface HmoFamilyLetHeadlineReturns extends HmoHeadlineMoney {

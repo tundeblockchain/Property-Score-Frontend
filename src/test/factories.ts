@@ -8,10 +8,12 @@ import type {
   GeometryConversionPlan,
   HmoFamilyLetHeadlineReturns,
   HmoLayoutScheme,
+  HmoMoneyComparison,
   HmoSchemeHeadlineReturns,
   HmoLicensingPath,
   HmoMoneySnapshot,
   HmoPlannerResult,
+  HmoUseCase,
   HmoSchemeRendering,
   LicensingCheck,
   PropertyListingSummary,
@@ -175,6 +177,57 @@ export function buildFamilyLetHeadline(
     grossYield: 6.4,
     netCashFlowAnnual: 3100,
     estimatedRoi: 7.2,
+    ...overrides,
+  };
+}
+
+export function buildSchemeWithMoney(
+  id: string,
+  useCase: HmoUseCase,
+  money: Partial<FinancialModel> = {},
+  extras: Partial<
+    Pick<
+      HmoLayoutScheme,
+      | 'lettingRooms'
+      | 'recommended'
+      | 'estimatedRefurbLowGbp'
+      | 'estimatedRefurbHighGbp'
+    >
+  > = {},
+): HmoLayoutScheme {
+  const lettingRooms = extras.lettingRooms ?? 5;
+  return buildHmoScheme({
+    id,
+    useCase,
+    lettingRooms,
+    recommended: extras.recommended ?? false,
+    financials: {
+      ...buildFinancialModel(money),
+      voidRateAssumed: 0.08,
+      roomRentWeeklyAssumed: 110,
+      occupiedRoomsAssumed: lettingRooms,
+    },
+    ...extras,
+  });
+}
+
+export function buildHmoMoneyComparison(
+  overrides: Partial<HmoMoneyComparison> = {},
+): HmoMoneyComparison {
+  return {
+    asListedFamily: buildHmoMoneySnapshot(),
+    bestHmo: {
+      ...buildHmoMoneySnapshot(),
+      schemeId: 'workers',
+      schemeTitle: 'Workers HMO',
+    },
+    delta: {
+      monthlyRentGbp: 0,
+      grossYieldPts: 0,
+      netCashFlowAnnualGbp: 0,
+      estimatedRoiPts: 0,
+    },
+    notes: [],
     ...overrides,
   };
 }

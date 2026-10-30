@@ -3,66 +3,38 @@ import { deriveHmoHeadline, resolveHmoHeadline } from '@/lib/hmoHeadline';
 import {
   buildFamilyLetHeadline,
   buildFinancialModel,
+  buildHmoMoneyComparison,
   buildHmoMoneySnapshot,
   buildHmoPlanner,
   buildHmoScheme,
+  buildSchemeWithMoney,
 } from '@/test/factories';
-
-function schemeWithMoney(
-  id: string,
-  useCase: 'students' | 'workers' | 'social_care',
-  money: { netCashFlowAnnual: number; estimatedRoi: number },
-  lettingRooms = 5,
-) {
-  return buildHmoScheme({
-    id,
-    useCase,
-    lettingRooms,
-    recommended: false,
-    financials: {
-      ...buildFinancialModel(money),
-      voidRateAssumed: 0.08,
-      roomRentWeeklyAssumed: 110,
-      occupiedRoomsAssumed: lettingRooms,
-    },
-  });
-}
 
 describe('deriveHmoHeadline', () => {
   it('picks the scheme with the highest net cash flow', () => {
     const planner = buildHmoPlanner({
       schemes: [
-        schemeWithMoney('students', 'students', {
+        buildSchemeWithMoney('students', 'students', {
           netCashFlowAnnual: 4_000,
           estimatedRoi: 20,
         }),
-        schemeWithMoney('workers', 'workers', {
-          netCashFlowAnnual: 9_800,
-          estimatedRoi: 14,
-        }, 6),
-        schemeWithMoney('care', 'social_care', {
+        buildSchemeWithMoney(
+          'workers',
+          'workers',
+          { netCashFlowAnnual: 9_800, estimatedRoi: 14 },
+          { lettingRooms: 6 },
+        ),
+        buildSchemeWithMoney('care', 'social_care', {
           netCashFlowAnnual: 6_000,
           estimatedRoi: 11,
         }),
       ],
-      moneyComparison: {
+      moneyComparison: buildHmoMoneyComparison({
         asListedFamily: buildHmoMoneySnapshot({
           netCashFlowAnnual: 3_100,
           estimatedRoi: 7,
         }),
-        bestHmo: {
-          ...buildHmoMoneySnapshot(),
-          schemeId: 'workers',
-          schemeTitle: 'Workers HMO',
-        },
-        delta: {
-          monthlyRentGbp: 0,
-          grossYieldPts: 0,
-          netCashFlowAnnualGbp: 0,
-          estimatedRoiPts: 0,
-        },
-        notes: [],
-      },
+      }),
     });
 
     expect(deriveHmoHeadline(planner)).toEqual(
@@ -73,8 +45,8 @@ describe('deriveHmoHeadline', () => {
         lettingRooms: 6,
         netCashFlowAnnual: 9_800,
         estimatedRoi: 14,
-        estimatedRefurbLowGbp: 30_000,
-        estimatedRefurbHighGbp: 45_000,
+        refurbEstimateLowGbp: 30_000,
+        refurbEstimateHighGbp: 45_000,
       }),
     );
   });
@@ -82,11 +54,11 @@ describe('deriveHmoHeadline', () => {
   it('breaks a cash-flow tie with the higher estimated ROI', () => {
     const planner = buildHmoPlanner({
       schemes: [
-        schemeWithMoney('students', 'students', {
+        buildSchemeWithMoney('students', 'students', {
           netCashFlowAnnual: 8_000,
           estimatedRoi: 12,
         }),
-        schemeWithMoney('workers', 'workers', {
+        buildSchemeWithMoney('workers', 'workers', {
           netCashFlowAnnual: 8_000,
           estimatedRoi: 16.5,
         }),
@@ -105,32 +77,19 @@ describe('deriveHmoHeadline', () => {
   it('can pick the as-listed family let over every HMO scheme', () => {
     const planner = buildHmoPlanner({
       schemes: [
-        schemeWithMoney('workers', 'workers', {
+        buildSchemeWithMoney('workers', 'workers', {
           netCashFlowAnnual: 1_200,
           estimatedRoi: 4,
         }),
       ],
-      moneyComparison: {
+      moneyComparison: buildHmoMoneyComparison({
         asListedFamily: buildHmoMoneySnapshot({
-          label: 'Family let (as listed)',
           estimatedRentMonthly: 850,
           grossYield: 6.4,
           netCashFlowAnnual: 3_100,
           estimatedRoi: 7.2,
         }),
-        bestHmo: {
-          ...buildHmoMoneySnapshot(),
-          schemeId: 'workers',
-          schemeTitle: 'Workers HMO',
-        },
-        delta: {
-          monthlyRentGbp: 0,
-          grossYieldPts: 0,
-          netCashFlowAnnualGbp: 0,
-          estimatedRoiPts: 0,
-        },
-        notes: [],
-      },
+      }),
     });
 
     expect(deriveHmoHeadline(planner)).toEqual({
@@ -173,31 +132,21 @@ describe('deriveHmoHeadline', () => {
             occupiedRoomsAssumed: 5,
           },
         }),
-        schemeWithMoney('workers', 'workers', {
-          netCashFlowAnnual: 0,
-          estimatedRoi: 1.5,
-        }, 6),
+        buildSchemeWithMoney(
+          'workers',
+          'workers',
+          { netCashFlowAnnual: 0, estimatedRoi: 1.5 },
+          { lettingRooms: 6 },
+        ),
       ],
-      moneyComparison: {
+      moneyComparison: buildHmoMoneyComparison({
         asListedFamily: buildHmoMoneySnapshot({
           estimatedRentMonthly: 850,
           grossYield: Number.NaN,
           netCashFlowAnnual: 9_999,
           estimatedRoi: 20,
         }),
-        bestHmo: {
-          ...buildHmoMoneySnapshot(),
-          schemeId: 'workers',
-          schemeTitle: 'Workers HMO',
-        },
-        delta: {
-          monthlyRentGbp: 0,
-          grossYieldPts: 0,
-          netCashFlowAnnualGbp: 0,
-          estimatedRoiPts: 0,
-        },
-        notes: [],
-      },
+      }),
     });
 
     expect(deriveHmoHeadline(planner)).toEqual(
@@ -214,29 +163,17 @@ describe('deriveHmoHeadline', () => {
   it('breaks a cash-flow tie in favour of the family let when its ROI is higher', () => {
     const planner = buildHmoPlanner({
       schemes: [
-        schemeWithMoney('workers', 'workers', {
+        buildSchemeWithMoney('workers', 'workers', {
           netCashFlowAnnual: 3_100,
           estimatedRoi: 6,
         }),
       ],
-      moneyComparison: {
+      moneyComparison: buildHmoMoneyComparison({
         asListedFamily: buildHmoMoneySnapshot({
           netCashFlowAnnual: 3_100,
           estimatedRoi: 9,
         }),
-        bestHmo: {
-          ...buildHmoMoneySnapshot(),
-          schemeId: 'workers',
-          schemeTitle: 'Workers HMO',
-        },
-        delta: {
-          monthlyRentGbp: 0,
-          grossYieldPts: 0,
-          netCashFlowAnnualGbp: 0,
-          estimatedRoiPts: 0,
-        },
-        notes: [],
-      },
+      }),
     });
 
     expect(deriveHmoHeadline(planner)?.basis).toBe('family_let');
@@ -258,7 +195,7 @@ describe('resolveHmoHeadline', () => {
     const planner = buildHmoPlanner({
       headline,
       schemes: [
-        schemeWithMoney('workers', 'workers', {
+        buildSchemeWithMoney('workers', 'workers', {
           netCashFlowAnnual: 12_000,
           estimatedRoi: 20,
         }),

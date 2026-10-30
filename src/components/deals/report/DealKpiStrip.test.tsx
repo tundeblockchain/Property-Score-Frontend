@@ -1,53 +1,20 @@
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { DealKpiStrip } from '@/components/deals/report/DealKpiStrip';
 import {
   buildFamilyLetHeadline,
   buildFinancialModel,
   buildHmoHeadline,
+  buildHmoMoneyComparison,
   buildHmoMoneySnapshot,
   buildHmoPlanner,
   buildHmoScheme,
+  buildSchemeWithMoney,
 } from '@/test/factories';
 import { renderWithProviders } from '@/test/renderWithProviders';
 
-function schemeWithMoney(
-  id: string,
-  useCase: 'students' | 'workers' | 'social_care',
-  money: Partial<ReturnType<typeof buildFinancialModel>>,
-  extras: { lettingRooms?: number; recommended?: boolean } = {},
-) {
-  const lettingRooms = extras.lettingRooms ?? 5;
-  return buildHmoScheme({
-    id,
-    useCase,
-    lettingRooms,
-    recommended: extras.recommended ?? false,
-    financials: {
-      ...buildFinancialModel(money),
-      voidRateAssumed: 0.08,
-      roomRentWeeklyAssumed: 110,
-      occupiedRoomsAssumed: lettingRooms,
-    },
-  });
-}
-
-function moneyComparison(family: ReturnType<typeof buildHmoMoneySnapshot>) {
-  return {
-    asListedFamily: family,
-    bestHmo: {
-      ...buildHmoMoneySnapshot(),
-      schemeId: 'workers',
-      schemeTitle: 'Workers HMO',
-    },
-    delta: {
-      monthlyRentGbp: 0,
-      grossYieldPts: 0,
-      netCashFlowAnnualGbp: 0,
-      estimatedRoiPts: 0,
-    },
-    notes: [] as string[],
-  };
+function roomsTile() {
+  return screen.getByRole('link', { name: /HMO rooms/ });
 }
 
 describe('DealKpiStrip', () => {
@@ -96,9 +63,11 @@ describe('DealKpiStrip', () => {
             grossYield: 11.2,
             netCashFlowAnnual: 9800,
             estimatedRoi: 14.1,
+            refurbEstimateLowGbp: 30_000,
+            refurbEstimateHighGbp: 45_000,
           }),
           schemes: [
-            schemeWithMoney(
+            buildSchemeWithMoney(
               'students',
               'students',
               { netCashFlowAnnual: 20_000, estimatedRoi: 30 },
@@ -110,17 +79,32 @@ describe('DealKpiStrip', () => {
     );
 
     expect(screen.getByText('Best return: Workers HMO')).toBeInTheDocument();
+    expect(screen.getByText('Refurb est. £30,000–£45,000')).toBeInTheDocument();
     expect(screen.getByText('11.2%')).toBeInTheDocument();
     expect(screen.getByText('£2,400')).toBeInTheDocument();
     expect(screen.getByText('£9,800')).toBeInTheDocument();
     expect(screen.getByText('14.1%')).toBeInTheDocument();
-    expect(screen.getByText('HMO rooms')).toBeInTheDocument();
-    expect(screen.getByText('6')).toBeInTheDocument();
+    expect(within(roomsTile()).getByText('6')).toBeInTheDocument();
     expect(screen.queryByText('8.6%')).not.toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /HMO rooms/ })).toHaveAttribute(
-      'href',
-      '#hmo-overview',
+    expect(roomsTile()).toHaveAttribute('href', '#hmo-overview');
+  });
+
+  it('says before conversion costs when a scheme headline has no refurb range', () => {
+    renderWithProviders(
+      <DealKpiStrip
+        hmoPlanner={buildHmoPlanner({
+          headline: buildHmoHeadline({
+            lettingRooms: 5,
+            refurbEstimateLowGbp: undefined,
+            refurbEstimateHighGbp: undefined,
+          }),
+        })}
+      />,
     );
+
+    expect(screen.getByText('Best return: Workers HMO')).toBeInTheDocument();
+    expect(screen.getByText('before conversion costs')).toBeInTheDocument();
+    expect(screen.queryByText(/Refurb est\./)).not.toBeInTheDocument();
   });
 
   it('derives the cash-flow winner for older deals without a headline', () => {
@@ -129,7 +113,7 @@ describe('DealKpiStrip', () => {
         financialModel={buildFinancialModel()}
         hmoPlanner={buildHmoPlanner({
           schemes: [
-            schemeWithMoney(
+            buildSchemeWithMoney(
               'students',
               'students',
               {
@@ -140,7 +124,7 @@ describe('DealKpiStrip', () => {
               },
               { lettingRooms: 4, recommended: true },
             ),
-            schemeWithMoney(
+            buildSchemeWithMoney(
               'workers',
               'workers',
               {
@@ -161,8 +145,8 @@ describe('DealKpiStrip', () => {
     expect(screen.getByText('£1,950')).toBeInTheDocument();
     expect(screen.getByText('£8,200')).toBeInTheDocument();
     expect(screen.getByText('16.4%')).toBeInTheDocument();
-    expect(screen.getByText('5')).toBeInTheDocument();
-    expect(screen.queryByText('4')).not.toBeInTheDocument();
+    expect(within(roomsTile()).getByText('5')).toBeInTheDocument();
+    expect(within(roomsTile()).queryByText('4')).not.toBeInTheDocument();
   });
 
   it('breaks a cash-flow tie with the higher ROI on older deals', () => {
@@ -170,11 +154,11 @@ describe('DealKpiStrip', () => {
       <DealKpiStrip
         hmoPlanner={buildHmoPlanner({
           schemes: [
-            schemeWithMoney('students', 'students', {
+            buildSchemeWithMoney('students', 'students', {
               netCashFlowAnnual: 8_000,
               estimatedRoi: 12,
             }),
-            schemeWithMoney(
+            buildSchemeWithMoney(
               'workers',
               'workers',
               {
@@ -192,7 +176,7 @@ describe('DealKpiStrip', () => {
 
     expect(screen.getByText('Best return: Workers HMO')).toBeInTheDocument();
     expect(screen.getByText('16.5%')).toBeInTheDocument();
-    expect(screen.getByText('6')).toBeInTheDocument();
+    expect(within(roomsTile()).getByText('6')).toBeInTheDocument();
   });
 
   it('shows occupancy wording when the family let is the best return', () => {
@@ -215,6 +199,8 @@ describe('DealKpiStrip', () => {
     expect(
       screen.getByText('Best return: Family let (as listed)'),
     ).toBeInTheDocument();
+    expect(screen.queryByText(/Refurb est\./)).not.toBeInTheDocument();
+    expect(screen.queryByText('before conversion costs')).not.toBeInTheDocument();
     expect(screen.getByText('6.4%')).toBeInTheDocument();
     expect(screen.getByText('£850')).toBeInTheDocument();
     expect(screen.getByText('£3,100')).toBeInTheDocument();
@@ -232,20 +218,19 @@ describe('DealKpiStrip', () => {
         hmoPlanner={buildHmoPlanner({
           asListedBedrooms: 3,
           schemes: [
-            schemeWithMoney('workers', 'workers', {
+            buildSchemeWithMoney('workers', 'workers', {
               netCashFlowAnnual: 1_200,
               estimatedRoi: 4,
             }),
           ],
-          moneyComparison: moneyComparison(
-            buildHmoMoneySnapshot({
-              label: 'Family let (as listed)',
+          moneyComparison: buildHmoMoneyComparison({
+            asListedFamily: buildHmoMoneySnapshot({
               estimatedRentMonthly: 850,
               grossYield: 6.4,
               netCashFlowAnnual: 3_100,
               estimatedRoi: 7.2,
             }),
-          ),
+          }),
         })}
       />,
     );
@@ -256,6 +241,43 @@ describe('DealKpiStrip', () => {
     expect(screen.getByText('£850')).toBeInTheDocument();
     expect(screen.getByText('Occupancy')).toBeInTheDocument();
     expect(screen.queryByText('HMO rooms')).not.toBeInTheDocument();
+  });
+
+  it('keeps the recommended scheme rooms when no headline can be derived', () => {
+    renderWithProviders(
+      <DealKpiStrip
+        financialModel={buildFinancialModel()}
+        hmoPlanner={buildHmoPlanner({
+          recommendedSchemeId: 'missing',
+          schemes: [
+            buildHmoScheme({
+              id: 'workers',
+              lettingRooms: 6,
+              recommended: false,
+              financials: {
+                voidRateAssumed: 0.08,
+                roomRentWeeklyAssumed: 110,
+                occupiedRoomsAssumed: 6,
+              },
+            }),
+            buildHmoScheme({
+              id: 'students',
+              lettingRooms: 7,
+              recommended: true,
+              financials: {
+                voidRateAssumed: 0.08,
+                roomRentWeeklyAssumed: 110,
+                occupiedRoomsAssumed: 7,
+              },
+            }),
+          ],
+        })}
+      />,
+    );
+
+    expect(screen.queryByText(/Best return:/)).not.toBeInTheDocument();
+    expect(within(roomsTile()).getByText('7')).toBeInTheDocument();
+    expect(within(roomsTile()).getByText('best fit')).toBeInTheDocument();
   });
 
   it('omits the HMO tile for properties without a planner result', () => {

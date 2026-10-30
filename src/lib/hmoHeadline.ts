@@ -1,3 +1,7 @@
+import {
+  FAMILY_LET_HEADLINE_LABEL,
+  hmoUseCaseLabel,
+} from '@/components/deals/hmoPlanner/labels';
 import type {
   HmoFamilyLetHeadlineReturns,
   HmoHeadlineReturns,
@@ -5,16 +9,7 @@ import type {
   HmoMoneySnapshot,
   HmoPlannerResult,
   HmoSchemeHeadlineReturns,
-  HmoUseCase,
 } from '@/models';
-
-const FAMILY_LET_LABEL = 'Family let (as listed)';
-
-const SCHEME_HEADLINE_LABEL: Record<HmoUseCase, string> = {
-  students: 'Students HMO',
-  workers: 'Workers HMO',
-  social_care: 'Social care HMO',
-};
 
 interface HeadlineMoney {
   estimatedRentMonthly: number;
@@ -66,15 +61,15 @@ function headlineFromScheme(
   const headline: HmoSchemeHeadlineReturns = {
     basis: 'scheme',
     schemeId: scheme.id,
-    label: SCHEME_HEADLINE_LABEL[scheme.useCase],
+    label: hmoUseCaseLabel(scheme.useCase),
     lettingRooms: scheme.lettingRooms,
     ...money,
   };
   if (isFiniteNumber(scheme.estimatedRefurbLowGbp)) {
-    headline.estimatedRefurbLowGbp = scheme.estimatedRefurbLowGbp;
+    headline.refurbEstimateLowGbp = scheme.estimatedRefurbLowGbp;
   }
   if (isFiniteNumber(scheme.estimatedRefurbHighGbp)) {
-    headline.estimatedRefurbHighGbp = scheme.estimatedRefurbHighGbp;
+    headline.refurbEstimateHighGbp = scheme.estimatedRefurbHighGbp;
   }
   return headline;
 }
@@ -88,15 +83,17 @@ function headlineFromFamilyLet(
   }
   return {
     basis: 'family_let',
-    label: FAMILY_LET_LABEL,
+    label: FAMILY_LET_HEADLINE_LABEL,
     ...money,
   };
 }
 
 /**
- * Pick the best-return strategy from saved scheme financials and the as-listed
- * family let. Highest net cash flow wins; equal cash flow prefers higher ROI.
- * Candidates with missing or non-finite figures are skipped, not coerced to 0.
+ * Legacy fallback for saved deals that predate `hmoPlanner.headline`.
+ * Mirrors packages/shared/src/hmo-money/headline.ts (highest netCashFlowAnnual,
+ * then highest estimatedRoi; skip missing/non-finite figures, never coerce to 0).
+ * Do not call this on fresh API results — use planner.headline via
+ * resolveHmoHeadline.
  */
 export function deriveHmoHeadline(
   planner: HmoPlannerResult,
