@@ -92,7 +92,7 @@ export function formatCurrencyAmount(amount: number, currency: string): string {
 }
 
 /** Free has no Stripe price; this is not read from the plans catalog. */
-export const FREE_PLAN_PRICE_LABEL = formatCurrencyAmount(0, 'gbp');
+export const FREE_PLAN_PRICE_LABEL = 'Free';
 
 export function formatPrice(price: Price): string {
   const formatted = formatCurrencyAmount(
