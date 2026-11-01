@@ -1,6 +1,8 @@
 import type {
   BillingPlansResponse,
   BillingSummaryResponse,
+  Price,
+  PricingResponse,
   DealDetail,
   DealSummary,
   EpcEnrichment,
@@ -340,6 +342,46 @@ export function buildBillingSummary(
   };
 }
 
+export function buildPrice(overrides: Partial<Price> = {}): Price {
+  return {
+    priceId: 'price_starter',
+    unitAmount: 3900,
+    currency: 'gbp',
+    interval: 'month',
+    ...overrides,
+  };
+}
+
+export function buildPricing(
+  overrides: Partial<PricingResponse> = {},
+): PricingResponse {
+  return {
+    plans: {
+      starter: buildPrice({
+        priceId: 'price_starter',
+        unitAmount: 3900,
+        interval: 'month',
+      }),
+      pro: buildPrice({
+        priceId: 'price_pro',
+        unitAmount: 9900,
+        interval: 'month',
+      }),
+    },
+    creditPacks: [
+      {
+        credits: 5,
+        price: buildPrice({
+          priceId: 'price_credits_5',
+          unitAmount: 1400,
+          interval: null,
+        }),
+      },
+    ],
+    ...overrides,
+  };
+}
+
 export function buildBillingPlans(
   overrides: Partial<BillingPlansResponse> = {},
 ): BillingPlansResponse {
@@ -348,8 +390,6 @@ export function buildBillingPlans(
     proposedLayoutCreditCost: 3,
     freePlan: {
       title: 'Free',
-      priceGbp: 0,
-      priceLabel: '£0',
       creditsLabel: '5 listing analyses to start',
       description: 'Try the core score and comparables.',
       comparison: { included: ['Overall score'], missing: ['PDF export'] },
@@ -358,8 +398,6 @@ export function buildBillingPlans(
       {
         product: 'starter_subscription',
         title: 'Starter',
-        priceGbp: 39,
-        priceLabel: '£39 / month',
         creditsLabel: '20 listing analyses / month',
         description: 'Full reports.',
         comparison: { included: ['PDF export'], missing: [] },
@@ -367,8 +405,6 @@ export function buildBillingPlans(
       {
         product: 'pro_subscription',
         title: 'Pro',
-        priceGbp: 99,
-        priceLabel: '£99 / month',
         creditsLabel: '60 listing analyses / month',
         description: 'Higher volume screening.',
         comparison: { included: ['Money comparison'], missing: [] },
@@ -379,12 +415,9 @@ export function buildBillingPlans(
       {
         product: 'credits_5',
         title: '5 extra analyses',
-        priceGbp: 14,
-        priceLabel: '£14 one-time',
         creditsLabel: '+5 listing analyses',
         description: 'Quick top-up.',
         features: ['Adds 5 listing analyses to your balance'],
-        valueLabel: '£2.80 per analysis',
       },
     ],
     ...overrides,

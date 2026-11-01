@@ -15,6 +15,7 @@ import { useBilling } from '@/hooks/useBilling';
 import { useBillingPlans } from '@/hooks/useBillingPlans';
 import { useCheckout } from '@/hooks/useBillingMutations';
 import { isFreeTier } from '@/lib/plans';
+import { FREE_PLAN_PRICE_LABEL } from '@/lib/pricing';
 import type { CheckoutProduct } from '@/models';
 
 export function BillingPage() {
@@ -72,7 +73,13 @@ export function BillingPage() {
           currentTier={billing.data.tier}
           leadingCard={
             <PlanCardShell
-              {...catalog.freePlan}
+              title={catalog.freePlan.title}
+              priceLabel={FREE_PLAN_PRICE_LABEL}
+              creditsLabel={catalog.freePlan.creditsLabel}
+              description={catalog.freePlan.description}
+              comparison={catalog.freePlan.comparison}
+              features={catalog.freePlan.features}
+              highlight={catalog.freePlan.highlight}
               action={
                 isFreeTier(billing.data.tier) ? <CurrentPlanButton /> : null
               }

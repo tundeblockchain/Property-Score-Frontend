@@ -12,6 +12,32 @@ export type CheckoutProduct =
   | 'credits_40'
   | 'credits_100';
 
+export type PriceInterval = 'month' | 'year';
+
+export type CreditPackSize = 5 | 15 | 40 | 100;
+
+export interface Price {
+  priceId: string;
+  /** Amount in minor units, e.g. 1200 for 12.00 in a two-decimal currency. */
+  unitAmount: number;
+  /** Lowercase ISO 4217 code, e.g. 'gbp'. */
+  currency: string;
+  interval: PriceInterval | null;
+}
+
+export interface CreditPackPrice {
+  credits: CreditPackSize;
+  price: Price;
+}
+
+export interface PricingResponse {
+  plans: {
+    starter: Price | null;
+    pro: Price | null;
+  };
+  creditPacks: CreditPackPrice[];
+}
+
 export interface TierAccess {
   scoreBreakdown: boolean;
   pdfExport: boolean;
@@ -597,14 +623,10 @@ export interface PlanComparison {
 export interface PlanCatalogItem {
   product?: CheckoutProduct;
   title: string;
-  priceLabel: string;
   creditsLabel: string;
   description: string;
-  priceGbp: number;
   comparison?: PlanComparison;
   features?: string[];
-  valueLabel?: string;
-  savePercent?: number;
   highlight?: boolean;
 }
 

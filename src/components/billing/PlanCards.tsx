@@ -1,17 +1,22 @@
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
-import { Box, Button, Chip, Stack, Typography } from '@mui/material';
+import { Box, Button, Chip, Skeleton, Stack, Typography } from '@mui/material';
 import { useState, type ReactNode } from 'react';
 import { ErrorAlert } from '@/components/common/Feedback';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
+import { usePricing } from '@/hooks/usePricing';
 import {
   isPaidPlanSwitch,
   isPaidSubscriptionProduct,
   isSubscriptionDowngrade,
-  perCreditValueLabel,
   subscriptionProductForTier,
   type PlanSummary,
 } from '@/lib/plans';
+import {
+  liveCopyForPlans,
+  PRICE_UNAVAILABLE_LABEL,
+  type LivePlanCopy,
+} from '@/lib/pricing';
 import type { CheckoutPlanCatalogItem, CheckoutProduct, UserTier } from '@/models';
 
 interface PlanFeatureListProps {
@@ -61,8 +66,43 @@ export function CurrentPlanButton() {
 }
 
 interface PlanCardShellProps extends PlanSummary {
+  priceLabel?: ReactNode;
+  valueLabel?: string;
+  savePercent?: number;
   /** Call to action rendered at the bottom of the card. */
   action: ReactNode;
+}
+
+function PriceSlotSkeleton() {
+  return (
+    <Skeleton
+      variant="text"
+      width="7rem"
+      role="status"
+      aria-label="Loading price"
+    />
+  );
+}
+
+function liveFieldsForCard(
+  pricing: ReturnType<typeof usePricing>,
+  liveCopy: Map<CheckoutProduct, LivePlanCopy> | null,
+  product: CheckoutProduct,
+): {
+  priceLabel: ReactNode;
+  valueLabel?: string;
+  savePercent?: number;
+} {
+  if (pricing.isPending) {
+    return { priceLabel: <PriceSlotSkeleton /> };
+  }
+
+  const copy = liveCopy?.get(product);
+  return {
+    priceLabel: copy?.priceLabel ?? PRICE_UNAVAILABLE_LABEL,
+    valueLabel: copy?.valueLabel ?? undefined,
+    savePercent: copy?.savePercent ?? undefined,
+  };
 }
 
 export function PlanCardShell({
@@ -100,13 +140,15 @@ export function PlanCardShell({
           />
         ) : null}
       </Stack>
-      <Typography variant="body2" color="text.secondary">
-        {priceLabel}
-      </Typography>
+      {priceLabel != null && priceLabel !== '' ? (
+        <Typography variant="body2" color="text.secondary">
+          {priceLabel}
+        </Typography>
+      ) : null}
       <Typography fontWeight={600}>{creditsLabel}</Typography>
       {valueLabel ? (
         <Typography variant="body2" color="success.dark" fontWeight={600}>
-          {perCreditValueLabel(valueLabel)}
+          {valueLabel}
         </Typography>
       ) : null}
       <Typography variant="body2" color="text.secondary">
@@ -141,6 +183,11 @@ interface PlanCardProps {
   loadingProduct: CheckoutProduct | null;
   onSelect: (product: CheckoutProduct) => void;
   currentTier?: UserTier;
+  live: {
+    priceLabel: ReactNode;
+    valueLabel?: string;
+    savePercent?: number;
+  };
 }
 
 export function PlanCard({
@@ -148,6 +195,7 @@ export function PlanCard({
   loadingProduct,
   onSelect,
   currentTier,
+  live,
 }: PlanCardProps) {
   const isLoading = loadingProduct === plan.product;
   const isSubscription = isPaidSubscriptionProduct(plan.product);
@@ -175,13 +223,13 @@ export function PlanCard({
   return (
     <PlanCardShell
       title={plan.title}
-      priceLabel={plan.priceLabel}
+      priceLabel={live.priceLabel}
       creditsLabel={plan.creditsLabel}
       description={plan.description}
       comparison={plan.comparison}
       features={plan.features}
-      valueLabel={plan.valueLabel}
-      savePercent={plan.savePercent}
+      valueLabel={live.valueLabel}
+      savePercent={live.savePercent}
       highlight={plan.highlight}
       action={action}
     />
@@ -206,6 +254,9 @@ export function PlanCards({
   currentTier,
   leadingCard,
 }: PlanCardsProps) {
+  const pricing = usePricing();
+  const liveCopy =
+    pricing.data != null ? liveCopyForPlans(pricing.data, plans) : null;
   const [pendingSwitch, setPendingSwitch] =
     useState<CheckoutPlanCatalogItem | null>(null);
   const isDowngrade =
@@ -237,6 +288,7 @@ export function PlanCards({
               loadingProduct={loadingProduct}
               onSelect={handleSelect}
               currentTier={currentTier}
+              live={liveFieldsForCard(pricing, liveCopy, plan.product)}
             />
           </Stack>
         ))}

@@ -7,7 +7,6 @@ import {
   isPaidPlanSwitch,
   isPaidSubscriptionChange,
   isSubscriptionDowngrade,
-  perCreditValueLabel,
   remainingAnalysesBadgeLabel,
   remainingAnalysesLabel,
   subscriptionProductForTier,
@@ -80,16 +79,5 @@ describe('plan copy helpers', () => {
       isPaidPlanSwitch(USER_TIER.FREE, CHECKOUT_PRODUCT.STARTER_SUBSCRIPTION),
     ).toBe(false);
     expect(isPaidPlanSwitch(USER_TIER.PRO, 'credits_5')).toBe(false);
-  });
-
-  it('keeps only the per-analysis rate on pack value labels', () => {
-    expect(perCreditValueLabel('£2.80 per analysis')).toBe(
-      '£2.80 per analysis',
-    );
-    expect(
-      perCreditValueLabel(
-        '£2.33 per analysis · 17% less than the 5-analysis pack',
-      ),
-    ).toBe('£2.33 per analysis');
   });
 });

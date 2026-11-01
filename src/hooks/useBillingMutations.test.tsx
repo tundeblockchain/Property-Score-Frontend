@@ -6,7 +6,7 @@ import { createCheckout } from '@/api/billing';
 import { queryKeys } from '@/hooks/queryKeys';
 import { useCheckout } from '@/hooks/useBillingMutations';
 import { CHECKOUT_PRODUCT } from '@/lib/plans';
-import { buildBillingPlans } from '@/test/factories';
+import { buildBillingPlans, buildPricing } from '@/test/factories';
 
 const rememberPendingCheckout = vi.fn();
 const trackInitiateCheckout = vi.fn();
@@ -42,6 +42,7 @@ describe('useCheckout', () => {
       defaultOptions: { mutations: { retry: false } },
     });
     queryClient.setQueryData(queryKeys.billingPlans, buildBillingPlans());
+    queryClient.setQueryData(queryKeys.pricing, buildPricing());
 
     function Wrapper({ children }: { children: ReactNode }) {
       return (

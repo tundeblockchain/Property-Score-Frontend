@@ -6,21 +6,30 @@ import type { ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createCheckout, getBilling, getBillingPlans } from '@/api/billing';
+import { getPricing } from '@/api/pricing';
 import {
   AuthContext,
   type AuthContextValue,
 } from '@/auth/AuthContext';
 import { BillingPage } from '@/pages/BillingPage';
-import { buildBillingPlans, buildBillingSummary } from '@/test/factories';
+import {
+  buildBillingPlans,
+  buildBillingSummary,
+  buildPricing,
+} from '@/test/factories';
 import { theme } from '@/theme/theme';
 import { CHECKOUT_PRODUCT, USER_TIER } from '@/lib/plans';
-import type { User } from '@/models';
+import type { PlanCatalogItem, User } from '@/models';
 
 vi.mock('@/api/billing', () => ({
   getBilling: vi.fn(),
   getBillingPlans: vi.fn(),
   createCheckout: vi.fn(),
   createPortal: vi.fn(),
+}));
+
+vi.mock('@/api/pricing', () => ({
+  getPricing: vi.fn(),
 }));
 
 const authValue: AuthContextValue = {
@@ -62,6 +71,7 @@ describe('BillingPage', () => {
   beforeEach(() => {
     vi.mocked(getBilling).mockResolvedValue(buildBillingSummary());
     vi.mocked(getBillingPlans).mockResolvedValue(buildBillingPlans());
+    vi.mocked(getPricing).mockResolvedValue(buildPricing());
     vi.mocked(createCheckout).mockReset();
   });
 
@@ -70,11 +80,42 @@ describe('BillingPage', () => {
 
     expect(await screen.findByRole('heading', { name: 'Starter' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Current plan' })).toBeDisabled();
-    expect(screen.getByText('£39 / month')).toBeInTheDocument();
+    expect(await screen.findByText('£39/month')).toBeInTheDocument();
+    expect(screen.getByText('Free', { selector: 'p' })).toBeInTheDocument();
+    expect(screen.queryByText('£0')).not.toBeInTheDocument();
     expect(screen.getByText('20 listing analyses / month')).toBeInTheDocument();
     expect(screen.getByText('4 analyses left')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '5 extra analyses' })).toBeInTheDocument();
     expect(screen.getByText('£14 one-time')).toBeInTheDocument();
+    expect(screen.getByText('£2.80 per analysis')).toBeInTheDocument();
+  });
+
+  it('uses a frontend Free price and does not read catalog price fields', async () => {
+    const catalog = buildBillingPlans();
+    expect(catalog.freePlan).not.toHaveProperty('priceLabel');
+    expect(catalog.freePlan).not.toHaveProperty('priceGbp');
+    expect(catalog.freePlan).not.toHaveProperty('valueLabel');
+    expect(catalog.freePlan).not.toHaveProperty('savePercent');
+
+    vi.mocked(getBillingPlans).mockResolvedValue({
+      ...catalog,
+      freePlan: {
+        ...catalog.freePlan,
+        priceLabel: '£999',
+        priceGbp: 999,
+        valueLabel: '£199.80 per analysis',
+        savePercent: 50,
+      } as PlanCatalogItem,
+    });
+
+    renderBillingPage();
+
+    expect(await screen.findByText('Free', { selector: 'p' })).toBeInTheDocument();
+    expect(screen.queryByText('£0')).not.toBeInTheDocument();
+    expect(screen.queryByText('£999')).not.toBeInTheDocument();
+    expect(screen.queryByText('£199.80 per analysis')).not.toBeInTheDocument();
+    expect(screen.queryByText('Save 50%')).not.toBeInTheDocument();
+    expect(screen.getByText('5 listing analyses to start')).toBeInTheDocument();
   });
 
   it('lets a paid starter subscriber choose Pro', async () => {
