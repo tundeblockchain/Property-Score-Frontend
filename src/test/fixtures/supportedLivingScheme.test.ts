@@ -1,12 +1,24 @@
 import { describe, expect, it } from 'vitest';
 import { buildSupportedLivingLeaseRent } from '@/test/factories';
-import payload from '@/test/fixtures/supported-living-scheme.json';
 import {
   backendSupportedLivingScheme,
+  ensuiteWinningSupportedLivingScheme,
   parseBackendSupportedLivingScheme,
+  rawStandardWinningScheme,
+  supportedLivingPlannerSnapshot,
 } from '@/test/fixtures/supportedLivingScheme';
 
 describe('backend supported-living fixture', () => {
+  it('loads the captured buildHmoPlanner snapshot', () => {
+    expect(supportedLivingPlannerSnapshot.generatedBy).toBe('buildHmoPlanner');
+    expect(
+      supportedLivingPlannerSnapshot.standardWinning.residentRoomOption,
+    ).toBe('standard');
+    expect(
+      supportedLivingPlannerSnapshot.ensuiteWinning.residentRoomOption,
+    ).toBe('ensuite');
+  });
+
   it('parses planner extras as SupportedLivingSchemeExtras', () => {
     const extras = backendSupportedLivingScheme.supportedLiving;
 
@@ -14,7 +26,11 @@ describe('backend supported-living fixture', () => {
     expect(extras).toBeDefined();
     expect(extras).not.toHaveProperty('outputs');
     expect(extras?.inputs.rentPerRoomWeekly).toEqual({
-      value: 280,
+      value: 180,
+      isEstimate: true,
+    });
+    expect(extras?.inputs.residentEnsuiteRentPremiumWeekly).toEqual({
+      value: 0,
       isEstimate: true,
     });
     expect(extras?.inputs.leaseTermYears.value).toBe(5);
@@ -22,45 +38,68 @@ describe('backend supported-living fixture', () => {
     expect(extras?.inputs.cpiUpliftPct.value).toBe(2);
     expect(extras?.leaseRentByYear[0]).toEqual({
       year: 1,
-      weeklyRentPerRoomGbp: 280,
-      annualRentGbp: 58240,
+      weeklyRentPerRoomGbp: 180,
+      annualRentGbp: 28080,
     });
     expect(extras?.leaseRentByYear[1]).toEqual({
       year: 2,
-      weeklyRentPerRoomGbp: 286,
-      annualRentGbp: 59405,
+      weeklyRentPerRoomGbp: 184,
+      annualRentGbp: 28642,
     });
     expect(extras?.leaseRentByYear[0]).not.toHaveProperty('rentGbp');
     expect(extras?.planningNote).toBe(
       'Sleep-in staff may need C2 planning permission.',
     );
     expect(backendSupportedLivingScheme.licensing.useClass).not.toBe('C2');
-    expect(extras?.staffRoomOption).toBe('with_ensuite');
-    expect(extras?.staffRoomOptions.withEnsuite).toEqual({
-      option: 'with_ensuite',
-      netCashFlowAnnual: 18600,
-      estimatedRoi: 9.1,
+    expect(extras?.staffRoomOption).toBe('without_ensuite');
+    expect(extras?.staffRoomOptions.withoutEnsuite).toEqual({
+      option: 'without_ensuite',
+      netCashFlowAnnual: 4252,
+      estimatedRoi: 4.86,
     });
     expect(extras?.residentRoomOption).toBe('standard');
-    expect(extras?.residentRoomOptions.standard.option).toBe('standard');
-    expect(extras?.residentRoomOptions.ensuite.option).toBe('ensuite');
-    expect(extras?.residentRoomOptions.standard.netCashFlowAnnual).not.toBe(
-      extras?.staffRoomOptions.withEnsuite.netCashFlowAnnual,
+    expect(extras?.residentRoomOptions.standard).toEqual({
+      option: 'standard',
+      netCashFlowAnnual: 4252,
+      estimatedRoi: 4.86,
+    });
+    expect(extras?.residentRoomOptions.ensuite).toEqual({
+      option: 'ensuite',
+      netCashFlowAnnual: 4252,
+      estimatedRoi: 4.5,
+    });
+    expect(extras?.residentRoomOptionReason).toBe(
+      'Chose resident rooms as standard shared bathrooms: net cash flow £4,252 vs £4,252; ROI on deposit 4.86% vs 4.5%. Net cash flow is equal, so the higher ROI on deposit wins.',
     );
-    expect(typeof extras?.residentRoomOptionReason).toBe('string');
-    expect(extras?.residentRoomOptionReason.length).toBeGreaterThan(0);
     expect(extras?.riskBadge).toBe('Provider / regulatory risk: Medium-High');
     expect(backendSupportedLivingScheme.rooms.every((room) => room.id)).toBe(
       true,
     );
     expect(backendSupportedLivingScheme.fireEscape?.alarmGrade).toBe('LD1');
+  });
 
-    const override = backendSupportedLivingScheme.refurbBoq?.lineItems.find(
-      (item) => item.source === 'override',
+  it('parses the ensuite-winning planner scheme', () => {
+    const extras = ensuiteWinningSupportedLivingScheme.supportedLiving;
+
+    expect(extras?.residentRoomOption).toBe('ensuite');
+    expect(extras?.staffRoomOption).toBe('without_ensuite');
+    expect(extras?.residentRoomOptions.ensuite).toEqual({
+      option: 'ensuite',
+      netCashFlowAnnual: 6787,
+      estimatedRoi: 7.18,
+    });
+    expect(extras?.residentRoomOptionReason).toBe(
+      'Chose resident rooms with ensuite wet rooms: net cash flow £6,787 vs £4,252; ROI on deposit 7.18% vs 4.86%. Higher net cash flow wins.',
     );
-    expect(override?.category).toBe('override');
-    expect(override?.lowGbp).toBeLessThan(0);
-    expect(override?.highGbp).toBeLessThan(0);
+    expect(extras?.inputs.residentEnsuiteRentPremiumWeekly).toEqual({
+      value: 25,
+      isEstimate: false,
+    });
+    expect(extras?.leaseRentByYear[1]).toEqual({
+      year: 2,
+      weeklyRentPerRoomGbp: 209,
+      annualRentGbp: 32620,
+    });
   });
 
   it('builds annual lease rent from the unrounded weekly figure', () => {
@@ -74,9 +113,9 @@ describe('backend supported-living fixture', () => {
   it('rejects an invented outputs object', () => {
     expect(() =>
       parseBackendSupportedLivingScheme({
-        ...payload,
+        ...rawStandardWinningScheme,
         supportedLiving: {
-          ...payload.supportedLiving,
+          ...rawStandardWinningScheme.supportedLiving,
           outputs: { rentAcrossLeaseGbp: 1 },
         },
       }),
@@ -84,10 +123,11 @@ describe('backend supported-living fixture', () => {
   });
 
   it('rejects extras that omit the resident-room layout', () => {
-    const { residentRoomOption: _omit, ...rest } = payload.supportedLiving;
+    const { residentRoomOption: _omit, ...rest } =
+      rawStandardWinningScheme.supportedLiving;
     expect(() =>
       parseBackendSupportedLivingScheme({
-        ...payload,
+        ...rawStandardWinningScheme,
         supportedLiving: rest,
       }),
     ).toThrow(/missing residentRoomOption/);
@@ -96,9 +136,9 @@ describe('backend supported-living fixture', () => {
   it('rejects lease rows that still use rentGbp', () => {
     expect(() =>
       parseBackendSupportedLivingScheme({
-        ...payload,
+        ...rawStandardWinningScheme,
         supportedLiving: {
-          ...payload.supportedLiving,
+          ...rawStandardWinningScheme.supportedLiving,
           leaseRentByYear: [{ year: 1, rentGbp: 58240 }],
         },
       }),

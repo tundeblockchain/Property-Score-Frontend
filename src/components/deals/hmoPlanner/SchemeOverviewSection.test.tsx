@@ -6,8 +6,14 @@ import {
   buildSupportedLiving,
   buildSupportedLivingScheme,
 } from '@/test/factories';
-import { backendSupportedLivingScheme } from '@/test/fixtures/supportedLivingScheme';
+import {
+  backendSupportedLivingScheme,
+  ensuiteWinningSupportedLivingScheme,
+} from '@/test/fixtures/supportedLivingScheme';
 import { renderWithProviders } from '@/test/renderWithProviders';
+
+const NO_NEW_ENSUITES_REASON =
+  'Chose resident rooms as standard shared bathrooms: the ensuite layout adds no new ensuites, so it is treated as equal to standard.';
 
 describe('SchemeOverviewSection', () => {
   it('shows scheme room and money facts without area fit', () => {
@@ -34,11 +40,14 @@ describe('SchemeOverviewSection', () => {
     ).toBeInTheDocument();
 
     expect(screen.getByText('Rent per room / wk')).toBeInTheDocument();
-    expect(screen.getAllByText('£280').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('£180').length).toBeGreaterThan(0);
     expect(screen.getByText('Lease term')).toBeInTheDocument();
     expect(screen.getByText('5 years')).toBeInTheDocument();
     expect(screen.getByText('Year 3')).toBeInTheDocument();
     expect(screen.getByText('Staff ensuite rent premium / wk')).toBeInTheDocument();
+    expect(
+      screen.getByText('Resident ensuite rent premium / wk'),
+    ).toBeInTheDocument();
     expect(screen.getAllByText('Estimate').length).toBeGreaterThan(0);
 
     expect(screen.getByText('Yield on vacant possession')).toBeInTheDocument();
@@ -54,6 +63,7 @@ describe('SchemeOverviewSection', () => {
     expect(
       screen.getByRole('columnheader', { name: 'Annual rent' }),
     ).toBeInTheDocument();
+    expect(screen.getByText('£28,642')).toBeInTheDocument();
 
     const resident = screen.getByRole('region', { name: 'Resident-room layout' });
     expect(
@@ -68,8 +78,8 @@ describe('SchemeOverviewSection', () => {
     }
 
     const staff = screen.getByRole('region', { name: 'Staff-room choice' });
-    expect(within(staff).getByText('Chosen: With ensuite')).toBeInTheDocument();
-    expect(within(staff).getByText('Without ensuite')).toBeInTheDocument();
+    expect(within(staff).getByText('Chosen: Without ensuite')).toBeInTheDocument();
+    expect(within(staff).getByText('With ensuite')).toBeInTheDocument();
     expect(within(staff).getByText('Chosen')).toBeInTheDocument();
 
     expect(
@@ -78,33 +88,13 @@ describe('SchemeOverviewSection', () => {
       ),
     ).toBeInTheDocument();
 
-    expect(screen.getByText('Bedroom 1')).toBeInTheDocument();
-    expect(screen.getByText('Staff room')).toBeInTheDocument();
+    expect(screen.getByText(/Bedroom 1/)).toBeInTheDocument();
+    expect(screen.getByText(/Bedroom 4/)).toBeInTheDocument();
   });
 
   it('marks the ensuite resident layout as chosen', () => {
     renderWithProviders(
-      <SchemeOverviewSection
-        scheme={buildSupportedLivingScheme({
-          supportedLiving: buildSupportedLiving({
-            residentRoomOption: 'ensuite',
-            residentRoomOptionReason:
-              'Chose resident rooms as ensuite: net cash flow £9,000 vs £7,000; ROI on deposit 5.0% vs 3.0%. Higher net cash flow wins.',
-            residentRoomOptions: {
-              standard: {
-                option: 'standard',
-                netCashFlowAnnual: 7000,
-                estimatedRoi: 3,
-              },
-              ensuite: {
-                option: 'ensuite',
-                netCashFlowAnnual: 9000,
-                estimatedRoi: 5,
-              },
-            },
-          }),
-        })}
-      />,
+      <SchemeOverviewSection scheme={ensuiteWinningSupportedLivingScheme} />,
     );
 
     const resident = screen.getByRole('region', { name: 'Resident-room layout' });
@@ -113,9 +103,30 @@ describe('SchemeOverviewSection', () => {
     expect(
       within(resident).queryByText('Chosen: Standard (shared bathrooms)'),
     ).not.toBeInTheDocument();
+    expect(
+      within(resident).getByText(
+        ensuiteWinningSupportedLivingScheme.supportedLiving
+          ?.residentRoomOptionReason ?? '',
+      ),
+    ).toBeInTheDocument();
 
     const staff = screen.getByRole('region', { name: 'Staff-room choice' });
-    expect(within(staff).getByText('Chosen: With ensuite')).toBeInTheDocument();
+    expect(within(staff).getByText('Chosen: Without ensuite')).toBeInTheDocument();
+  });
+
+  it('renders the planner reason when ensuites add no new wet rooms', () => {
+    renderWithProviders(
+      <SchemeOverviewSection
+        scheme={buildSupportedLivingScheme({
+          supportedLiving: buildSupportedLiving({
+            residentRoomOptionReason: NO_NEW_ENSUITES_REASON,
+          }),
+        })}
+      />,
+    );
+
+    const resident = screen.getByRole('region', { name: 'Resident-room layout' });
+    expect(within(resident).getByText(NO_NEW_ENSUITES_REASON)).toBeInTheDocument();
   });
 
   it('hides supported-living extras when the payload has none', () => {

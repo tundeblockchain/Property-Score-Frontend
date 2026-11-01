@@ -116,6 +116,7 @@ export interface HmoLayoutRoom {
   label: string;
   type: HmoRoomType;
   estimatedAreaSqM?: number;
+  floor?: string;
   meetsSpaceStandard?: boolean;
   notes?: string;
 }
@@ -143,6 +144,7 @@ export interface HmoSupportedLivingInputs {
   refurbHighGbp: HmoEstimatedInput<number>;
   complianceLumpSumGbp: HmoEstimatedInput<number>;
   staffEnsuiteRentPremiumWeekly: HmoEstimatedInput<number>;
+  residentEnsuiteRentPremiumWeekly: HmoEstimatedInput<number>;
 }
 
 /** Mirrors Property-Score `SupportedLivingLeaseYearRent` (e02603b). */
@@ -269,6 +271,7 @@ export interface ConversionStep {
   action: ConversionAction;
   targetType: HmoRoomType;
   estimatedAreaSqM?: number;
+  floor?: string;
   meetsSpaceStandard?: boolean;
   rationale: string;
   estimatedCostGbpLow: number;

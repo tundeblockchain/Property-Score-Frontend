@@ -145,6 +145,7 @@ export function buildSupportedLiving(
       refurbHighGbp: { value: 65000, isEstimate: true },
       complianceLumpSumGbp: { value: 12000, isEstimate: true },
       staffEnsuiteRentPremiumWeekly: { value: 25, isEstimate: true },
+      residentEnsuiteRentPremiumWeekly: { value: 0, isEstimate: true },
     },
     leaseRentByYear: buildSupportedLivingLeaseRent(280, 4, 5, 2),
     yieldOnVacantPossession: 8.4,

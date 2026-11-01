@@ -55,6 +55,9 @@ function Assumptions({
   );
   const compliance = inputValue(inputs.complianceLumpSumGbp);
   const ensuitePremium = inputValue(inputs.staffEnsuiteRentPremiumWeekly);
+  const residentEnsuitePremium = inputValue(
+    inputs.residentEnsuiteRentPremiumWeekly,
+  );
 
   return (
     <Stack spacing={1}>
@@ -119,6 +122,12 @@ function Assumptions({
           value={formatCurrency(ensuitePremium.value)}
           estimate={ensuitePremium.estimate}
           info="Extra weekly rent assumed when the staff room is modelled with an ensuite."
+        />
+        <Fact
+          label="Resident ensuite rent premium / wk"
+          value={formatCurrency(residentEnsuitePremium.value)}
+          estimate={residentEnsuitePremium.estimate}
+          info="Extra weekly rent assumed when resident rooms are modelled with ensuites."
         />
       </Stack>
     </Stack>
