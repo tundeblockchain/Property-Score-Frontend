@@ -12,6 +12,7 @@ import {
   type AuthContextValue,
 } from '@/auth/AuthContext';
 import { PRICE_UNAVAILABLE_LABEL } from '@/lib/pricing';
+import type { PlanCatalogItem } from '@/models';
 import { PricingPage } from '@/pages/PricingPage';
 import { buildBillingPlans, buildPrice, buildPricing } from '@/test/factories';
 import { theme } from '@/theme/theme';
@@ -98,6 +99,33 @@ describe('PricingPage', () => {
     expect(screen.getByText('£0')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Choose Starter' })).toBeEnabled();
     expect(screen.getByRole('button', { name: 'Choose Pro' })).toBeEnabled();
+  });
+
+  it('uses a frontend Free price and does not read catalog price fields', async () => {
+    const catalog = buildBillingPlans();
+    expect(catalog.freePlan).not.toHaveProperty('priceLabel');
+    expect(catalog.freePlan).not.toHaveProperty('priceGbp');
+    expect(catalog.freePlan).not.toHaveProperty('valueLabel');
+    expect(catalog.freePlan).not.toHaveProperty('savePercent');
+
+    vi.mocked(getBillingPlans).mockResolvedValue({
+      ...catalog,
+      freePlan: {
+        ...catalog.freePlan,
+        priceLabel: '£999',
+        priceGbp: 999,
+        valueLabel: '£199.80 per analysis',
+        savePercent: 50,
+      } as PlanCatalogItem,
+    });
+
+    renderPricingPage();
+
+    expect(await screen.findByText('£0')).toBeInTheDocument();
+    expect(screen.queryByText('£999')).not.toBeInTheDocument();
+    expect(screen.queryByText('£199.80 per analysis')).not.toBeInTheDocument();
+    expect(screen.queryByText('Save 50%')).not.toBeInTheDocument();
+    expect(screen.getByText('5 listing analyses to start')).toBeInTheDocument();
   });
 
   it('derives pack value and save badges from live prices', async () => {

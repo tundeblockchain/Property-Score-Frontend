@@ -19,7 +19,7 @@ import {
 } from '@/test/factories';
 import { theme } from '@/theme/theme';
 import { CHECKOUT_PRODUCT, USER_TIER } from '@/lib/plans';
-import type { User } from '@/models';
+import type { PlanCatalogItem, User } from '@/models';
 
 vi.mock('@/api/billing', () => ({
   getBilling: vi.fn(),
@@ -87,6 +87,33 @@ describe('BillingPage', () => {
     expect(screen.getByRole('heading', { name: '5 extra analyses' })).toBeInTheDocument();
     expect(screen.getByText('£14 one-time')).toBeInTheDocument();
     expect(screen.getByText('£2.80 per analysis')).toBeInTheDocument();
+  });
+
+  it('uses a frontend Free price and does not read catalog price fields', async () => {
+    const catalog = buildBillingPlans();
+    expect(catalog.freePlan).not.toHaveProperty('priceLabel');
+    expect(catalog.freePlan).not.toHaveProperty('priceGbp');
+    expect(catalog.freePlan).not.toHaveProperty('valueLabel');
+    expect(catalog.freePlan).not.toHaveProperty('savePercent');
+
+    vi.mocked(getBillingPlans).mockResolvedValue({
+      ...catalog,
+      freePlan: {
+        ...catalog.freePlan,
+        priceLabel: '£999',
+        priceGbp: 999,
+        valueLabel: '£199.80 per analysis',
+        savePercent: 50,
+      } as PlanCatalogItem,
+    });
+
+    renderBillingPage();
+
+    expect(await screen.findByText('£0')).toBeInTheDocument();
+    expect(screen.queryByText('£999')).not.toBeInTheDocument();
+    expect(screen.queryByText('£199.80 per analysis')).not.toBeInTheDocument();
+    expect(screen.queryByText('Save 50%')).not.toBeInTheDocument();
+    expect(screen.getByText('5 listing analyses to start')).toBeInTheDocument();
   });
 
   it('lets a paid starter subscriber choose Pro', async () => {
