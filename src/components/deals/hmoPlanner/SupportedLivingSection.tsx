@@ -208,32 +208,37 @@ function LeaseRentTable({ extras }: { extras: HmoSupportedLiving }) {
 
 function LayoutChoices({ extras }: { extras: HmoSupportedLiving }) {
   return (
-    <Stack
-      direction={{ xs: 'column', md: 'row' }}
-      spacing={3}
-      useFlexGap
-      alignItems="flex-start"
-    >
-      <SupportedLivingChoice
-        title="Resident-room layout"
-        chosen={extras.residentRoomOption}
-        reason={extras.residentRoomOptionReason}
-        options={[
-          extras.residentRoomOptions.standard,
-          extras.residentRoomOptions.ensuite,
-        ]}
-        labelFor={residentRoomOptionLabel}
-      />
-      <SupportedLivingChoice
-        title="Staff-room choice"
-        chosen={extras.staffRoomOption}
-        reason={extras.staffRoomOptionReason}
-        options={[
-          extras.staffRoomOptions.withEnsuite,
-          extras.staffRoomOptions.withoutEnsuite,
-        ]}
-        labelFor={staffRoomOptionLabel}
-      />
+    <Stack spacing={1}>
+      <Stack
+        direction={{ xs: 'column', md: 'row' }}
+        spacing={3}
+        useFlexGap
+        alignItems="flex-start"
+      >
+        <SupportedLivingChoice
+          title="Resident-room layout"
+          chosen={extras.residentRoomOption}
+          reason={extras.residentRoomOptionReason}
+          options={[
+            extras.residentRoomOptions.standard,
+            extras.residentRoomOptions.ensuite,
+          ]}
+          labelFor={residentRoomOptionLabel}
+        />
+        <SupportedLivingChoice
+          title="Staff-room choice"
+          chosen={extras.staffRoomOption}
+          reason={extras.staffRoomOptionReason}
+          options={[
+            extras.staffRoomOptions.withEnsuite,
+            extras.staffRoomOptions.withoutEnsuite,
+          ]}
+          labelFor={staffRoomOptionLabel}
+        />
+      </Stack>
+      <Typography variant="caption" color="text.secondary">
+        {"Each layout's figures assume the chosen option for the other."}
+      </Typography>
     </Stack>
   );
 }

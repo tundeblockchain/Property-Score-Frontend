@@ -1,18 +1,13 @@
 import { Chip, Stack, Typography } from '@mui/material';
 import { Fact } from '@/components/deals/common/Fact';
 import { formatCurrency, formatPercent } from '@/lib/format';
-
-export interface SupportedLivingChoiceOption<T extends string> {
-  option: T;
-  netCashFlowAnnual: number;
-  estimatedRoi: number;
-}
+import type { HmoChoiceMetrics } from '@/models';
 
 interface SupportedLivingChoiceProps<T extends string> {
   title: string;
   chosen: T;
   reason: string;
-  options: ReadonlyArray<SupportedLivingChoiceOption<T>>;
+  options: ReadonlyArray<HmoChoiceMetrics<T>>;
   labelFor: (option: T) => string;
 }
 
@@ -24,23 +19,30 @@ export function SupportedLivingChoice<T extends string>({
   labelFor,
 }: SupportedLivingChoiceProps<T>) {
   return (
-    <Stack spacing={1} sx={{ flex: 1, minWidth: 240 }}>
+    <Stack
+      component="section"
+      spacing={1}
+      sx={{ flex: 1, minWidth: 240 }}
+      aria-label={title}
+    >
       <Typography variant="subtitle2">{title}</Typography>
       <Typography>Chosen: {labelFor(chosen)}</Typography>
-      <Typography variant="body2" color="text.secondary">
-        {reason}
-      </Typography>
+      {reason ? (
+        <Typography variant="body2" color="text.secondary">
+          {reason}
+        </Typography>
+      ) : null}
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
         spacing={2}
         useFlexGap
         flexWrap="wrap"
       >
-        {options.map((money) => {
-          const selected = money.option === chosen;
+        {options.map((metrics) => {
+          const selected = metrics.option === chosen;
           return (
             <Stack
-              key={money.option}
+              key={metrics.option}
               spacing={1}
               sx={{
                 flex: 1,
@@ -53,7 +55,7 @@ export function SupportedLivingChoice<T extends string>({
             >
               <Stack direction="row" spacing={1} alignItems="center" useFlexGap>
                 <Typography fontWeight={600}>
-                  {labelFor(money.option)}
+                  {labelFor(metrics.option)}
                 </Typography>
                 {selected ? (
                   <Chip label="Chosen" size="small" color="success" />
@@ -62,11 +64,11 @@ export function SupportedLivingChoice<T extends string>({
               <Stack direction="row" spacing={3} flexWrap="wrap" useFlexGap>
                 <Fact
                   label="Net cash flow / yr"
-                  value={formatCurrency(money.netCashFlowAnnual)}
+                  value={formatCurrency(metrics.netCashFlowAnnual)}
                 />
                 <Fact
                   label="Est. ROI"
-                  value={formatPercent(money.estimatedRoi)}
+                  value={formatPercent(metrics.estimatedRoi)}
                 />
               </Stack>
             </Stack>

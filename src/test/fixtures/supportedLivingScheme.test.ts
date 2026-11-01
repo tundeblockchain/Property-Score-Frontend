@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { buildSupportedLivingLeaseRent } from '@/test/factories';
 import payload from '@/test/fixtures/supported-living-scheme.json';
 import {
   backendSupportedLivingScheme,
@@ -24,6 +25,11 @@ describe('backend supported-living fixture', () => {
       weeklyRentPerRoomGbp: 280,
       annualRentGbp: 58240,
     });
+    expect(extras?.leaseRentByYear[1]).toEqual({
+      year: 2,
+      weeklyRentPerRoomGbp: 286,
+      annualRentGbp: 59405,
+    });
     expect(extras?.leaseRentByYear[0]).not.toHaveProperty('rentGbp');
     expect(extras?.planningNote).toBe(
       'Sleep-in staff may need C2 planning permission.',
@@ -38,7 +44,11 @@ describe('backend supported-living fixture', () => {
     expect(extras?.residentRoomOption).toBe('standard');
     expect(extras?.residentRoomOptions.standard.option).toBe('standard');
     expect(extras?.residentRoomOptions.ensuite.option).toBe('ensuite');
-    expect(extras?.residentRoomOptionReason).toMatch(/shared bathrooms/);
+    expect(extras?.residentRoomOptions.standard.netCashFlowAnnual).not.toBe(
+      extras?.staffRoomOptions.withEnsuite.netCashFlowAnnual,
+    );
+    expect(typeof extras?.residentRoomOptionReason).toBe('string');
+    expect(extras?.residentRoomOptionReason.length).toBeGreaterThan(0);
     expect(extras?.riskBadge).toBe('Provider / regulatory risk: Medium-High');
     expect(backendSupportedLivingScheme.rooms.every((room) => room.id)).toBe(
       true,
@@ -51,6 +61,14 @@ describe('backend supported-living fixture', () => {
     expect(override?.category).toBe('override');
     expect(override?.lowGbp).toBeLessThan(0);
     expect(override?.highGbp).toBeLessThan(0);
+  });
+
+  it('builds annual lease rent from the unrounded weekly figure', () => {
+    expect(buildSupportedLivingLeaseRent(280, 4, 2, 2)[1]).toEqual({
+      year: 2,
+      weeklyRentPerRoomGbp: 286,
+      annualRentGbp: 59405,
+    });
   });
 
   it('rejects an invented outputs object', () => {

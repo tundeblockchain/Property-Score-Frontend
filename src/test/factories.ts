@@ -107,7 +107,10 @@ export function buildConversionPlan(
   };
 }
 
-/** Property-Score planner: annualRentGbp = round(weekly * lettingRooms * 52). */
+/**
+ * Property-Score planner: weeklyRentPerRoomGbp = round(weekly),
+ * annualRentGbp = round(unrounded weekly * lettingRooms * 52).
+ */
 export function buildSupportedLivingLeaseRent(
   weeklyRentPerRoomGbp: number,
   lettingRooms: number,
@@ -117,11 +120,10 @@ export function buildSupportedLivingLeaseRent(
   const rows: HmoLeaseRentYear[] = [];
   let weekly = weeklyRentPerRoomGbp;
   for (let year = 1; year <= termYears; year += 1) {
-    const roundedWeekly = Math.round(weekly);
     rows.push({
       year,
-      weeklyRentPerRoomGbp: roundedWeekly,
-      annualRentGbp: Math.round(roundedWeekly * lettingRooms * 52),
+      weeklyRentPerRoomGbp: Math.round(weekly),
+      annualRentGbp: Math.round(weekly * lettingRooms * 52),
     });
     weekly *= 1 + cpiUpliftPct / 100;
   }
@@ -165,17 +167,17 @@ export function buildSupportedLiving(
     },
     residentRoomOption: 'standard',
     residentRoomOptionReason:
-      'Standard rooms with shared bathrooms are the default supported-living layout. Ensuites raise refurb cost more than the extra rent covers.',
+      'Chose resident rooms as standard shared bathrooms: net cash flow £12,000 vs £8,000; ROI on deposit 6.0% vs 4.0%. Higher net cash flow wins.',
     residentRoomOptions: {
       standard: {
         option: 'standard',
-        netCashFlowAnnual: 18600,
-        estimatedRoi: 9.1,
+        netCashFlowAnnual: 12000,
+        estimatedRoi: 6,
       },
       ensuite: {
         option: 'ensuite',
-        netCashFlowAnnual: 15100,
-        estimatedRoi: 7.8,
+        netCashFlowAnnual: 8000,
+        estimatedRoi: 4,
       },
     },
     riskBadge: 'Provider / regulatory risk: Medium-High',

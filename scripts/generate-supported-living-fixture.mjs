@@ -1,16 +1,12 @@
 /**
- * Emit src/test/fixtures/supported-living-scheme.json from the Property-Score
- * planner formula:
+ * Emit src/test/fixtures/supported-living-scheme.json.
+ *
+ * Lease rows follow backend #50 `supported-living.ts`:
  *   weeklyRentPerRoomGbp = roundMoney(weekly)
- *   annualRentGbp = roundMoney(weekly * lettingRooms * 52)
+ *   annualRentGbp = roundMoney(unrounded weekly * lettingRooms * 52)
  *
- * Backend defaults: leaseTermYears=5, breakYear=3, cpiUpliftPct=2,
- * planningNote = 'Sleep-in staff may need C2 planning permission.',
- * resident rooms default to `standard` (shared bathrooms) vs `ensuite`.
- *
- * When Property-Score is available, replace this JSON with the social_care
- * scheme from `buildHmoPlanner` on cursor/resident-room-layout-5262 (PR #50)
- * verbatim.
+ * Resident-room extras here are factory-shaped until a `buildHmoPlanner`
+ * snapshot from Property-Score PR #50 is checked in.
  *
  * Usage: node scripts/generate-supported-living-fixture.mjs
  */
@@ -31,11 +27,10 @@ function leaseRentByYear() {
   const rows = [];
   let weekly = WEEKLY_RENT;
   for (let year = 1; year <= TERM_YEARS; year += 1) {
-    const weeklyRentPerRoomGbp = roundMoney(weekly);
     rows.push({
       year,
-      weeklyRentPerRoomGbp,
-      annualRentGbp: roundMoney(weeklyRentPerRoomGbp * LETTING_ROOMS * 52),
+      weeklyRentPerRoomGbp: roundMoney(weekly),
+      annualRentGbp: roundMoney(weekly * LETTING_ROOMS * 52),
     });
     weekly *= 1 + CPI_UPLIFT_PCT / 100;
   }
@@ -128,17 +123,17 @@ const scheme = {
     },
     residentRoomOption: 'standard',
     residentRoomOptionReason:
-      'Standard rooms with shared bathrooms are the default supported-living layout. Ensuites raise refurb cost more than the extra rent covers.',
+      'Chose resident rooms as standard shared bathrooms: net cash flow £12,000 vs £8,000; ROI on deposit 6.0% vs 4.0%. Higher net cash flow wins.',
     residentRoomOptions: {
       standard: {
         option: 'standard',
-        netCashFlowAnnual: 18600,
-        estimatedRoi: 9.1,
+        netCashFlowAnnual: 12000,
+        estimatedRoi: 6,
       },
       ensuite: {
         option: 'ensuite',
-        netCashFlowAnnual: 15100,
-        estimatedRoi: 7.8,
+        netCashFlowAnnual: 8000,
+        estimatedRoi: 4,
       },
     },
     riskBadge: 'Provider / regulatory risk: Medium-High',

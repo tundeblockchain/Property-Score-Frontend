@@ -6,14 +6,12 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 /**
- * Narrows planner JSON to `HmoLayoutScheme`.
- * JSON imports widen unions to `string`; this checks the e02603b
- * `SupportedLivingSchemeExtras` / `SupportedLivingLeaseYearRent` names
- * so a rename fails at load time.
+ * Narrows factory JSON to `HmoLayoutScheme`.
+ * JSON imports widen unions to `string`; this checks the extras names
+ * so a rename fails at load time. Resident-room figures are factory
+ * data until a `buildHmoPlanner` snapshot from PR #50 is checked in.
  *
  * Regenerate: `node scripts/generate-supported-living-fixture.mjs`.
- * When Property-Score is available, replace the JSON with the social_care
- * scheme from `buildHmoPlanner` on cursor/resident-room-layout-5262 verbatim.
  */
 export function parseBackendSupportedLivingScheme(
   value: unknown,

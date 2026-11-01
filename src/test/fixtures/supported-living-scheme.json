@@ -109,22 +109,22 @@
       {
         "year": 2,
         "weeklyRentPerRoomGbp": 286,
-        "annualRentGbp": 59488
+        "annualRentGbp": 59405
       },
       {
         "year": 3,
         "weeklyRentPerRoomGbp": 291,
-        "annualRentGbp": 60528
+        "annualRentGbp": 60593
       },
       {
         "year": 4,
         "weeklyRentPerRoomGbp": 297,
-        "annualRentGbp": 61776
+        "annualRentGbp": 61805
       },
       {
         "year": 5,
         "weeklyRentPerRoomGbp": 303,
-        "annualRentGbp": 63024
+        "annualRentGbp": 63041
       }
     ],
     "yieldOnVacantPossession": 8.4,
@@ -145,17 +145,17 @@
       }
     },
     "residentRoomOption": "standard",
-    "residentRoomOptionReason": "Standard rooms with shared bathrooms are the default supported-living layout. Ensuites raise refurb cost more than the extra rent covers.",
+    "residentRoomOptionReason": "Chose resident rooms as standard shared bathrooms: net cash flow £12,000 vs £8,000; ROI on deposit 6.0% vs 4.0%. Higher net cash flow wins.",
     "residentRoomOptions": {
       "standard": {
         "option": "standard",
-        "netCashFlowAnnual": 18600,
-        "estimatedRoi": 9.1
+        "netCashFlowAnnual": 12000,
+        "estimatedRoi": 6
       },
       "ensuite": {
         "option": "ensuite",
-        "netCashFlowAnnual": 15100,
-        "estimatedRoi": 7.8
+        "netCashFlowAnnual": 8000,
+        "estimatedRoi": 4
       }
     },
     "riskBadge": "Provider / regulatory risk: Medium-High",

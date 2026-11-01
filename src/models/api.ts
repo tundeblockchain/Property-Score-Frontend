@@ -154,31 +154,28 @@ export interface HmoLeaseRentYear {
 
 export type HmoStaffRoomOption = 'with_ensuite' | 'without_ensuite';
 
-/** Mirrors Property-Score `SupportedLivingStaffRoomMetrics`. */
-export interface HmoStaffRoomOptionMoney {
-  option: HmoStaffRoomOption;
+/**
+ * Shared staff / resident comparison metrics.
+ * Mirrors Property-Score `SupportedLivingStaffRoomMetrics` and
+ * `SupportedLivingResidentRoomMetrics`.
+ */
+export interface HmoChoiceMetrics<T extends string = string> {
+  option: T;
   netCashFlowAnnual: number;
   estimatedRoi: number;
 }
+
+export type HmoStaffRoomOptionMoney = HmoChoiceMetrics<HmoStaffRoomOption>;
 
 export interface HmoStaffRoomOptions {
   withEnsuite: HmoStaffRoomOptionMoney;
   withoutEnsuite: HmoStaffRoomOptionMoney;
 }
 
-/**
- * Resident letting rooms: shared bathrooms (standard, the default)
- * versus ensuites. Mirrors Property-Score
- * `SupportedLivingResidentRoomOption` (PR #50).
- */
+/** Mirrors Property-Score `ResidentRoomOption`. */
 export type HmoResidentRoomOption = 'standard' | 'ensuite';
 
-/** Mirrors Property-Score `SupportedLivingResidentRoomMetrics`. */
-export interface HmoResidentRoomOptionMoney {
-  option: HmoResidentRoomOption;
-  netCashFlowAnnual: number;
-  estimatedRoi: number;
-}
+export type HmoResidentRoomOptionMoney = HmoChoiceMetrics<HmoResidentRoomOption>;
 
 export interface HmoResidentRoomOptions {
   standard: HmoResidentRoomOptionMoney;

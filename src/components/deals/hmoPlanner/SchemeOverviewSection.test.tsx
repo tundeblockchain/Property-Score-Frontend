@@ -1,7 +1,11 @@
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { SchemeOverviewSection } from '@/components/deals/hmoPlanner/SchemeOverviewSection';
-import { buildHmoScheme, buildSupportedLivingScheme } from '@/test/factories';
+import {
+  buildHmoScheme,
+  buildSupportedLiving,
+  buildSupportedLivingScheme,
+} from '@/test/factories';
 import { backendSupportedLivingScheme } from '@/test/fixtures/supportedLivingScheme';
 import { renderWithProviders } from '@/test/renderWithProviders';
 
@@ -19,7 +23,8 @@ describe('SchemeOverviewSection', () => {
     expect(screen.queryByText('Assumptions')).not.toBeInTheDocument();
   });
 
-  it('renders supported living from the backend planner fixture', () => {
+  it('renders supported living from the extras fixture', () => {
+    const extras = backendSupportedLivingScheme.supportedLiving;
     renderWithProviders(
       <SchemeOverviewSection scheme={backendSupportedLivingScheme} />,
     );
@@ -50,24 +55,67 @@ describe('SchemeOverviewSection', () => {
       screen.getByRole('columnheader', { name: 'Annual rent' }),
     ).toBeInTheDocument();
 
-    expect(screen.getByText('Resident-room layout')).toBeInTheDocument();
+    const resident = screen.getByRole('region', { name: 'Resident-room layout' });
     expect(
-      screen.getByText('Chosen: Standard (shared bathrooms)'),
+      within(resident).getByText('Chosen: Standard (shared bathrooms)'),
     ).toBeInTheDocument();
-    expect(screen.getByText('Ensuites')).toBeInTheDocument();
+    expect(within(resident).getByText('Ensuites')).toBeInTheDocument();
+    expect(within(resident).getByText('Chosen')).toBeInTheDocument();
+    if (extras?.residentRoomOptionReason) {
+      expect(
+        within(resident).getByText(extras.residentRoomOptionReason),
+      ).toBeInTheDocument();
+    }
+
+    const staff = screen.getByRole('region', { name: 'Staff-room choice' });
+    expect(within(staff).getByText('Chosen: With ensuite')).toBeInTheDocument();
+    expect(within(staff).getByText('Without ensuite')).toBeInTheDocument();
+    expect(within(staff).getByText('Chosen')).toBeInTheDocument();
+
     expect(
       screen.getByText(
-        /Standard rooms with shared bathrooms are the default supported-living layout/,
+        "Each layout's figures assume the chosen option for the other.",
       ),
     ).toBeInTheDocument();
 
-    expect(screen.getByText('Staff-room choice')).toBeInTheDocument();
-    expect(screen.getByText('Chosen: With ensuite')).toBeInTheDocument();
-    expect(screen.getByText('Without ensuite')).toBeInTheDocument();
-    expect(screen.getAllByText('Chosen').length).toBeGreaterThan(1);
-
     expect(screen.getByText('Bedroom 1')).toBeInTheDocument();
     expect(screen.getByText('Staff room')).toBeInTheDocument();
+  });
+
+  it('marks the ensuite resident layout as chosen', () => {
+    renderWithProviders(
+      <SchemeOverviewSection
+        scheme={buildSupportedLivingScheme({
+          supportedLiving: buildSupportedLiving({
+            residentRoomOption: 'ensuite',
+            residentRoomOptionReason:
+              'Chose resident rooms as ensuite: net cash flow £9,000 vs £7,000; ROI on deposit 5.0% vs 3.0%. Higher net cash flow wins.',
+            residentRoomOptions: {
+              standard: {
+                option: 'standard',
+                netCashFlowAnnual: 7000,
+                estimatedRoi: 3,
+              },
+              ensuite: {
+                option: 'ensuite',
+                netCashFlowAnnual: 9000,
+                estimatedRoi: 5,
+              },
+            },
+          }),
+        })}
+      />,
+    );
+
+    const resident = screen.getByRole('region', { name: 'Resident-room layout' });
+    expect(within(resident).getByText('Chosen: Ensuites')).toBeInTheDocument();
+    expect(within(resident).getByText('Chosen')).toBeInTheDocument();
+    expect(
+      within(resident).queryByText('Chosen: Standard (shared bathrooms)'),
+    ).not.toBeInTheDocument();
+
+    const staff = screen.getByRole('region', { name: 'Staff-room choice' });
+    expect(within(staff).getByText('Chosen: With ensuite')).toBeInTheDocument();
   });
 
   it('hides supported-living extras when the payload has none', () => {

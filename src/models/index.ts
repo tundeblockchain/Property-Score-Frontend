@@ -76,6 +76,7 @@ export type {
   HmoSupportedLiving,
   HmoSupportedLivingInputs,
   HmoLeaseRentYear,
+  HmoChoiceMetrics,
   HmoStaffRoomOption,
   HmoStaffRoomOptionMoney,
   HmoStaffRoomOptions,
