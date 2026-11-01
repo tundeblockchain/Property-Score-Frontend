@@ -107,7 +107,10 @@ export function buildConversionPlan(
   };
 }
 
-/** Property-Score planner: annualRentGbp = round(weekly * lettingRooms * 52). */
+/**
+ * Property-Score planner: weeklyRentPerRoomGbp = round(weekly),
+ * annualRentGbp = round(unrounded weekly * lettingRooms * 52).
+ */
 export function buildSupportedLivingLeaseRent(
   weeklyRentPerRoomGbp: number,
   lettingRooms: number,
@@ -119,7 +122,7 @@ export function buildSupportedLivingLeaseRent(
   for (let year = 1; year <= termYears; year += 1) {
     rows.push({
       year,
-      weeklyRentPerRoomGbp: weekly,
+      weeklyRentPerRoomGbp: Math.round(weekly),
       annualRentGbp: Math.round(weekly * lettingRooms * 52),
     });
     weekly *= 1 + cpiUpliftPct / 100;
@@ -142,6 +145,7 @@ export function buildSupportedLiving(
       refurbHighGbp: { value: 65000, isEstimate: true },
       complianceLumpSumGbp: { value: 12000, isEstimate: true },
       staffEnsuiteRentPremiumWeekly: { value: 25, isEstimate: true },
+      residentEnsuiteRentPremiumWeekly: { value: 0, isEstimate: true },
     },
     leaseRentByYear: buildSupportedLivingLeaseRent(280, 4, 5, 2),
     yieldOnVacantPossession: 8.4,
@@ -151,8 +155,31 @@ export function buildSupportedLiving(
     staffRoomOptionReason:
       'Overnight cover needs a staff room; the 7.2 m² rear single is below the letting space standard. An ensuite keeps staff self-contained.',
     staffRoomOptions: {
-      withEnsuite: { netCashFlowAnnual: 18600, estimatedRoi: 9.1 },
-      withoutEnsuite: { netCashFlowAnnual: 14200, estimatedRoi: 8.2 },
+      withEnsuite: {
+        option: 'with_ensuite',
+        netCashFlowAnnual: 18600,
+        estimatedRoi: 9.1,
+      },
+      withoutEnsuite: {
+        option: 'without_ensuite',
+        netCashFlowAnnual: 14200,
+        estimatedRoi: 8.2,
+      },
+    },
+    residentRoomOption: 'standard',
+    residentRoomOptionReason:
+      'Chose resident rooms as standard shared bathrooms: net cash flow £12,000 vs £8,000; ROI on deposit 6.0% vs 4.0%. Higher net cash flow wins.',
+    residentRoomOptions: {
+      standard: {
+        option: 'standard',
+        netCashFlowAnnual: 12000,
+        estimatedRoi: 6,
+      },
+      ensuite: {
+        option: 'ensuite',
+        netCashFlowAnnual: 8000,
+        estimatedRoi: 4,
+      },
     },
     riskBadge: 'Provider / regulatory risk: Medium-High',
     planningNote: 'Sleep-in staff may need C2 planning permission.',
@@ -165,6 +192,10 @@ export function buildSupportedLiving(
     staffRoomOptions: {
       ...defaults.staffRoomOptions,
       ...overrides.staffRoomOptions,
+    },
+    residentRoomOptions: {
+      ...defaults.residentRoomOptions,
+      ...overrides.residentRoomOptions,
     },
   };
 }

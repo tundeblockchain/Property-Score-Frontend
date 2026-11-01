@@ -1,0 +1,935 @@
+{
+  "generatedBy": "buildHmoPlanner",
+  "property": {
+    "bedrooms": 4,
+    "bathrooms": 2,
+    "askingPrice": 350000,
+    "estimatedRoomRentWeekly": 150,
+    "hasFloorPlan": true
+  },
+  "standardWinning": {
+    "residentRoomOption": "standard",
+    "source": "floor_plan_vision",
+    "scheme": {
+      "id": "social_care",
+      "useCase": "social_care",
+      "title": "Supported living · 3-bed supported living",
+      "summary": "Shared bathrooms with wet-room access per floor, a retained communal lounge, and one staff sleep-in / office — supported living rather than max density.",
+      "lettingRooms": 3,
+      "rooms": [
+        {
+          "id": "bed-a",
+          "label": "Bedroom 1",
+          "type": "ensuite",
+          "estimatedAreaSqM": 12.5,
+          "floor": "ground",
+          "meetsSpaceStandard": true,
+          "notes": "Existing resident wet-room ensuite · ~12.5 m² meets double space standard (≥11 m²)"
+        },
+        {
+          "id": "bed-b",
+          "label": "Bedroom 2",
+          "type": "double",
+          "estimatedAreaSqM": 12,
+          "floor": "first",
+          "meetsSpaceStandard": true,
+          "notes": "No ensuite — wet-room access on this floor · ~12 m² meets double space standard (≥11 m²)"
+        },
+        {
+          "id": "bed-c",
+          "label": "Bedroom 3",
+          "type": "double",
+          "estimatedAreaSqM": 11.5,
+          "floor": "first",
+          "meetsSpaceStandard": true,
+          "notes": "No ensuite — wet-room access on this floor · ~11.5 m² meets double space standard (≥11 m²)"
+        },
+        {
+          "id": "bed-d",
+          "label": "Bedroom 4",
+          "type": "staff",
+          "estimatedAreaSqM": 10,
+          "floor": "first",
+          "meetsSpaceStandard": true,
+          "notes": "Staff sleep-in / office — basic finish, no rent, no ensuite by default"
+        }
+      ],
+      "amenities": [
+        "Communal lounge retained",
+        "Shared bathrooms — no new resident ensuites",
+        "Shared wet-room access on any floor with a resident room that has no ensuite",
+        "Staff sleep-in room / office (basic finish, no rent)"
+      ],
+      "complianceNotes": [
+        "Sleep-in staff may need C2 planning permission.",
+        "Supported living often sits outside standard HMO room-by-room models — confirm commissioning route",
+        "Building regs, fire strategy, and CQC / local authority expectations may apply depending on the care model",
+        "Do not treat this scheme as a substitute for specialist care property advice",
+        "Provider / regulatory risk: Medium-High",
+        "Confirm with the local authority whether this care / supported-living model needs planning permission",
+        "Sleep-in staff may need C2 planning permission",
+        "Check on site: Storey / escape height",
+        "Check on site: Protected escape route"
+      ],
+      "layoutNotes": [
+        "1 existing resident ensuite(s) retained — no new ensuites",
+        "Budget 1 shared wet room(s) for floors with resident rooms that have no ensuite",
+        "Keep the communal lounge; do not convert it to another bedroom",
+        "As built 4 bedrooms → proposed 3 letting rooms",
+        "Retained communal: Living"
+      ],
+      "estimatedRefurbLowGbp": 44330,
+      "estimatedRefurbHighGbp": 78540,
+      "conversionPlan": {
+        "useCase": "social_care",
+        "asBuiltBedrooms": 4,
+        "proposedLettingRooms": 3,
+        "steps": [
+          {
+            "id": "bed-a",
+            "sourceLabel": "Bedroom 1",
+            "sourceKind": "bedroom",
+            "action": "keep_bedroom",
+            "targetType": "ensuite",
+            "estimatedAreaSqM": 12.5,
+            "floor": "ground",
+            "meetsSpaceStandard": true,
+            "rationale": "Retain existing resident wet-room ensuite",
+            "estimatedCostGbpLow": 0,
+            "estimatedCostGbpHigh": 0
+          },
+          {
+            "id": "bed-b",
+            "sourceLabel": "Bedroom 2",
+            "sourceKind": "bedroom",
+            "action": "keep_bedroom",
+            "targetType": "double",
+            "estimatedAreaSqM": 12,
+            "floor": "first",
+            "meetsSpaceStandard": true,
+            "rationale": "Retain as resident room with wet-room access on this floor",
+            "estimatedCostGbpLow": 0,
+            "estimatedCostGbpHigh": 0
+          },
+          {
+            "id": "bed-c",
+            "sourceLabel": "Bedroom 3",
+            "sourceKind": "bedroom",
+            "action": "keep_bedroom",
+            "targetType": "double",
+            "estimatedAreaSqM": 11.5,
+            "floor": "first",
+            "meetsSpaceStandard": true,
+            "rationale": "Retain as resident room with wet-room access on this floor",
+            "estimatedCostGbpLow": 0,
+            "estimatedCostGbpHigh": 0
+          },
+          {
+            "id": "bed-d",
+            "sourceLabel": "Bedroom 4",
+            "sourceKind": "bedroom",
+            "action": "staff_room",
+            "targetType": "staff",
+            "estimatedAreaSqM": 10,
+            "floor": "first",
+            "rationale": "Allocate as staff / sleep-in rather than maximising density",
+            "estimatedCostGbpLow": 1000,
+            "estimatedCostGbpHigh": 2500
+          },
+          {
+            "id": "fp-room-4",
+            "sourceLabel": "Living",
+            "sourceKind": "living",
+            "action": "keep_communal",
+            "targetType": "single",
+            "estimatedAreaSqM": 16,
+            "floor": "ground",
+            "rationale": "Keep communal / reception space for dignity and social care model",
+            "estimatedCostGbpLow": 0,
+            "estimatedCostGbpHigh": 0
+          }
+        ],
+        "retainedCommunal": [
+          "Living"
+        ],
+        "blocked": []
+      },
+      "financials": {
+        "askingPrice": 350000,
+        "estimatedRentMonthly": 2340,
+        "grossYield": 8.02,
+        "netCashFlowAnnual": 4252,
+        "estimatedRoi": 4.86,
+        "voidRateAssumed": 0,
+        "roomRentWeeklyAssumed": 180,
+        "occupiedRoomsAssumed": 3
+      },
+      "licensing": {
+        "useClass": "unclear",
+        "occupancyBand": "care_model",
+        "estimatedOccupants": 5,
+        "planningPermission": {
+          "status": "check_with_la",
+          "reason": "Supported living can fall outside a standard C3→C4 HMO path — sleep-in staff may need C2 planning permission. Confirm planning and care-model use with the local authority."
+        },
+        "mandatoryLicence": {
+          "status": "check_with_la",
+          "reason": "Whether HMO licensing applies depends on the care / supported-living model and how the property is occupied."
+        },
+        "additionalLicence": {
+          "status": "check_with_la",
+          "reason": "Confirm additional HMO licensing with the local authority for this care / supported-living model."
+        },
+        "selectiveLicence": {
+          "status": "check_with_la",
+          "reason": "Confirm selective licensing with the local authority for this care / supported-living model."
+        },
+        "actionItems": [
+          "Confirm with the local authority whether this care / supported-living model needs planning permission",
+          "Sleep-in staff may need C2 planning permission",
+          "Confirm CQC / commissioner expectations and whether HMO licensing still applies",
+          "Confirm additional HMO licensing with the local authority for this care / supported-living model.",
+          "Confirm selective licensing with the local authority for this care / supported-living model."
+        ],
+        "confidence": "low",
+        "disclaimer": "Indicative England-oriented licensing pathfinder only — not legal advice. Confirm use class, planning, and HMO/selective licensing with the local authority before purchase or conversion. Curated district-level screening register only — not a live council register lookup. Scheme boundaries (wards/postcodes) and designation dates change; confirm with the local authority before purchase."
+      },
+      "fireEscape": {
+        "estimatedStoreys": 2,
+        "storeySource": "floor_plan_rooms",
+        "riskBand": "higher",
+        "items": [
+          {
+            "id": "storeys_escape",
+            "title": "Storey / escape height",
+            "status": "check_on_site",
+            "detail": "About 2 storeys — confirm a clear final exit route and whether the stair needs protection for this HMO size."
+          },
+          {
+            "id": "protected_route",
+            "title": "Protected escape route",
+            "status": "check_on_site",
+            "detail": "Confirm hallway/stair enclosure, final exits, and any dead-end conditions on site."
+          },
+          {
+            "id": "fire_doors",
+            "title": "Fire doors (bedrooms / kitchen)",
+            "status": "likely_required",
+            "detail": "With 3 letting rooms, FD30-grade doors to bedrooms and the shared kitchen are commonly expected."
+          },
+          {
+            "id": "detection_alarm",
+            "title": "Detection & alarm",
+            "status": "likely_required",
+            "detail": "LD1 interlinked detection is the typical standard at 4 bedrooms including the staff sleep-in (up to 4)."
+          },
+          {
+            "id": "kitchen_separation",
+            "title": "Kitchen fire separation",
+            "status": "check_on_site",
+            "detail": "Shared kitchens are a primary fire risk — check door closers, heat detection, and separation from the escape route."
+          },
+          {
+            "id": "care_enhanced",
+            "title": "Care / supported living fire plan",
+            "status": "check_on_site",
+            "detail": "Supported living often needs a person-centred evacuation strategy and may trigger enhanced detection or sprinkler expectations — confirm with the care model and fire officer."
+          }
+        ],
+        "actionItems": [
+          "Check on site: Storey / escape height",
+          "Check on site: Protected escape route",
+          "Likely required: Fire doors (bedrooms / kitchen)",
+          "Likely required: Detection & alarm",
+          "Check on site: Kitchen fire separation",
+          "Check on site: Care / supported living fire plan",
+          "Commission a competent fire risk assessment before occupation"
+        ],
+        "confidence": "high",
+        "disclaimer": "Indicative England-oriented HMO fire / escape screening only — not a fire risk assessment, LACORS certificate, or Building Regulations approval. Commission a competent person before purchase or occupation.",
+        "alarmGrade": "LD1"
+      },
+      "refurbBoq": {
+        "lineItems": [
+          {
+            "id": "room-fabric",
+            "category": "room_fabric",
+            "label": "Room fabric & basic fit-out",
+            "quantity": 3,
+            "unit": "room",
+            "lowGbp": 4500,
+            "highGbp": 7000,
+            "notes": "Decoration, flooring, furniture, and minor M&E per letting room",
+            "source": "base_allowance"
+          },
+          {
+            "id": "kitchen",
+            "category": "kitchen_communal",
+            "label": "Shared kitchen upgrade",
+            "quantity": 1,
+            "unit": "kitchen",
+            "lowGbp": 6000,
+            "highGbp": 10000,
+            "notes": "Sized for occupant count; includes white goods allowance",
+            "source": "base_allowance"
+          },
+          {
+            "id": "wet-room",
+            "category": "ensuite_wetroom",
+            "label": "Accessible wet rooms",
+            "quantity": 2,
+            "unit": "wet room",
+            "lowGbp": 5000,
+            "highGbp": 9000,
+            "notes": "Resident ensuite wet rooms and shared wet-room access on floors without one",
+            "source": "use_case"
+          },
+          {
+            "id": "staff-fitout",
+            "category": "care_adaptations",
+            "label": "Staff / sleep-in room fit-out",
+            "quantity": 1,
+            "unit": "room",
+            "lowGbp": 1500,
+            "highGbp": 3000,
+            "notes": "Basic finish; no rent",
+            "source": "use_case"
+          },
+          {
+            "id": "compliance-lump-sum",
+            "category": "care_adaptations",
+            "label": "Compliance lump sum",
+            "quantity": 1,
+            "lowGbp": 4000,
+            "highGbp": 8000,
+            "notes": "Licensing, fire strategy, and commissioning extras",
+            "source": "use_case"
+          },
+          {
+            "id": "conversion-0-Bedroom 4",
+            "category": "care_adaptations",
+            "label": "Staff space: Bedroom 4",
+            "quantity": 1,
+            "lowGbp": 1000,
+            "highGbp": 2500,
+            "source": "conversion_step"
+          },
+          {
+            "id": "fire-doors",
+            "category": "fire_compliance",
+            "label": "FD30 fire doors (rooms + kitchen)",
+            "quantity": 4,
+            "unit": "door",
+            "lowGbp": 450,
+            "highGbp": 850,
+            "source": "fire_checklist"
+          },
+          {
+            "id": "detection",
+            "category": "fire_compliance",
+            "label": "Interlinked smoke / heat detection",
+            "quantity": 1,
+            "unit": "system",
+            "lowGbp": 2500,
+            "highGbp": 5500,
+            "source": "fire_checklist"
+          },
+          {
+            "id": "contingency",
+            "category": "contingency",
+            "label": "Contingency (10%)",
+            "quantity": 1,
+            "lowGbp": 4030,
+            "highGbp": 7140,
+            "notes": "Buffer for unseen works and tender variance",
+            "source": "base_allowance"
+          }
+        ],
+        "subtotalLowGbp": 40300,
+        "subtotalHighGbp": 71400,
+        "totalLowGbp": 44330,
+        "totalHighGbp": 78540,
+        "contingencyPct": 0.1,
+        "notes": [
+          "Conversion line items come from the geometry conversion plan.",
+          "Fire compliance lines are driven by the scheme fire / escape checklist.",
+          "Totals are screening ranges — expect local tender variance around £44,330–£78,540."
+        ],
+        "disclaimer": "Indicative refurb bill of quantities for investor screening only — not a contractor quote, measured survey, or Building Regulations cost plan. Verify rates locally before offer."
+      },
+      "supportedLiving": {
+        "inputs": {
+          "rentPerRoomWeekly": {
+            "value": 180,
+            "isEstimate": true
+          },
+          "leaseTermYears": {
+            "value": 5,
+            "isEstimate": true
+          },
+          "breakYear": {
+            "value": 3,
+            "isEstimate": true
+          },
+          "cpiUpliftPct": {
+            "value": 2,
+            "isEstimate": true
+          },
+          "fri": {
+            "value": true,
+            "isEstimate": true
+          },
+          "vacantPossessionValueGbp": {
+            "value": 350000,
+            "isEstimate": true
+          },
+          "refurbLowGbp": {
+            "value": 44330,
+            "isEstimate": false
+          },
+          "refurbHighGbp": {
+            "value": 78540,
+            "isEstimate": false
+          },
+          "complianceLumpSumGbp": {
+            "value": 6000,
+            "isEstimate": true
+          },
+          "staffEnsuiteRentPremiumWeekly": {
+            "value": 0,
+            "isEstimate": true
+          },
+          "residentEnsuiteRentPremiumWeekly": {
+            "value": 0,
+            "isEstimate": true
+          }
+        },
+        "staffRoomOption": "without_ensuite",
+        "staffRoomOptionReason": "Chose staff room without ensuite/wet room: net cash flow £4,252 vs £4,252; ROI on deposit 4.86% vs 4.5%. Net cash flow is equal, so the higher ROI on deposit wins.",
+        "staffRoomOptions": {
+          "withEnsuite": {
+            "option": "with_ensuite",
+            "netCashFlowAnnual": 4252,
+            "estimatedRoi": 4.5
+          },
+          "withoutEnsuite": {
+            "option": "without_ensuite",
+            "netCashFlowAnnual": 4252,
+            "estimatedRoi": 4.86
+          }
+        },
+        "residentRoomOption": "standard",
+        "residentRoomOptionReason": "Chose resident rooms as standard shared bathrooms: net cash flow £4,252 vs £4,252; ROI on deposit 4.86% vs 4.5%. Net cash flow is equal, so the higher ROI on deposit wins.",
+        "residentRoomOptions": {
+          "standard": {
+            "option": "standard",
+            "netCashFlowAnnual": 4252,
+            "estimatedRoi": 4.86
+          },
+          "ensuite": {
+            "option": "ensuite",
+            "netCashFlowAnnual": 4252,
+            "estimatedRoi": 4.5
+          }
+        },
+        "leaseRentByYear": [
+          {
+            "year": 1,
+            "weeklyRentPerRoomGbp": 180,
+            "annualRentGbp": 28080
+          },
+          {
+            "year": 2,
+            "weeklyRentPerRoomGbp": 184,
+            "annualRentGbp": 28642
+          },
+          {
+            "year": 3,
+            "weeklyRentPerRoomGbp": 187,
+            "annualRentGbp": 29214
+          },
+          {
+            "year": 4,
+            "weeklyRentPerRoomGbp": 191,
+            "annualRentGbp": 29799
+          },
+          {
+            "year": 5,
+            "weeklyRentPerRoomGbp": 195,
+            "annualRentGbp": 30395
+          }
+        ],
+        "yieldOnVacantPossession": 8.02,
+        "premiumOverNormalLetAnnualGbp": 11436,
+        "providerFailureNetCashFlowAnnual": -3181,
+        "riskBadge": "Provider / regulatory risk: Medium-High",
+        "planningNote": "Sleep-in staff may need C2 planning permission."
+      },
+      "fitScore": 52,
+      "recommended": false
+    }
+  },
+  "ensuiteWinning": {
+    "residentRoomOption": "ensuite",
+    "source": "floor_plan_vision",
+    "scheme": {
+      "id": "social_care",
+      "useCase": "social_care",
+      "title": "Supported living · 3-bed supported living",
+      "summary": "Resident wet-room ensuites where possible, a retained communal lounge, and one staff sleep-in / office — supported living rather than max density.",
+      "lettingRooms": 3,
+      "rooms": [
+        {
+          "id": "bed-a",
+          "label": "Bedroom 1",
+          "type": "ensuite",
+          "estimatedAreaSqM": 12.5,
+          "floor": "ground",
+          "meetsSpaceStandard": true,
+          "notes": "Existing resident wet-room ensuite · ~12.5 m² meets double space standard (≥11 m²)"
+        },
+        {
+          "id": "bed-b",
+          "label": "Bedroom 2",
+          "type": "ensuite",
+          "estimatedAreaSqM": 12,
+          "floor": "first",
+          "meetsSpaceStandard": true,
+          "notes": "Resident wet-room ensuite · ~12 m² meets double space standard (≥11 m²)"
+        },
+        {
+          "id": "bed-c",
+          "label": "Bedroom 3",
+          "type": "double",
+          "estimatedAreaSqM": 11.5,
+          "floor": "first",
+          "meetsSpaceStandard": true,
+          "notes": "No ensuite — wet-room access on this floor · ~11.5 m² meets double space standard (≥11 m²)"
+        },
+        {
+          "id": "bed-d",
+          "label": "Bedroom 4",
+          "type": "staff",
+          "estimatedAreaSqM": 10,
+          "floor": "first",
+          "meetsSpaceStandard": true,
+          "notes": "Staff sleep-in / office — basic finish, no rent, no ensuite by default"
+        }
+      ],
+      "amenities": [
+        "Communal lounge retained",
+        "Resident ensuite wet rooms where plumbing allows",
+        "Shared wet-room access on any floor with a resident room that has no ensuite",
+        "Staff sleep-in room / office (basic finish, no rent)"
+      ],
+      "complianceNotes": [
+        "Sleep-in staff may need C2 planning permission.",
+        "Supported living often sits outside standard HMO room-by-room models — confirm commissioning route",
+        "Building regs, fire strategy, and CQC / local authority expectations may apply depending on the care model",
+        "Do not treat this scheme as a substitute for specialist care property advice",
+        "Provider / regulatory risk: Medium-High",
+        "Confirm with the local authority whether this care / supported-living model needs planning permission",
+        "Sleep-in staff may need C2 planning permission",
+        "Check on site: Storey / escape height",
+        "Check on site: Protected escape route"
+      ],
+      "layoutNotes": [
+        "1 resident room(s) share wet-room access on their floor",
+        "Budget 1 shared wet room(s) for floors without a resident ensuite",
+        "Keep the communal lounge; do not convert it to another bedroom",
+        "As built 4 bedrooms → proposed 3 letting rooms",
+        "Bedroom 2: Add wet-room ensuite for the resident room — costed in the wet-room line",
+        "Retained communal: Living"
+      ],
+      "estimatedRefurbLowGbp": 49830,
+      "estimatedRefurbHighGbp": 88440,
+      "conversionPlan": {
+        "useCase": "social_care",
+        "asBuiltBedrooms": 4,
+        "proposedLettingRooms": 3,
+        "steps": [
+          {
+            "id": "bed-a",
+            "sourceLabel": "Bedroom 1",
+            "sourceKind": "bedroom",
+            "action": "keep_bedroom",
+            "targetType": "ensuite",
+            "estimatedAreaSqM": 12.5,
+            "floor": "ground",
+            "meetsSpaceStandard": true,
+            "rationale": "Retain existing resident wet-room ensuite",
+            "estimatedCostGbpLow": 0,
+            "estimatedCostGbpHigh": 0
+          },
+          {
+            "id": "bed-b",
+            "sourceLabel": "Bedroom 2",
+            "sourceKind": "bedroom",
+            "action": "add_ensuite",
+            "targetType": "ensuite",
+            "estimatedAreaSqM": 12,
+            "floor": "first",
+            "meetsSpaceStandard": true,
+            "rationale": "Add wet-room ensuite for the resident room — costed in the wet-room line",
+            "estimatedCostGbpLow": 0,
+            "estimatedCostGbpHigh": 0
+          },
+          {
+            "id": "bed-c",
+            "sourceLabel": "Bedroom 3",
+            "sourceKind": "bedroom",
+            "action": "keep_bedroom",
+            "targetType": "double",
+            "estimatedAreaSqM": 11.5,
+            "floor": "first",
+            "meetsSpaceStandard": true,
+            "rationale": "Retain as resident room with wet-room access on this floor",
+            "estimatedCostGbpLow": 0,
+            "estimatedCostGbpHigh": 0
+          },
+          {
+            "id": "bed-d",
+            "sourceLabel": "Bedroom 4",
+            "sourceKind": "bedroom",
+            "action": "staff_room",
+            "targetType": "staff",
+            "estimatedAreaSqM": 10,
+            "floor": "first",
+            "rationale": "Allocate as staff / sleep-in rather than maximising density",
+            "estimatedCostGbpLow": 1000,
+            "estimatedCostGbpHigh": 2500
+          },
+          {
+            "id": "fp-room-4",
+            "sourceLabel": "Living",
+            "sourceKind": "living",
+            "action": "keep_communal",
+            "targetType": "single",
+            "estimatedAreaSqM": 16,
+            "floor": "ground",
+            "rationale": "Keep communal / reception space for dignity and social care model",
+            "estimatedCostGbpLow": 0,
+            "estimatedCostGbpHigh": 0
+          }
+        ],
+        "retainedCommunal": [
+          "Living"
+        ],
+        "blocked": []
+      },
+      "financials": {
+        "askingPrice": 350000,
+        "estimatedRentMonthly": 2665,
+        "grossYield": 9.14,
+        "netCashFlowAnnual": 6787,
+        "estimatedRoi": 7.18,
+        "voidRateAssumed": 0,
+        "roomRentWeeklyAssumed": 205,
+        "occupiedRoomsAssumed": 3
+      },
+      "licensing": {
+        "useClass": "unclear",
+        "occupancyBand": "care_model",
+        "estimatedOccupants": 5,
+        "planningPermission": {
+          "status": "check_with_la",
+          "reason": "Supported living can fall outside a standard C3→C4 HMO path — sleep-in staff may need C2 planning permission. Confirm planning and care-model use with the local authority."
+        },
+        "mandatoryLicence": {
+          "status": "check_with_la",
+          "reason": "Whether HMO licensing applies depends on the care / supported-living model and how the property is occupied."
+        },
+        "additionalLicence": {
+          "status": "check_with_la",
+          "reason": "Confirm additional HMO licensing with the local authority for this care / supported-living model."
+        },
+        "selectiveLicence": {
+          "status": "check_with_la",
+          "reason": "Confirm selective licensing with the local authority for this care / supported-living model."
+        },
+        "actionItems": [
+          "Confirm with the local authority whether this care / supported-living model needs planning permission",
+          "Sleep-in staff may need C2 planning permission",
+          "Confirm CQC / commissioner expectations and whether HMO licensing still applies",
+          "Confirm additional HMO licensing with the local authority for this care / supported-living model.",
+          "Confirm selective licensing with the local authority for this care / supported-living model."
+        ],
+        "confidence": "low",
+        "disclaimer": "Indicative England-oriented licensing pathfinder only — not legal advice. Confirm use class, planning, and HMO/selective licensing with the local authority before purchase or conversion. Curated district-level screening register only — not a live council register lookup. Scheme boundaries (wards/postcodes) and designation dates change; confirm with the local authority before purchase."
+      },
+      "fireEscape": {
+        "estimatedStoreys": 2,
+        "storeySource": "floor_plan_rooms",
+        "riskBand": "higher",
+        "items": [
+          {
+            "id": "storeys_escape",
+            "title": "Storey / escape height",
+            "status": "check_on_site",
+            "detail": "About 2 storeys — confirm a clear final exit route and whether the stair needs protection for this HMO size."
+          },
+          {
+            "id": "protected_route",
+            "title": "Protected escape route",
+            "status": "check_on_site",
+            "detail": "Confirm hallway/stair enclosure, final exits, and any dead-end conditions on site."
+          },
+          {
+            "id": "fire_doors",
+            "title": "Fire doors (bedrooms / kitchen)",
+            "status": "likely_required",
+            "detail": "With 3 letting rooms, FD30-grade doors to bedrooms and the shared kitchen are commonly expected."
+          },
+          {
+            "id": "detection_alarm",
+            "title": "Detection & alarm",
+            "status": "likely_required",
+            "detail": "LD1 interlinked detection is the typical standard at 4 bedrooms including the staff sleep-in (up to 4)."
+          },
+          {
+            "id": "kitchen_separation",
+            "title": "Kitchen fire separation",
+            "status": "check_on_site",
+            "detail": "Shared kitchens are a primary fire risk — check door closers, heat detection, and separation from the escape route."
+          },
+          {
+            "id": "care_enhanced",
+            "title": "Care / supported living fire plan",
+            "status": "check_on_site",
+            "detail": "Supported living often needs a person-centred evacuation strategy and may trigger enhanced detection or sprinkler expectations — confirm with the care model and fire officer."
+          }
+        ],
+        "actionItems": [
+          "Check on site: Storey / escape height",
+          "Check on site: Protected escape route",
+          "Likely required: Fire doors (bedrooms / kitchen)",
+          "Likely required: Detection & alarm",
+          "Check on site: Kitchen fire separation",
+          "Check on site: Care / supported living fire plan",
+          "Commission a competent fire risk assessment before occupation"
+        ],
+        "confidence": "high",
+        "disclaimer": "Indicative England-oriented HMO fire / escape screening only — not a fire risk assessment, LACORS certificate, or Building Regulations approval. Commission a competent person before purchase or occupation.",
+        "alarmGrade": "LD1"
+      },
+      "refurbBoq": {
+        "lineItems": [
+          {
+            "id": "room-fabric",
+            "category": "room_fabric",
+            "label": "Room fabric & basic fit-out",
+            "quantity": 3,
+            "unit": "room",
+            "lowGbp": 4500,
+            "highGbp": 7000,
+            "notes": "Decoration, flooring, furniture, and minor M&E per letting room",
+            "source": "base_allowance"
+          },
+          {
+            "id": "kitchen",
+            "category": "kitchen_communal",
+            "label": "Shared kitchen upgrade",
+            "quantity": 1,
+            "unit": "kitchen",
+            "lowGbp": 6000,
+            "highGbp": 10000,
+            "notes": "Sized for occupant count; includes white goods allowance",
+            "source": "base_allowance"
+          },
+          {
+            "id": "wet-room",
+            "category": "ensuite_wetroom",
+            "label": "Accessible wet rooms",
+            "quantity": 3,
+            "unit": "wet room",
+            "lowGbp": 5000,
+            "highGbp": 9000,
+            "notes": "Resident ensuite wet rooms and shared wet-room access on floors without one",
+            "source": "use_case"
+          },
+          {
+            "id": "staff-fitout",
+            "category": "care_adaptations",
+            "label": "Staff / sleep-in room fit-out",
+            "quantity": 1,
+            "unit": "room",
+            "lowGbp": 1500,
+            "highGbp": 3000,
+            "notes": "Basic finish; no rent",
+            "source": "use_case"
+          },
+          {
+            "id": "compliance-lump-sum",
+            "category": "care_adaptations",
+            "label": "Compliance lump sum",
+            "quantity": 1,
+            "lowGbp": 4000,
+            "highGbp": 8000,
+            "notes": "Licensing, fire strategy, and commissioning extras",
+            "source": "use_case"
+          },
+          {
+            "id": "conversion-0-Bedroom 4",
+            "category": "care_adaptations",
+            "label": "Staff space: Bedroom 4",
+            "quantity": 1,
+            "lowGbp": 1000,
+            "highGbp": 2500,
+            "source": "conversion_step"
+          },
+          {
+            "id": "fire-doors",
+            "category": "fire_compliance",
+            "label": "FD30 fire doors (rooms + kitchen)",
+            "quantity": 4,
+            "unit": "door",
+            "lowGbp": 450,
+            "highGbp": 850,
+            "source": "fire_checklist"
+          },
+          {
+            "id": "detection",
+            "category": "fire_compliance",
+            "label": "Interlinked smoke / heat detection",
+            "quantity": 1,
+            "unit": "system",
+            "lowGbp": 2500,
+            "highGbp": 5500,
+            "source": "fire_checklist"
+          },
+          {
+            "id": "contingency",
+            "category": "contingency",
+            "label": "Contingency (10%)",
+            "quantity": 1,
+            "lowGbp": 4530,
+            "highGbp": 8040,
+            "notes": "Buffer for unseen works and tender variance",
+            "source": "base_allowance"
+          }
+        ],
+        "subtotalLowGbp": 45300,
+        "subtotalHighGbp": 80400,
+        "totalLowGbp": 49830,
+        "totalHighGbp": 88440,
+        "contingencyPct": 0.1,
+        "notes": [
+          "Conversion line items come from the geometry conversion plan.",
+          "Fire compliance lines are driven by the scheme fire / escape checklist.",
+          "Totals are screening ranges — expect local tender variance around £49,830–£88,440."
+        ],
+        "disclaimer": "Indicative refurb bill of quantities for investor screening only — not a contractor quote, measured survey, or Building Regulations cost plan. Verify rates locally before offer."
+      },
+      "supportedLiving": {
+        "inputs": {
+          "rentPerRoomWeekly": {
+            "value": 180,
+            "isEstimate": true
+          },
+          "leaseTermYears": {
+            "value": 5,
+            "isEstimate": true
+          },
+          "breakYear": {
+            "value": 3,
+            "isEstimate": true
+          },
+          "cpiUpliftPct": {
+            "value": 2,
+            "isEstimate": true
+          },
+          "fri": {
+            "value": true,
+            "isEstimate": true
+          },
+          "vacantPossessionValueGbp": {
+            "value": 350000,
+            "isEstimate": true
+          },
+          "refurbLowGbp": {
+            "value": 49830,
+            "isEstimate": false
+          },
+          "refurbHighGbp": {
+            "value": 88440,
+            "isEstimate": false
+          },
+          "complianceLumpSumGbp": {
+            "value": 6000,
+            "isEstimate": true
+          },
+          "staffEnsuiteRentPremiumWeekly": {
+            "value": 0,
+            "isEstimate": true
+          },
+          "residentEnsuiteRentPremiumWeekly": {
+            "value": 25,
+            "isEstimate": false
+          }
+        },
+        "staffRoomOption": "without_ensuite",
+        "staffRoomOptionReason": "Chose staff room without ensuite/wet room: net cash flow £6,787 vs £6,787; ROI on deposit 7.18% vs 6.69%. Net cash flow is equal, so the higher ROI on deposit wins.",
+        "staffRoomOptions": {
+          "withEnsuite": {
+            "option": "with_ensuite",
+            "netCashFlowAnnual": 6787,
+            "estimatedRoi": 6.69
+          },
+          "withoutEnsuite": {
+            "option": "without_ensuite",
+            "netCashFlowAnnual": 6787,
+            "estimatedRoi": 7.18
+          }
+        },
+        "residentRoomOption": "ensuite",
+        "residentRoomOptionReason": "Chose resident rooms with ensuite wet rooms: net cash flow £6,787 vs £4,252; ROI on deposit 7.18% vs 4.86%. Higher net cash flow wins.",
+        "residentRoomOptions": {
+          "standard": {
+            "option": "standard",
+            "netCashFlowAnnual": 4252,
+            "estimatedRoi": 4.86
+          },
+          "ensuite": {
+            "option": "ensuite",
+            "netCashFlowAnnual": 6787,
+            "estimatedRoi": 7.18
+          }
+        },
+        "leaseRentByYear": [
+          {
+            "year": 1,
+            "weeklyRentPerRoomGbp": 205,
+            "annualRentGbp": 31980
+          },
+          {
+            "year": 2,
+            "weeklyRentPerRoomGbp": 209,
+            "annualRentGbp": 32620
+          },
+          {
+            "year": 3,
+            "weeklyRentPerRoomGbp": 213,
+            "annualRentGbp": 33272
+          },
+          {
+            "year": 4,
+            "weeklyRentPerRoomGbp": 218,
+            "annualRentGbp": 33937
+          },
+          {
+            "year": 5,
+            "weeklyRentPerRoomGbp": 222,
+            "annualRentGbp": 34616
+          }
+        ],
+        "yieldOnVacantPossession": 9.14,
+        "premiumOverNormalLetAnnualGbp": 15336,
+        "providerFailureNetCashFlowAnnual": -3181,
+        "riskBadge": "Provider / regulatory risk: Medium-High",
+        "planningNote": "Sleep-in staff may need C2 planning permission."
+      },
+      "fitScore": 52,
+      "recommended": false
+    }
+  }
+}

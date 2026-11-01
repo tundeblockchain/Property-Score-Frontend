@@ -5,6 +5,7 @@ import { SchemeAccordion } from '@/components/deals/hmoPlanner/SchemeAccordion';
 import {
   buildConversionPlan,
   buildHmoScheme,
+  buildSupportedLivingScheme,
   buildTierAccess,
 } from '@/test/factories';
 import { backendSupportedLivingScheme } from '@/test/fixtures/supportedLivingScheme';
@@ -52,7 +53,7 @@ describe('SchemeAccordion', () => {
     );
   });
 
-  it('renders the backend supported-living payload, including a negative override BoQ line', async () => {
+  it('renders the captured supported-living payload', async () => {
     const user = userEvent.setup();
     renderWithProviders(
       <SchemeAccordion scheme={backendSupportedLivingScheme} />,
@@ -61,9 +62,54 @@ describe('SchemeAccordion', () => {
     expect(
       screen.queryByText('Provider / regulatory risk: Medium-High'),
     ).not.toBeInTheDocument();
-    expect(screen.getByText('Chosen: With ensuite')).toBeInTheDocument();
+    expect(screen.getByText('Chosen: Without ensuite')).toBeInTheDocument();
+    expect(screen.getByText('Resident-room layout')).toBeInTheDocument();
+    expect(
+      screen.getByText('Chosen: Standard (shared bathrooms)'),
+    ).toBeInTheDocument();
     expect(screen.getByText('Rent across the lease')).toBeInTheDocument();
     expect(screen.queryByText('LD1')).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Refurb BoQ' }));
+
+    expect(await screen.findByText('Accessible wet rooms')).toBeInTheDocument();
+    expect(screen.getByText('Staff / sleep-in room fit-out')).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Fire / escape' }));
+
+    expect(await screen.findByText('Alarm grade')).toBeInTheDocument();
+    expect(screen.getByText('LD1')).toBeInTheDocument();
+  });
+
+  it('shows a negative override BoQ line', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(
+      <SchemeAccordion
+        scheme={buildSupportedLivingScheme({
+          refurbBoq: {
+            lineItems: [
+              {
+                id: 'boq-override',
+                category: 'override',
+                label: 'Staff ensuite already present — omit wet room',
+                quantity: 1,
+                lowGbp: -6500,
+                highGbp: -6500,
+                notes: 'Negative override because the listing already has a staff wet room.',
+                source: 'override',
+              },
+            ],
+            subtotalLowGbp: 0,
+            subtotalHighGbp: 2500,
+            totalLowGbp: 0,
+            totalHighGbp: 2750,
+            contingencyPct: 0.1,
+            notes: [],
+            disclaimer: 'Indicative only.',
+          },
+        })}
+      />,
+    );
 
     await user.click(screen.getByRole('button', { name: 'Refurb BoQ' }));
 
@@ -76,10 +122,5 @@ describe('SchemeAccordion', () => {
         `${formatCurrency(-6500)} – ${formatCurrency(-6500)}`,
       ),
     ).toBeInTheDocument();
-
-    await user.click(screen.getByRole('button', { name: 'Fire / escape' }));
-
-    expect(await screen.findByText('Alarm grade')).toBeInTheDocument();
-    expect(screen.getByText('LD1')).toBeInTheDocument();
   });
 });

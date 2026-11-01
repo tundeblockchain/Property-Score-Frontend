@@ -116,6 +116,7 @@ export interface HmoLayoutRoom {
   label: string;
   type: HmoRoomType;
   estimatedAreaSqM?: number;
+  floor?: string;
   meetsSpaceStandard?: boolean;
   notes?: string;
 }
@@ -143,6 +144,7 @@ export interface HmoSupportedLivingInputs {
   refurbHighGbp: HmoEstimatedInput<number>;
   complianceLumpSumGbp: HmoEstimatedInput<number>;
   staffEnsuiteRentPremiumWeekly: HmoEstimatedInput<number>;
+  residentEnsuiteRentPremiumWeekly: HmoEstimatedInput<number>;
 }
 
 /** Mirrors Property-Score `SupportedLivingLeaseYearRent` (e02603b). */
@@ -154,17 +156,35 @@ export interface HmoLeaseRentYear {
 
 export type HmoStaffRoomOption = 'with_ensuite' | 'without_ensuite';
 
-export interface HmoStaffRoomOptionMoney {
+/**
+ * Shared staff / resident comparison metrics.
+ * Mirrors Property-Score `SupportedLivingStaffRoomMetrics` and
+ * `SupportedLivingResidentRoomMetrics`.
+ */
+export interface HmoChoiceMetrics<T extends string = string> {
+  option: T;
   netCashFlowAnnual: number;
   estimatedRoi: number;
 }
+
+export type HmoStaffRoomOptionMoney = HmoChoiceMetrics<HmoStaffRoomOption>;
 
 export interface HmoStaffRoomOptions {
   withEnsuite: HmoStaffRoomOptionMoney;
   withoutEnsuite: HmoStaffRoomOptionMoney;
 }
 
-/** Mirrors Property-Score `SupportedLivingSchemeExtras` (e02603b). */
+/** Mirrors Property-Score `ResidentRoomOption`. */
+export type HmoResidentRoomOption = 'standard' | 'ensuite';
+
+export type HmoResidentRoomOptionMoney = HmoChoiceMetrics<HmoResidentRoomOption>;
+
+export interface HmoResidentRoomOptions {
+  standard: HmoResidentRoomOptionMoney;
+  ensuite: HmoResidentRoomOptionMoney;
+}
+
+/** Mirrors Property-Score `SupportedLivingSchemeExtras`. */
 export interface HmoSupportedLiving {
   inputs: HmoSupportedLivingInputs;
   leaseRentByYear: HmoLeaseRentYear[];
@@ -174,6 +194,9 @@ export interface HmoSupportedLiving {
   staffRoomOption: HmoStaffRoomOption;
   staffRoomOptionReason: string;
   staffRoomOptions: HmoStaffRoomOptions;
+  residentRoomOption: HmoResidentRoomOption;
+  residentRoomOptionReason: string;
+  residentRoomOptions: HmoResidentRoomOptions;
   riskBadge: string;
   planningNote: string;
 }
@@ -248,6 +271,7 @@ export interface ConversionStep {
   action: ConversionAction;
   targetType: HmoRoomType;
   estimatedAreaSqM?: number;
+  floor?: string;
   meetsSpaceStandard?: boolean;
   rationale: string;
   estimatedCostGbpLow: number;

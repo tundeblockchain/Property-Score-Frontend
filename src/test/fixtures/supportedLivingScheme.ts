@@ -1,19 +1,17 @@
 import type { HmoLayoutScheme } from '@/models';
-import payload from '@/test/fixtures/supported-living-scheme.json';
+import payload from '@/test/fixtures/supported_living_scheme_snapshot.json';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
 }
 
 /**
- * Narrows planner JSON to `HmoLayoutScheme`.
- * JSON imports widen unions to `string`; this checks the e02603b
- * `SupportedLivingSchemeExtras` / `SupportedLivingLeaseYearRent` names
- * so a rename fails at load time.
+ * Narrows a `social_care` scheme from the captured `buildHmoPlanner`
+ * snapshot. JSON imports widen unions to `string`; this checks extras
+ * names so a rename fails at load time.
  *
- * Regenerate: `node scripts/generate-supported-living-fixture.mjs`
- * (planner formula at e02603b). When Property-Score is available, replace
- * the JSON with the social_care scheme from `buildHmoPlanner` verbatim.
+ * Source: Property-Score PR #50 @ 2ba328f
+ * (`packages/shared/fixtures/supported-living-scheme.json`).
  */
 export function parseBackendSupportedLivingScheme(
   value: unknown,
@@ -37,6 +35,11 @@ export function parseBackendSupportedLivingScheme(
   if (typeof inputs.rentPerRoomWeekly.isEstimate !== 'boolean') {
     throw new Error('Supported living fixture rent must use isEstimate');
   }
+  if (!isRecord(inputs.residentEnsuiteRentPremiumWeekly)) {
+    throw new Error(
+      'Supported living fixture is missing inputs.residentEnsuiteRentPremiumWeekly',
+    );
+  }
   if (typeof extras.riskBadge !== 'string') {
     throw new Error('Supported living fixture is missing riskBadge');
   }
@@ -48,6 +51,25 @@ export function parseBackendSupportedLivingScheme(
   }
   if (!isRecord(extras.staffRoomOptions)) {
     throw new Error('Supported living fixture is missing staffRoomOptions');
+  }
+  if (
+    extras.residentRoomOption !== 'standard' &&
+    extras.residentRoomOption !== 'ensuite'
+  ) {
+    throw new Error('Supported living fixture is missing residentRoomOption');
+  }
+  if (!isRecord(extras.residentRoomOptions)) {
+    throw new Error('Supported living fixture is missing residentRoomOptions');
+  }
+  if (
+    !isRecord(extras.residentRoomOptions.standard) ||
+    extras.residentRoomOptions.standard.option !== 'standard' ||
+    !isRecord(extras.residentRoomOptions.ensuite) ||
+    extras.residentRoomOptions.ensuite.option !== 'ensuite'
+  ) {
+    throw new Error(
+      'Supported living fixture residentRoomOptions must include standard and ensuite with option',
+    );
   }
   if (!Array.isArray(extras.leaseRentByYear) || extras.leaseRentByYear.length === 0) {
     throw new Error('Supported living fixture is missing leaseRentByYear');
@@ -71,5 +93,60 @@ export function parseBackendSupportedLivingScheme(
   return value as unknown as HmoLayoutScheme;
 }
 
+export interface SupportedLivingPlannerSnapshot {
+  generatedBy: 'buildHmoPlanner';
+  standardWinning: {
+    residentRoomOption: 'standard';
+    scheme: HmoLayoutScheme;
+  };
+  ensuiteWinning: {
+    residentRoomOption: 'ensuite';
+    scheme: HmoLayoutScheme;
+  };
+}
+
+/**
+ * Captured `buildHmoPlanner` snapshot from Property-Score PR #50 @ 2ba328f.
+ * Do not add hand-written fields; replace the JSON file when the planner changes.
+ */
+export function parseSupportedLivingPlannerSnapshot(
+  value: unknown,
+): SupportedLivingPlannerSnapshot {
+  if (!isRecord(value) || value.generatedBy !== 'buildHmoPlanner') {
+    throw new Error('Supported living snapshot must be emitted by buildHmoPlanner');
+  }
+  if (!isRecord(value.standardWinning) || !isRecord(value.ensuiteWinning)) {
+    throw new Error(
+      'Supported living snapshot must include standardWinning and ensuiteWinning',
+    );
+  }
+  if (value.standardWinning.residentRoomOption !== 'standard') {
+    throw new Error('standardWinning.residentRoomOption must be standard');
+  }
+  if (value.ensuiteWinning.residentRoomOption !== 'ensuite') {
+    throw new Error('ensuiteWinning.residentRoomOption must be ensuite');
+  }
+
+  return {
+    generatedBy: 'buildHmoPlanner',
+    standardWinning: {
+      residentRoomOption: 'standard',
+      scheme: parseBackendSupportedLivingScheme(value.standardWinning.scheme),
+    },
+    ensuiteWinning: {
+      residentRoomOption: 'ensuite',
+      scheme: parseBackendSupportedLivingScheme(value.ensuiteWinning.scheme),
+    },
+  };
+}
+
+export const supportedLivingPlannerSnapshot =
+  parseSupportedLivingPlannerSnapshot(payload);
+
 export const backendSupportedLivingScheme =
-  parseBackendSupportedLivingScheme(payload);
+  supportedLivingPlannerSnapshot.standardWinning.scheme;
+
+export const ensuiteWinningSupportedLivingScheme =
+  supportedLivingPlannerSnapshot.ensuiteWinning.scheme;
+
+export const rawStandardWinningScheme = payload.standardWinning.scheme;

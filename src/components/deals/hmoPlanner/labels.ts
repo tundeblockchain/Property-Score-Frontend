@@ -5,6 +5,7 @@ import type {
   HmoLayoutScheme,
   HmoPlannerResult,
   HmoRenderSkipReason,
+  HmoResidentRoomOption,
   HmoStaffRoomOption,
   HmoSupportedLiving,
   HmoUseCase,
@@ -69,6 +70,15 @@ export function staffRoomOptionLabel(option: HmoStaffRoomOption): string {
       return 'With ensuite';
     case 'without_ensuite':
       return 'Without ensuite';
+  }
+}
+
+export function residentRoomOptionLabel(option: HmoResidentRoomOption): string {
+  switch (option) {
+    case 'standard':
+      return 'Standard (shared bathrooms)';
+    case 'ensuite':
+      return 'Ensuites';
   }
 }
 
