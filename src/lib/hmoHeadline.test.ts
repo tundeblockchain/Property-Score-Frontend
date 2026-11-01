@@ -51,6 +51,33 @@ describe('deriveHmoHeadline', () => {
     );
   });
 
+  it('can pick supported living and uses the renamed label', () => {
+    const planner = buildHmoPlanner({
+      schemes: [
+        buildSchemeWithMoney('students', 'students', {
+          netCashFlowAnnual: 4_000,
+          estimatedRoi: 10,
+        }),
+        buildSchemeWithMoney(
+          'social_care',
+          'social_care',
+          { netCashFlowAnnual: 12_400, estimatedRoi: 9 },
+          { lettingRooms: 4 },
+        ),
+      ],
+    });
+
+    expect(deriveHmoHeadline(planner)).toEqual(
+      expect.objectContaining({
+        basis: 'scheme',
+        schemeId: 'social_care',
+        label: 'Supported living',
+        lettingRooms: 4,
+        netCashFlowAnnual: 12_400,
+      }),
+    );
+  });
+
   it('breaks a cash-flow tie with the higher estimated ROI', () => {
     const planner = buildHmoPlanner({
       schemes: [

@@ -124,13 +124,51 @@ export interface HmoSchemeFinancials extends FinancialModel {
   occupiedRoomsAssumed: number;
 }
 
+/** A modelled assumption the investor can override; defaults may be estimates. */
+export interface HmoEditableInput<T> {
+  value: T;
+  estimated?: boolean;
+}
+
+export interface HmoSupportedLivingInputs {
+  rentPerRoomPerWeek: HmoEditableInput<number>;
+  leaseTermYears: HmoEditableInput<number>;
+  breakYear: HmoEditableInput<number | null>;
+  cpiUpliftPct: HmoEditableInput<number>;
+  fri: HmoEditableInput<boolean>;
+  vacantPossessionValueGbp: HmoEditableInput<number>;
+  refurbLowGbp: HmoEditableInput<number>;
+  refurbHighGbp: HmoEditableInput<number>;
+  complianceLumpSumGbp: HmoEditableInput<number>;
+}
+
+export interface HmoSupportedLivingOutputs {
+  rentAcrossLeaseGbp: number;
+  yieldOnVacantPossession: number;
+  premiumOverNormalLetGbp: number;
+  providerFailureNetCashFlowGbp: number;
+}
+
+export interface HmoStaffRoomChoice {
+  option: string;
+  reason: string;
+}
+
+export interface HmoSupportedLiving {
+  inputs: HmoSupportedLivingInputs;
+  outputs: HmoSupportedLivingOutputs;
+  staffRoom?: HmoStaffRoomChoice;
+  providerRegulatoryRisk?: string;
+  planningNote?: string;
+}
+
 export type LicensingRequirementStatus =
   | 'likely_required'
   | 'likely_not_required'
   | 'check_with_la'
   | 'not_applicable';
 
-export type HmoUseClass = 'C3' | 'C4' | 'sui_generis' | 'unclear';
+export type HmoUseClass = 'C2' | 'C3' | 'C4' | 'sui_generis' | 'unclear';
 
 export type HmoOccupancyBand = 'small_hmo' | 'large_hmo' | 'non_hmo' | 'care_model';
 
@@ -220,6 +258,8 @@ export interface HmoLayoutScheme {
   estimatedRefurbLowGbp: number;
   estimatedRefurbHighGbp: number;
   financials: HmoSchemeFinancials;
+  /** Lease-based supported living model; present on `social_care` schemes. */
+  supportedLiving?: HmoSupportedLiving;
   licensing: HmoLicensingPath;
   fireEscape?: HmoFireEscapeAssessment;
   refurbBoq?: HmoRefurbBoq;

@@ -17,6 +17,7 @@ import type {
   HmoPlannerResult,
   HmoUseCase,
   HmoSchemeRendering,
+  HmoSupportedLiving,
   LicensingCheck,
   PropertyListingSummary,
   PublicTestimonial,
@@ -74,7 +75,9 @@ function buildLicensingCheck(): LicensingCheck {
   return { status: 'check_with_la', reason: 'Confirm with the local authority.' };
 }
 
-function buildLicensingPath(): HmoLicensingPath {
+function buildLicensingPath(
+  overrides: Partial<HmoLicensingPath> = {},
+): HmoLicensingPath {
   return {
     useClass: 'C4',
     occupancyBand: 'small_hmo',
@@ -85,6 +88,7 @@ function buildLicensingPath(): HmoLicensingPath {
     actionItems: [],
     confidence: 'medium',
     disclaimer: 'Indicative only.',
+    ...overrides,
   };
 }
 
@@ -99,6 +103,49 @@ export function buildConversionPlan(
     retainedCommunal: ['Kitchen'],
     blocked: [],
     ...overrides,
+  };
+}
+
+export function buildSupportedLiving(
+  overrides: Partial<HmoSupportedLiving> = {},
+): HmoSupportedLiving {
+  const defaults: HmoSupportedLiving = {
+    inputs: {
+      rentPerRoomPerWeek: { value: 280, estimated: true },
+      leaseTermYears: { value: 20, estimated: true },
+      breakYear: { value: 10, estimated: true },
+      cpiUpliftPct: { value: 2.5, estimated: true },
+      fri: { value: true, estimated: false },
+      vacantPossessionValueGbp: { value: 275000, estimated: true },
+      refurbLowGbp: { value: 40000, estimated: true },
+      refurbHighGbp: { value: 65000, estimated: true },
+      complianceLumpSumGbp: { value: 12000, estimated: true },
+    },
+    outputs: {
+      rentAcrossLeaseGbp: 1_450_000,
+      yieldOnVacantPossession: 8.4,
+      premiumOverNormalLetGbp: 18600,
+      providerFailureNetCashFlowGbp: -4200,
+    },
+    staffRoom: {
+      option: 'Keep the smallest rear bedroom as staff',
+      reason:
+        'Overnight cover needs a staff room; the 7.2 m² rear single is below the letting space standard and sits next to the bathroom.',
+    },
+    providerRegulatoryRisk: 'Provider / regulatory risk: Medium-High',
+    planningNote:
+      'C2 planning: modelled as a residential institution (supported living), not a C3/C4 dwellinghouse HMO. Confirm the use class with the local authority before purchase.',
+  };
+
+  return {
+    ...defaults,
+    ...overrides,
+    inputs: { ...defaults.inputs, ...overrides.inputs },
+    outputs: { ...defaults.outputs, ...overrides.outputs },
+    staffRoom:
+      overrides.staffRoom === undefined
+        ? defaults.staffRoom
+        : { ...defaults.staffRoom, ...overrides.staffRoom },
   };
 }
 
@@ -139,6 +186,22 @@ export function buildHmoScheme(
     recommended: true,
     ...overrides,
   };
+}
+
+export function buildSupportedLivingScheme(
+  overrides: Partial<HmoLayoutScheme> = {},
+): HmoLayoutScheme {
+  return buildHmoScheme({
+    id: 'social_care',
+    useCase: 'social_care',
+    title: 'Supported living',
+    summary: 'Four supported-living rooms on a leased FRI contract.',
+    lettingRooms: 4,
+    recommended: false,
+    licensing: buildLicensingPath({ useClass: 'C2', occupancyBand: 'care_model' }),
+    supportedLiving: buildSupportedLiving(),
+    ...overrides,
+  });
 }
 
 export function buildHmoMoneySnapshot(

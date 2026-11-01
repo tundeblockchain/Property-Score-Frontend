@@ -53,4 +53,18 @@ describe('Fact', () => {
 
     expect(screen.getByText('C')).toHaveStyle({ color: '#65A30D' });
   });
+
+  it('marks estimated defaults', () => {
+    renderWithProviders(
+      <Fact label="Lease term" value="20 years" estimate />,
+    );
+
+    expect(screen.getByText('Estimate')).toBeInTheDocument();
+  });
+
+  it('does not mark measured values as estimates', () => {
+    renderWithProviders(<Fact label="FRI" value="Yes" />);
+
+    expect(screen.queryByText('Estimate')).not.toBeInTheDocument();
+  });
 });

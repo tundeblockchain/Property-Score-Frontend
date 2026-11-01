@@ -2,9 +2,11 @@ import { describe, expect, it } from 'vitest';
 import {
   conversionActionLabel,
   hmoRenderSkipReasonLabel,
+  hmoSchemeSectionTitle,
   hmoUseCaseLabel,
 } from '@/components/deals/hmoPlanner/labels';
 import type { ConversionAction, HmoRenderSkipReason, HmoUseCase } from '@/models';
+import { buildHmoScheme } from '@/test/factories';
 
 const skipCases: Array<[HmoRenderSkipReason, string]> = [
   [
@@ -49,11 +51,37 @@ describe('conversionActionLabel', () => {
 const useCaseCases: Array<[HmoUseCase, string]> = [
   ['students', 'Students HMO'],
   ['workers', 'Workers HMO'],
-  ['social_care', 'Social care HMO'],
+  ['social_care', 'Supported living'],
 ];
 
 describe('hmoUseCaseLabel', () => {
   it.each(useCaseCases)('labels %s', (useCase, label) => {
     expect(hmoUseCaseLabel(useCase)).toBe(label);
+  });
+});
+
+describe('hmoSchemeSectionTitle', () => {
+  it('keeps the API title for student and worker schemes', () => {
+    expect(
+      hmoSchemeSectionTitle(
+        buildHmoScheme({
+          title: 'Students · 3-bed student HMO',
+          lettingRooms: 3,
+        }),
+      ),
+    ).toBe('Students · 3-bed student HMO');
+  });
+
+  it('names supported living with the bed count, even when keyed only by id', () => {
+    expect(
+      hmoSchemeSectionTitle(
+        buildHmoScheme({
+          id: 'social_care',
+          useCase: 'social_care',
+          title: 'Social care HMO',
+          lettingRooms: 4,
+        }),
+      ),
+    ).toBe('Supported living · 4-bed supported living');
   });
 });

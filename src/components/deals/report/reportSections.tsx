@@ -25,6 +25,11 @@ import {
   orderedHmoSchemes,
   schemesWithReadyProposedLayout,
 } from '@/components/deals/hmoPlanner';
+import {
+  SUPPORTED_LIVING_PROVIDER_RISK,
+  hmoSchemeSectionTitle,
+  isSupportedLivingScheme,
+} from '@/components/deals/hmoPlanner/labels';
 import { ActionPlanList } from '@/components/deals/panels/ActionPlanList';
 import { AreaInsightsPanel } from '@/components/deals/panels/AreaInsightsPanel';
 import { ComparablesPanel } from '@/components/deals/panels/ComparablesPanel';
@@ -343,12 +348,23 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
           ? studentHmoLockPlan(access, scheme)
           : undefined;
         const recommended = scheme.recommended ? recommendedBadge() : undefined;
+        const supportedLivingRisk = isSupportedLivingScheme(scheme) ? (
+          <Chip
+            label={
+              scheme.supportedLiving?.providerRegulatoryRisk ??
+              SUPPORTED_LIVING_PROVIDER_RISK
+            }
+            color="warning"
+            size="small"
+          />
+        ) : undefined;
+        const schemeTitle = hmoSchemeSectionTitle(scheme);
 
         if (schemeLock) {
           schemeSections.push(
             lockedSection(
               `hmo-scheme-${scheme.id}`,
-              scheme.title,
+              schemeTitle,
               LayersOutlinedIcon,
               schemeLock,
               studentHmoLockDescription(schemeLock),
@@ -360,10 +376,10 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
 
         schemeSections.push({
           id: `hmo-scheme-${scheme.id}`,
-          title: scheme.title,
+          title: schemeTitle,
           defaultExpanded: scheme.recommended,
           icon: LayersOutlinedIcon,
-          badge: recommended,
+          badge: sectionBadges(recommended, supportedLivingRisk),
           render: () => (
             <SchemeAccordion scheme={scheme} tierAccess={access} />
           ),

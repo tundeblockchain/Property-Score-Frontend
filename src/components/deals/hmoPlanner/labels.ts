@@ -2,6 +2,7 @@ import type {
   ConversionAction,
   FireCheckStatus,
   FireRiskBand,
+  HmoLayoutScheme,
   HmoPlannerResult,
   HmoRenderSkipReason,
   HmoUseCase,
@@ -11,6 +12,12 @@ import type {
 
 export const FAMILY_LET_HEADLINE_LABEL = 'Family let (as listed)';
 
+export const SUPPORTED_LIVING_PROVIDER_RISK =
+  'Provider / regulatory risk: Medium-High';
+
+export const SUPPORTED_LIVING_C2_NOTE =
+  'C2 planning: modelled as a residential institution (supported living), not a C3/C4 dwellinghouse HMO. Confirm the use class with the local authority before purchase.';
+
 export function hmoUseCaseLabel(useCase: HmoUseCase): string {
   switch (useCase) {
     case 'students':
@@ -18,8 +25,23 @@ export function hmoUseCaseLabel(useCase: HmoUseCase): string {
     case 'workers':
       return 'Workers HMO';
     case 'social_care':
-      return 'Social care HMO';
+      return 'Supported living';
   }
+}
+
+export function isSupportedLivingScheme(
+  scheme: Pick<HmoLayoutScheme, 'id' | 'useCase'>,
+): boolean {
+  return scheme.useCase === 'social_care' || scheme.id === 'social_care';
+}
+
+export function hmoSchemeSectionTitle(
+  scheme: Pick<HmoLayoutScheme, 'id' | 'useCase' | 'lettingRooms' | 'title'>,
+): string {
+  if (isSupportedLivingScheme(scheme)) {
+    return `Supported living · ${scheme.lettingRooms}-bed supported living`;
+  }
+  return scheme.title;
 }
 
 export function conversionActionLabel(action: ConversionAction): string {
