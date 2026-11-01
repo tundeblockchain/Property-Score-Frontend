@@ -145,9 +145,11 @@ export interface HmoSupportedLivingInputs {
   staffEnsuiteRentPremiumWeekly: HmoEstimatedInput<number>;
 }
 
+/** Mirrors Property-Score `SupportedLivingLeaseYearRent` (e02603b). */
 export interface HmoLeaseRentYear {
   year: number;
-  rentGbp: number;
+  weeklyRentPerRoomGbp: number;
+  annualRentGbp: number;
 }
 
 export type HmoStaffRoomOption = 'with_ensuite' | 'without_ensuite';
@@ -182,7 +184,7 @@ export type LicensingRequirementStatus =
   | 'check_with_la'
   | 'not_applicable';
 
-export type HmoUseClass = 'C2' | 'C3' | 'C4' | 'sui_generis' | 'unclear';
+export type HmoUseClass = 'C3' | 'C4' | 'sui_generis' | 'unclear';
 
 export type HmoOccupancyBand = 'small_hmo' | 'large_hmo' | 'non_hmo' | 'care_model';
 

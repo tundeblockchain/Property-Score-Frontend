@@ -125,7 +125,7 @@ function Assumptions({
 
 function LeaseRentTable({ extras }: { extras: HmoSupportedLiving }) {
   const total = extras.leaseRentByYear.reduce(
-    (sum, row) => sum + row.rentGbp,
+    (sum, row) => sum + row.annualRentGbp,
     0,
   );
 
@@ -137,14 +137,14 @@ function LeaseRentTable({ extras }: { extras: HmoSupportedLiving }) {
         sx={{
           borderCollapse: 'collapse',
           width: '100%',
-          maxWidth: 420,
+          maxWidth: 560,
           '& th, & td': {
             borderBottom: '1px solid',
             borderColor: 'divider',
             py: 0.75,
             textAlign: 'left',
           },
-          '& td:last-of-type, & th:last-of-type': {
+          '& th:not(:first-of-type), & td:not(:first-of-type)': {
             textAlign: 'right',
             fontVariantNumeric: 'tabular-nums',
           },
@@ -156,7 +156,7 @@ function LeaseRentTable({ extras }: { extras: HmoSupportedLiving }) {
           color="text.secondary"
           sx={{ captionSide: 'bottom', display: 'table-caption', textAlign: 'left' }}
         >
-          Annual rent after modelled CPI uplifts.
+          Weekly rent is the CPI-uplifted room rent. Annual rent is weekly × rooms × 52.
         </Typography>
         <thead>
           <tr>
@@ -164,7 +164,10 @@ function LeaseRentTable({ extras }: { extras: HmoSupportedLiving }) {
               Year
             </Typography>
             <Typography component="th" variant="body2" color="text.secondary">
-              Rent
+              Rent / room / wk
+            </Typography>
+            <Typography component="th" variant="body2" color="text.secondary">
+              Annual rent
             </Typography>
           </tr>
         </thead>
@@ -174,8 +177,11 @@ function LeaseRentTable({ extras }: { extras: HmoSupportedLiving }) {
               <Typography component="td" variant="body2">
                 {row.year}
               </Typography>
+              <Typography component="td" variant="body2">
+                {formatCurrency(row.weeklyRentPerRoomGbp)}
+              </Typography>
               <Typography component="td" variant="body2" fontWeight={600}>
-                {formatCurrency(row.rentGbp)}
+                {formatCurrency(row.annualRentGbp)}
               </Typography>
             </tr>
           ))}
@@ -184,6 +190,9 @@ function LeaseRentTable({ extras }: { extras: HmoSupportedLiving }) {
           <tr>
             <Typography component="th" variant="body2" fontWeight={600} scope="row">
               Total
+            </Typography>
+            <Typography component="td" variant="body2">
+              {' '}
             </Typography>
             <Typography component="td" variant="body2" fontWeight={600}>
               {formatCurrency(total)}

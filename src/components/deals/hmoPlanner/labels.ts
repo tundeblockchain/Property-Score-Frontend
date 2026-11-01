@@ -17,9 +17,6 @@ export const FAMILY_LET_HEADLINE_LABEL = 'Family let (as listed)';
 export const SUPPORTED_LIVING_PROVIDER_RISK =
   'Provider / regulatory risk: Medium-High';
 
-export const SUPPORTED_LIVING_C2_NOTE =
-  'C2 planning: modelled as a residential institution (supported living), not a C3/C4 dwellinghouse HMO. Confirm the use class with the local authority before purchase.';
-
 export function hmoUseCaseLabel(useCase: HmoUseCase): string {
   switch (useCase) {
     case 'students':
@@ -56,6 +53,10 @@ export function hmoSchemeSectionTitle(
   return scheme.title;
 }
 
+/**
+ * Prefer the payload badge. The hard-coded copy is only for older stored
+ * deals that predate `supportedLiving.riskBadge`; it is not the source of truth.
+ */
 export function supportedLivingRiskBadge(
   extras: Pick<HmoSupportedLiving, 'riskBadge'> | undefined,
 ): string {

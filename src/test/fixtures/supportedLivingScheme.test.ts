@@ -6,7 +6,7 @@ import {
 } from '@/test/fixtures/supportedLivingScheme';
 
 describe('backend supported-living fixture', () => {
-  it('parses the captured planner JSON as SupportedLivingSchemeExtras', () => {
+  it('parses planner extras as SupportedLivingSchemeExtras', () => {
     const extras = backendSupportedLivingScheme.supportedLiving;
 
     expect(backendSupportedLivingScheme.useCase).toBe('social_care');
@@ -16,7 +16,19 @@ describe('backend supported-living fixture', () => {
       value: 280,
       isEstimate: true,
     });
-    expect(extras?.leaseRentByYear[0]).toEqual({ year: 1, rentGbp: 58240 });
+    expect(extras?.inputs.leaseTermYears.value).toBe(5);
+    expect(extras?.inputs.breakYear.value).toBe(3);
+    expect(extras?.inputs.cpiUpliftPct.value).toBe(2);
+    expect(extras?.leaseRentByYear[0]).toEqual({
+      year: 1,
+      weeklyRentPerRoomGbp: 280,
+      annualRentGbp: 58240,
+    });
+    expect(extras?.leaseRentByYear[0]).not.toHaveProperty('rentGbp');
+    expect(extras?.planningNote).toBe(
+      'Sleep-in staff may need C2 planning permission.',
+    );
+    expect(backendSupportedLivingScheme.licensing.useClass).not.toBe('C2');
     expect(extras?.staffRoomOption).toBe('with_ensuite');
     expect(extras?.staffRoomOptions.withEnsuite.netCashFlowAnnual).toBe(18600);
     expect(extras?.riskBadge).toBe('Provider / regulatory risk: Medium-High');
@@ -43,5 +55,17 @@ describe('backend supported-living fixture', () => {
         },
       }),
     ).toThrow(/must not have an outputs object/);
+  });
+
+  it('rejects lease rows that still use rentGbp', () => {
+    expect(() =>
+      parseBackendSupportedLivingScheme({
+        ...payload,
+        supportedLiving: {
+          ...payload.supportedLiving,
+          leaseRentByYear: [{ year: 1, rentGbp: 58240 }],
+        },
+      }),
+    ).toThrow(/weeklyRentPerRoomGbp and annualRentGbp/);
   });
 });

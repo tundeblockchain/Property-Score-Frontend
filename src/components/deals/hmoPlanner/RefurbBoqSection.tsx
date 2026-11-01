@@ -15,13 +15,12 @@ function lineRange(item: RefurbBoqLineItem): string {
   return `${formatCurrency(low)} – ${formatCurrency(high)}`;
 }
 
-function isNegativeOverride(item: RefurbBoqLineItem): boolean {
-  return (
-    item.category === 'override' ||
-    item.source === 'override' ||
-    item.lowGbp < 0 ||
-    item.highGbp < 0
-  );
+function isOverrideLine(item: RefurbBoqLineItem): boolean {
+  return item.category === 'override' || item.source === 'override';
+}
+
+function isNegativeRange(item: RefurbBoqLineItem): boolean {
+  return item.lowGbp < 0 || item.highGbp < 0;
 }
 
 export function RefurbBoqSection({ boq }: RefurbBoqSectionProps) {
@@ -50,11 +49,13 @@ export function RefurbBoqSection({ boq }: RefurbBoqSectionProps) {
             sx={{
               borderLeft: 3,
               // Only fire compliance is a flag; the rest are plain line items.
-              borderColor: isNegativeOverride(item)
+              borderColor: isNegativeRange(item)
                 ? 'error.main'
-                : item.category === 'fire_compliance'
-                  ? 'warning.main'
-                  : 'divider',
+                : isOverrideLine(item)
+                  ? 'info.main'
+                  : item.category === 'fire_compliance'
+                    ? 'warning.main'
+                    : 'divider',
               pl: 1.5,
               py: 0.5,
             }}
@@ -83,7 +84,7 @@ export function RefurbBoqSection({ boq }: RefurbBoqSectionProps) {
                 fontWeight={600}
                 sx={{
                   fontVariantNumeric: 'tabular-nums',
-                  color: isNegativeOverride(item) ? 'error.dark' : undefined,
+                  color: isNegativeRange(item) ? 'error.dark' : undefined,
                 }}
               >
                 {lineRange(item)}

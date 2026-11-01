@@ -17,6 +17,7 @@ import type {
   HmoPlannerResult,
   HmoUseCase,
   HmoSchemeRendering,
+  HmoLeaseRentYear,
   HmoSupportedLiving,
   LicensingCheck,
   PropertyListingSummary,
@@ -106,15 +107,35 @@ export function buildConversionPlan(
   };
 }
 
+/** Property-Score planner: annualRentGbp = round(weekly * lettingRooms * 52). */
+export function buildSupportedLivingLeaseRent(
+  weeklyRentPerRoomGbp: number,
+  lettingRooms: number,
+  termYears: number,
+  cpiUpliftPct: number,
+): HmoLeaseRentYear[] {
+  const rows: HmoLeaseRentYear[] = [];
+  let weekly = weeklyRentPerRoomGbp;
+  for (let year = 1; year <= termYears; year += 1) {
+    rows.push({
+      year,
+      weeklyRentPerRoomGbp: weekly,
+      annualRentGbp: Math.round(weekly * lettingRooms * 52),
+    });
+    weekly *= 1 + cpiUpliftPct / 100;
+  }
+  return rows;
+}
+
 export function buildSupportedLiving(
   overrides: Partial<HmoSupportedLiving> = {},
 ): HmoSupportedLiving {
   const defaults: HmoSupportedLiving = {
     inputs: {
       rentPerRoomWeekly: { value: 280, isEstimate: true },
-      leaseTermYears: { value: 20, isEstimate: true },
-      breakYear: { value: 10, isEstimate: true },
-      cpiUpliftPct: { value: 2.5, isEstimate: true },
+      leaseTermYears: { value: 5, isEstimate: true },
+      breakYear: { value: 3, isEstimate: true },
+      cpiUpliftPct: { value: 2, isEstimate: true },
       fri: { value: true, isEstimate: false },
       vacantPossessionValueGbp: { value: 275000, isEstimate: true },
       refurbLowGbp: { value: 40000, isEstimate: true },
@@ -122,11 +143,7 @@ export function buildSupportedLiving(
       complianceLumpSumGbp: { value: 12000, isEstimate: true },
       staffEnsuiteRentPremiumWeekly: { value: 25, isEstimate: true },
     },
-    leaseRentByYear: [
-      { year: 1, rentGbp: 58240 },
-      { year: 2, rentGbp: 59696 },
-      { year: 3, rentGbp: 61188 },
-    ],
+    leaseRentByYear: buildSupportedLivingLeaseRent(280, 4, 5, 2),
     yieldOnVacantPossession: 8.4,
     premiumOverNormalLetAnnualGbp: 18600,
     providerFailureNetCashFlowAnnual: -4200,
@@ -138,8 +155,7 @@ export function buildSupportedLiving(
       withoutEnsuite: { netCashFlowAnnual: 14200, estimatedRoi: 8.2 },
     },
     riskBadge: 'Provider / regulatory risk: Medium-High',
-    planningNote:
-      'C2 planning: modelled as a residential institution (supported living), not a C3/C4 dwellinghouse HMO. Confirm the use class with the local authority before purchase.',
+    planningNote: 'Sleep-in staff may need C2 planning permission.',
   };
 
   return {
@@ -202,7 +218,10 @@ export function buildSupportedLivingScheme(
     summary: 'Four supported-living rooms on a leased FRI contract.',
     lettingRooms: 4,
     recommended: false,
-    licensing: buildLicensingPath({ useClass: 'C2', occupancyBand: 'care_model' }),
+    licensing: buildLicensingPath({
+      useClass: 'unclear',
+      occupancyBand: 'care_model',
+    }),
     supportedLiving: buildSupportedLiving(),
     ...overrides,
   });

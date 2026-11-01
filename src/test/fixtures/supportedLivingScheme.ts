@@ -6,9 +6,14 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 /**
- * Narrows captured planner JSON to `HmoLayoutScheme`.
+ * Narrows planner JSON to `HmoLayoutScheme`.
  * JSON imports widen unions to `string`; this checks the e02603b
- * `SupportedLivingSchemeExtras` names so a rename fails at load time.
+ * `SupportedLivingSchemeExtras` / `SupportedLivingLeaseYearRent` names
+ * so a rename fails at load time.
+ *
+ * Regenerate: `node scripts/generate-supported-living-fixture.mjs`
+ * (planner formula at e02603b). When Property-Score is available, replace
+ * the JSON with the social_care scheme from `buildHmoPlanner` verbatim.
  */
 export function parseBackendSupportedLivingScheme(
   value: unknown,
@@ -44,8 +49,22 @@ export function parseBackendSupportedLivingScheme(
   if (!isRecord(extras.staffRoomOptions)) {
     throw new Error('Supported living fixture is missing staffRoomOptions');
   }
-  if (!Array.isArray(extras.leaseRentByYear)) {
+  if (!Array.isArray(extras.leaseRentByYear) || extras.leaseRentByYear.length === 0) {
     throw new Error('Supported living fixture is missing leaseRentByYear');
+  }
+
+  const firstYear = extras.leaseRentByYear[0];
+  if (
+    !isRecord(firstYear) ||
+    typeof firstYear.weeklyRentPerRoomGbp !== 'number' ||
+    typeof firstYear.annualRentGbp !== 'number'
+  ) {
+    throw new Error(
+      'Supported living fixture leaseRentByYear must use weeklyRentPerRoomGbp and annualRentGbp',
+    );
+  }
+  if ('rentGbp' in firstYear) {
+    throw new Error('Supported living fixture leaseRentByYear must not use rentGbp');
   }
 
   // Validated JSON boundary: imports widen unions to `string`.

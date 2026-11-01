@@ -25,14 +25,14 @@ describe('SchemeOverviewSection', () => {
     );
 
     expect(
-      screen.getByText(/C2 planning: modelled as a residential institution/),
+      screen.getByText('Sleep-in staff may need C2 planning permission.'),
     ).toBeInTheDocument();
 
     expect(screen.getByText('Rent per room / wk')).toBeInTheDocument();
     expect(screen.getAllByText('£280').length).toBeGreaterThan(0);
     expect(screen.getByText('Lease term')).toBeInTheDocument();
-    expect(screen.getByText('20 years')).toBeInTheDocument();
-    expect(screen.getByText('Year 10')).toBeInTheDocument();
+    expect(screen.getByText('5 years')).toBeInTheDocument();
+    expect(screen.getByText('Year 3')).toBeInTheDocument();
     expect(screen.getByText('Staff ensuite rent premium / wk')).toBeInTheDocument();
     expect(screen.getAllByText('Estimate').length).toBeGreaterThan(0);
 
@@ -43,6 +43,12 @@ describe('SchemeOverviewSection', () => {
     ).toBeInTheDocument();
     expect(screen.getByText('Rent across the lease')).toBeInTheDocument();
     expect(screen.getByRole('columnheader', { name: 'Year' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('columnheader', { name: 'Rent / room / wk' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('columnheader', { name: 'Annual rent' }),
+    ).toBeInTheDocument();
 
     expect(screen.getByText('Staff-room choice')).toBeInTheDocument();
     expect(screen.getByText('Chosen: With ensuite')).toBeInTheDocument();
