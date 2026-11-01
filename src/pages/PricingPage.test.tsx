@@ -95,7 +95,7 @@ describe('PricingPage', () => {
     expect(screen.getByText('20 listing analyses / month')).toBeInTheDocument();
     expect(screen.getByText('60 listing analyses / month')).toBeInTheDocument();
     expect(screen.getByText('Full reports.')).toBeInTheDocument();
-    expect(screen.queryByText('£0')).not.toBeInTheDocument();
+    expect(screen.getByText('£0')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Choose Starter' })).toBeEnabled();
     expect(screen.getByRole('button', { name: 'Choose Pro' })).toBeEnabled();
   });
@@ -170,7 +170,7 @@ describe('PricingPage', () => {
     expect(screen.getByRole('button', { name: 'Choose Pro' })).toBeEnabled();
     expect(screen.queryByText('£39/month')).not.toBeInTheDocument();
     expect(screen.queryByText('£2.80 per analysis')).not.toBeInTheDocument();
-    expect(screen.queryByText('£0')).not.toBeInTheDocument();
+    expect(screen.getByText('£0')).toBeInTheDocument();
     expect(screen.queryByText(PRICE_UNAVAILABLE_LABEL)).not.toBeInTheDocument();
   });
 
@@ -186,7 +186,7 @@ describe('PricingPage', () => {
     ).toBeGreaterThan(0);
     expect(screen.queryByText('£39/month')).not.toBeInTheDocument();
     expect(screen.queryByText('£2.80 per analysis')).not.toBeInTheDocument();
-    expect(screen.queryByText('£0')).not.toBeInTheDocument();
+    expect(screen.getByText('£0')).toBeInTheDocument();
     expect(screen.getByText('20 listing analyses / month')).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Choose Starter' }));

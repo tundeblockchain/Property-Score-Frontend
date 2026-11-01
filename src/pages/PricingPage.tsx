@@ -10,6 +10,7 @@ import { useBillingPlans } from '@/hooks/useBillingPlans';
 import { useCheckout } from '@/hooks/useBillingMutations';
 import { trackLeadOnce } from '@/lib/analytics';
 import { formatCreditCostLabel, remainingAnalysesLabel, tierLabel } from '@/lib/plans';
+import { FREE_PLAN_PRICE_LABEL } from '@/lib/pricing';
 import { PROPERTIES_PATH } from '@/lib/paths';
 import type { CheckoutProduct, PlanCatalogItem } from '@/models';
 
@@ -100,6 +101,7 @@ export function PricingPage() {
           leadingCard={
             <PlanCardShell
               title={catalog.freePlan.title}
+              priceLabel={FREE_PLAN_PRICE_LABEL}
               creditsLabel={catalog.freePlan.creditsLabel}
               description={catalog.freePlan.description}
               comparison={catalog.freePlan.comparison}

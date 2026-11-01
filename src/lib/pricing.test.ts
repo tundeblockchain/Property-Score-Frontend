@@ -5,6 +5,7 @@ import {
   formatPerAnalysisValue,
   formatPrice,
   formatPriceLabel,
+  FREE_PLAN_PRICE_LABEL,
   liveCopyForPlans,
   majorUnitsForAnalytics,
   priceForProduct,
@@ -43,6 +44,10 @@ describe('formatPrice', () => {
         }),
       ),
     ).toBe('£99.50/year');
+  });
+
+  it('labels the free plan as £0 without a Stripe price', () => {
+    expect(FREE_PLAN_PRICE_LABEL).toBe('£0');
   });
 
   it('labels one-off credit packs as one-time', () => {

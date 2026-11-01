@@ -81,6 +81,7 @@ describe('BillingPage', () => {
     expect(await screen.findByRole('heading', { name: 'Starter' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Current plan' })).toBeDisabled();
     expect(await screen.findByText('£39/month')).toBeInTheDocument();
+    expect(screen.getByText('£0')).toBeInTheDocument();
     expect(screen.getByText('20 listing analyses / month')).toBeInTheDocument();
     expect(screen.getByText('4 analyses left')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '5 extra analyses' })).toBeInTheDocument();
