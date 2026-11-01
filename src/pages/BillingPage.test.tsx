@@ -84,7 +84,8 @@ describe('BillingPage', () => {
     expect(screen.getByText('20 listing analyses / month')).toBeInTheDocument();
     expect(screen.getByText('4 analyses left')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '5 extra analyses' })).toBeInTheDocument();
-    expect(screen.getByText('£14')).toBeInTheDocument();
+    expect(screen.getByText('£14 one-time')).toBeInTheDocument();
+    expect(screen.getByText('£2.80 per analysis')).toBeInTheDocument();
   });
 
   it('lets a paid starter subscriber choose Pro', async () => {

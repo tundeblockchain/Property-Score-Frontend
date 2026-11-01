@@ -13,7 +13,7 @@ import {
 } from '@/auth/AuthContext';
 import { PRICE_UNAVAILABLE_LABEL } from '@/lib/pricing';
 import { PricingPage } from '@/pages/PricingPage';
-import { buildBillingPlans, buildPricing } from '@/test/factories';
+import { buildBillingPlans, buildPrice, buildPricing } from '@/test/factories';
 import { theme } from '@/theme/theme';
 
 vi.mock('@/api/billing', () => ({
@@ -87,15 +87,84 @@ describe('PricingPage', () => {
 
     expect(await screen.findByText('£39/month')).toBeInTheDocument();
     expect(screen.getByText('£99/month')).toBeInTheDocument();
-    expect(screen.getByText('£14')).toBeInTheDocument();
+    expect(screen.getByText('£14 one-time')).toBeInTheDocument();
+    expect(screen.getByText('£1.95 per analysis')).toBeInTheDocument();
+    expect(screen.getByText('£1.65 per analysis')).toBeInTheDocument();
+    expect(screen.getByText('£2.80 per analysis')).toBeInTheDocument();
+    expect(screen.getByText('Save 15%')).toBeInTheDocument();
     expect(screen.getByText('20 listing analyses / month')).toBeInTheDocument();
     expect(screen.getByText('60 listing analyses / month')).toBeInTheDocument();
     expect(screen.getByText('Full reports.')).toBeInTheDocument();
     expect(screen.queryByText('£39 / month')).not.toBeInTheDocument();
     expect(screen.queryByText('£99 / month')).not.toBeInTheDocument();
-    expect(screen.queryByText('£14 one-time')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Choose Starter' })).toBeEnabled();
     expect(screen.getByRole('button', { name: 'Choose Pro' })).toBeEnabled();
+  });
+
+  it('derives pack value and save badges from live prices, not catalog copy', async () => {
+    vi.mocked(getBillingPlans).mockResolvedValue(
+      buildBillingPlans({
+        creditPacks: [
+          {
+            product: 'credits_5',
+            title: '5 extra analyses',
+            priceGbp: 14,
+            priceLabel: '£14 one-time',
+            creditsLabel: '+5 listing analyses',
+            description: 'Quick top-up.',
+            valueLabel: '£2.80 per analysis',
+            savePercent: 99,
+          },
+          {
+            product: 'credits_15',
+            title: '15 extra analyses',
+            priceGbp: 35,
+            priceLabel: '£35 one-time',
+            creditsLabel: '+15 listing analyses',
+            description: 'Screen a shortlist.',
+            valueLabel: '£9.99 per analysis',
+            savePercent: 3,
+          },
+        ],
+      }),
+    );
+    vi.mocked(getPricing).mockResolvedValue(
+      buildPricing({
+        creditPacks: [
+          {
+            credits: 5,
+            price: buildPrice({
+              priceId: 'price_credits_5',
+              unitAmount: 2000,
+              interval: null,
+            }),
+          },
+          {
+            credits: 15,
+            price: buildPrice({
+              priceId: 'price_credits_15',
+              unitAmount: 4500,
+              interval: null,
+            }),
+          },
+        ],
+      }),
+    );
+
+    renderPricingPage();
+    await findPaidPlanCards();
+
+    expect(await screen.findByText('£20 one-time')).toBeInTheDocument();
+    expect(screen.getByText('£45 one-time')).toBeInTheDocument();
+    expect(screen.getByText('£4 per analysis')).toBeInTheDocument();
+    expect(screen.getByText('£3 per analysis')).toBeInTheDocument();
+    expect(screen.getByText('Save 25%')).toBeInTheDocument();
+    expect(screen.queryByText('£2.80 per analysis')).not.toBeInTheDocument();
+    expect(screen.queryByText('£9.99 per analysis')).not.toBeInTheDocument();
+    expect(screen.queryByText('Save 99%')).not.toBeInTheDocument();
+    expect(screen.queryByText('Save 3%')).not.toBeInTheDocument();
+    expect(screen.getByText('+5 listing analyses')).toBeInTheDocument();
+    expect(screen.getByText('+15 listing analyses')).toBeInTheDocument();
   });
 
   it('skeletons only the price slot while pricing loads', async () => {
@@ -114,6 +183,8 @@ describe('PricingPage', () => {
     expect(screen.getByRole('button', { name: 'Choose Pro' })).toBeEnabled();
     expect(screen.queryByText('£39/month')).not.toBeInTheDocument();
     expect(screen.queryByText('£39 / month')).not.toBeInTheDocument();
+    expect(screen.queryByText('£2.80 per analysis')).not.toBeInTheDocument();
+    expect(screen.queryByText('Save 99%')).not.toBeInTheDocument();
     expect(screen.queryByText(PRICE_UNAVAILABLE_LABEL)).not.toBeInTheDocument();
   });
 
@@ -129,6 +200,7 @@ describe('PricingPage', () => {
     ).toBeGreaterThan(0);
     expect(screen.queryByText('£39/month')).not.toBeInTheDocument();
     expect(screen.queryByText('£39 / month')).not.toBeInTheDocument();
+    expect(screen.queryByText('£2.80 per analysis')).not.toBeInTheDocument();
     expect(screen.getByText('20 listing analyses / month')).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Choose Starter' }));
@@ -157,7 +229,39 @@ describe('PricingPage', () => {
     );
     expect(screen.queryByText('£39/month')).not.toBeInTheDocument();
     expect(screen.queryByText('£39 / month')).not.toBeInTheDocument();
+    expect(screen.queryByText('£1.95 per analysis')).not.toBeInTheDocument();
+    expect(screen.queryByText('£2.80 per analysis')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Choose Starter' })).toBeEnabled();
     expect(screen.getByRole('button', { name: 'Choose Pro' })).toBeEnabled();
+  });
+
+  it('uses fallback copy when a live amount is malformed', async () => {
+    vi.mocked(getPricing).mockResolvedValue(
+      buildPricing({
+        plans: {
+          starter: buildPrice({
+            priceId: 'price_starter',
+            unitAmount: Number.NaN,
+            interval: 'month',
+          }),
+          pro: buildPrice({
+            priceId: 'price_pro',
+            unitAmount: -9900,
+            interval: 'month',
+          }),
+        },
+      }),
+    );
+
+    renderPricingPage();
+    await findPaidPlanCards();
+
+    expect(
+      (await screen.findAllByText(PRICE_UNAVAILABLE_LABEL)).length,
+    ).toBeGreaterThan(0);
+    expect(screen.queryByText(/£NaN/)).not.toBeInTheDocument();
+    expect(screen.queryByText('£39/month')).not.toBeInTheDocument();
+    expect(screen.queryByText('£99/month')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Choose Starter' })).toBeEnabled();
   });
 });

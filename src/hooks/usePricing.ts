@@ -7,5 +7,6 @@ export function usePricing() {
     queryKey: queryKeys.pricing,
     queryFn: getPricing,
     staleTime: 5 * 60 * 1000,
+    retry: 1,
   });
 }
