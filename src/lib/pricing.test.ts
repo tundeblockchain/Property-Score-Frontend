@@ -6,6 +6,7 @@ import {
   formatPrice,
   formatPriceLabel,
   liveCopyForPlans,
+  majorUnitsForAnalytics,
   priceForProduct,
   savePercentFromUnitPrices,
 } from '@/lib/pricing';
@@ -108,6 +109,14 @@ describe('analysis counts and pack economics', () => {
     expect(savePercentFromUnitPrices(2.33, 2.8)).toBe(17);
     expect(savePercentFromUnitPrices(2.8, 2.8)).toBeNull();
     expect(savePercentFromUnitPrices(3, 2.8)).toBeNull();
+  });
+
+  it('exposes major units for checkout analytics', () => {
+    expect(majorUnitsForAnalytics(buildPrice({ unitAmount: 9900 }))).toBe(99);
+    expect(majorUnitsForAnalytics(null)).toBeUndefined();
+    expect(
+      majorUnitsForAnalytics(buildPrice({ unitAmount: Number.NaN })),
+    ).toBeUndefined();
   });
 });
 

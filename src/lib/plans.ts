@@ -7,13 +7,10 @@ export interface PlanComparison {
 
 export interface PlanSummary {
   title: string;
-  priceLabel: string;
   creditsLabel: string;
   description: string;
   comparison?: PlanComparison;
   features?: string[];
-  valueLabel?: string;
-  savePercent?: number;
   highlight?: boolean;
 }
 
@@ -96,14 +93,6 @@ export function remainingAnalysesBadgeLabel(amount: number): string {
 
 export function isLowAnalysisBalance(amount: number): boolean {
   return amount <= LOW_ANALYSIS_BALANCE;
-}
-
-/** Keep only the per-analysis rate; drop catalog comparison copy. */
-export function perCreditValueLabel(valueLabel: string): string {
-  const separatorIndex = valueLabel.indexOf(' · ');
-  return separatorIndex === -1
-    ? valueLabel
-    : valueLabel.slice(0, separatorIndex);
 }
 
 export function subscriptionProductForTier(

@@ -119,6 +119,20 @@ export function formatPriceLabel(
   }
 }
 
+export function majorUnitsForAnalytics(
+  price: Price | null | undefined,
+): number | undefined {
+  if (!price) {
+    return undefined;
+  }
+  try {
+    return majorUnitsFromPrice(price);
+  } catch (error) {
+    logError(error, 'Unable to read checkout price');
+    return undefined;
+  }
+}
+
 export function formatPerAnalysisValue(
   price: Price,
   analysisCount: number,

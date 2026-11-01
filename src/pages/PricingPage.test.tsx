@@ -95,35 +95,26 @@ describe('PricingPage', () => {
     expect(screen.getByText('20 listing analyses / month')).toBeInTheDocument();
     expect(screen.getByText('60 listing analyses / month')).toBeInTheDocument();
     expect(screen.getByText('Full reports.')).toBeInTheDocument();
-    expect(screen.queryByText('£39 / month')).not.toBeInTheDocument();
-    expect(screen.queryByText('£99 / month')).not.toBeInTheDocument();
+    expect(screen.queryByText('£0')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Choose Starter' })).toBeEnabled();
     expect(screen.getByRole('button', { name: 'Choose Pro' })).toBeEnabled();
   });
 
-  it('derives pack value and save badges from live prices, not catalog copy', async () => {
+  it('derives pack value and save badges from live prices', async () => {
     vi.mocked(getBillingPlans).mockResolvedValue(
       buildBillingPlans({
         creditPacks: [
           {
             product: 'credits_5',
             title: '5 extra analyses',
-            priceGbp: 14,
-            priceLabel: '£14 one-time',
             creditsLabel: '+5 listing analyses',
             description: 'Quick top-up.',
-            valueLabel: '£2.80 per analysis',
-            savePercent: 99,
           },
           {
             product: 'credits_15',
             title: '15 extra analyses',
-            priceGbp: 35,
-            priceLabel: '£35 one-time',
             creditsLabel: '+15 listing analyses',
             description: 'Screen a shortlist.',
-            valueLabel: '£9.99 per analysis',
-            savePercent: 3,
           },
         ],
       }),
@@ -159,10 +150,6 @@ describe('PricingPage', () => {
     expect(screen.getByText('£4 per analysis')).toBeInTheDocument();
     expect(screen.getByText('£3 per analysis')).toBeInTheDocument();
     expect(screen.getByText('Save 25%')).toBeInTheDocument();
-    expect(screen.queryByText('£2.80 per analysis')).not.toBeInTheDocument();
-    expect(screen.queryByText('£9.99 per analysis')).not.toBeInTheDocument();
-    expect(screen.queryByText('Save 99%')).not.toBeInTheDocument();
-    expect(screen.queryByText('Save 3%')).not.toBeInTheDocument();
     expect(screen.getByText('+5 listing analyses')).toBeInTheDocument();
     expect(screen.getByText('+15 listing analyses')).toBeInTheDocument();
   });
@@ -182,9 +169,8 @@ describe('PricingPage', () => {
     expect(screen.getByRole('button', { name: 'Choose Starter' })).toBeEnabled();
     expect(screen.getByRole('button', { name: 'Choose Pro' })).toBeEnabled();
     expect(screen.queryByText('£39/month')).not.toBeInTheDocument();
-    expect(screen.queryByText('£39 / month')).not.toBeInTheDocument();
     expect(screen.queryByText('£2.80 per analysis')).not.toBeInTheDocument();
-    expect(screen.queryByText('Save 99%')).not.toBeInTheDocument();
+    expect(screen.queryByText('£0')).not.toBeInTheDocument();
     expect(screen.queryByText(PRICE_UNAVAILABLE_LABEL)).not.toBeInTheDocument();
   });
 
@@ -199,8 +185,8 @@ describe('PricingPage', () => {
       (await screen.findAllByText(PRICE_UNAVAILABLE_LABEL)).length,
     ).toBeGreaterThan(0);
     expect(screen.queryByText('£39/month')).not.toBeInTheDocument();
-    expect(screen.queryByText('£39 / month')).not.toBeInTheDocument();
     expect(screen.queryByText('£2.80 per analysis')).not.toBeInTheDocument();
+    expect(screen.queryByText('£0')).not.toBeInTheDocument();
     expect(screen.getByText('20 listing analyses / month')).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Choose Starter' }));
@@ -228,7 +214,6 @@ describe('PricingPage', () => {
       0,
     );
     expect(screen.queryByText('£39/month')).not.toBeInTheDocument();
-    expect(screen.queryByText('£39 / month')).not.toBeInTheDocument();
     expect(screen.queryByText('£1.95 per analysis')).not.toBeInTheDocument();
     expect(screen.queryByText('£2.80 per analysis')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Choose Starter' })).toBeEnabled();

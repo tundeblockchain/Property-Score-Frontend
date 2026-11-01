@@ -18,7 +18,7 @@ export type CreditPackSize = 5 | 15 | 40 | 100;
 
 export interface Price {
   priceId: string;
-  /** Amount in minor units, e.g. 3900 for £39.00. */
+  /** Amount in minor units, e.g. 1200 for 12.00 in a two-decimal currency. */
   unitAmount: number;
   /** Lowercase ISO 4217 code, e.g. 'gbp'. */
   currency: string;
@@ -623,14 +623,10 @@ export interface PlanComparison {
 export interface PlanCatalogItem {
   product?: CheckoutProduct;
   title: string;
-  priceLabel: string;
   creditsLabel: string;
   description: string;
-  priceGbp: number;
   comparison?: PlanComparison;
   features?: string[];
-  valueLabel?: string;
-  savePercent?: number;
   highlight?: boolean;
 }
 

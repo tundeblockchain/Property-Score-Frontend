@@ -5,7 +5,12 @@ import {
   rememberPendingCheckout,
   trackInitiateCheckout,
 } from '@/lib/analytics';
-import type { BillingPlansResponse, CheckoutProduct } from '@/models';
+import { majorUnitsForAnalytics, priceForProduct } from '@/lib/pricing';
+import type {
+  BillingPlansResponse,
+  CheckoutProduct,
+  PricingResponse,
+} from '@/models';
 
 function catalogItemForProduct(
   catalog: BillingPlansResponse | undefined,
@@ -29,10 +34,15 @@ export function useCheckout() {
       const catalog = queryClient.getQueryData<BillingPlansResponse>(
         queryKeys.billingPlans,
       );
+      const pricing = queryClient.getQueryData<PricingResponse>(
+        queryKeys.pricing,
+      );
       const item = catalogItemForProduct(catalog, product);
       const pending = {
         product,
-        value: item?.priceGbp,
+        value: majorUnitsForAnalytics(
+          pricing ? priceForProduct(pricing, product) : null,
+        ),
         contentName: item?.title,
         sessionId: data.sessionId,
       };

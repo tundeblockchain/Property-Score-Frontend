@@ -72,7 +72,12 @@ export function BillingPage() {
           currentTier={billing.data.tier}
           leadingCard={
             <PlanCardShell
-              {...catalog.freePlan}
+              title={catalog.freePlan.title}
+              creditsLabel={catalog.freePlan.creditsLabel}
+              description={catalog.freePlan.description}
+              comparison={catalog.freePlan.comparison}
+              features={catalog.freePlan.features}
+              highlight={catalog.freePlan.highlight}
               action={
                 isFreeTier(billing.data.tier) ? <CurrentPlanButton /> : null
               }

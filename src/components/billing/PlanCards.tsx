@@ -65,8 +65,10 @@ export function CurrentPlanButton() {
   );
 }
 
-interface PlanCardShellProps extends Omit<PlanSummary, 'priceLabel'> {
-  priceLabel: ReactNode;
+interface PlanCardShellProps extends PlanSummary {
+  priceLabel?: ReactNode;
+  valueLabel?: string;
+  savePercent?: number;
   /** Call to action rendered at the bottom of the card. */
   action: ReactNode;
 }
@@ -138,9 +140,11 @@ export function PlanCardShell({
           />
         ) : null}
       </Stack>
-      <Typography variant="body2" color="text.secondary">
-        {priceLabel}
-      </Typography>
+      {priceLabel != null && priceLabel !== '' ? (
+        <Typography variant="body2" color="text.secondary">
+          {priceLabel}
+        </Typography>
+      ) : null}
       <Typography fontWeight={600}>{creditsLabel}</Typography>
       {valueLabel ? (
         <Typography variant="body2" color="success.dark" fontWeight={600}>
