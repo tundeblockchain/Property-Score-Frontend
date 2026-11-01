@@ -1,16 +1,16 @@
 /**
  * Emit src/test/fixtures/supported-living-scheme.json from the Property-Score
- * planner formula at e02603b:
- *   annualRentGbp = round(weeklyRentPerRoomGbp * lettingRooms * 52)
+ * planner formula:
+ *   weeklyRentPerRoomGbp = roundMoney(weekly)
+ *   annualRentGbp = roundMoney(weekly * lettingRooms * 52)
  *
- * Backend defaults (review 5729319073 / types.ts): leaseTermYears=5,
- * breakYear=3, cpiUpliftPct=2, planningNote =
- * 'Sleep-in staff may need C2 planning permission.'
+ * Backend defaults: leaseTermYears=5, breakYear=3, cpiUpliftPct=2,
+ * planningNote = 'Sleep-in staff may need C2 planning permission.',
+ * resident rooms default to `standard` (shared bathrooms) vs `ensuite`.
  *
- * When Property-Score is available, prefer replacing this JSON with the
- * social_care scheme from `buildHmoPlanner` on main@e02603b verbatim:
- *   checkout tundeblockchain/Property-Score @ e02603b
- *   run buildHmoPlanner for a social_care scheme and copy that scheme object
+ * When Property-Score is available, replace this JSON with the social_care
+ * scheme from `buildHmoPlanner` on cursor/resident-room-layout-5262 (PR #50)
+ * verbatim.
  *
  * Usage: node scripts/generate-supported-living-fixture.mjs
  */
@@ -23,14 +23,19 @@ const WEEKLY_RENT = 280;
 const TERM_YEARS = 5;
 const CPI_UPLIFT_PCT = 2;
 
+function roundMoney(value) {
+  return Math.round(value);
+}
+
 function leaseRentByYear() {
   const rows = [];
   let weekly = WEEKLY_RENT;
   for (let year = 1; year <= TERM_YEARS; year += 1) {
+    const weeklyRentPerRoomGbp = roundMoney(weekly);
     rows.push({
       year,
-      weeklyRentPerRoomGbp: weekly,
-      annualRentGbp: Math.round(weekly * LETTING_ROOMS * 52),
+      weeklyRentPerRoomGbp,
+      annualRentGbp: roundMoney(weeklyRentPerRoomGbp * LETTING_ROOMS * 52),
     });
     weekly *= 1 + CPI_UPLIFT_PCT / 100;
   }
@@ -110,8 +115,31 @@ const scheme = {
     staffRoomOptionReason:
       'Overnight cover needs a staff room; the 7.2 m² rear single is below the letting space standard. An ensuite keeps staff self-contained and lifts rent enough to cover the wet-room cost.',
     staffRoomOptions: {
-      withEnsuite: { netCashFlowAnnual: 18600, estimatedRoi: 9.1 },
-      withoutEnsuite: { netCashFlowAnnual: 14200, estimatedRoi: 8.2 },
+      withEnsuite: {
+        option: 'with_ensuite',
+        netCashFlowAnnual: 18600,
+        estimatedRoi: 9.1,
+      },
+      withoutEnsuite: {
+        option: 'without_ensuite',
+        netCashFlowAnnual: 14200,
+        estimatedRoi: 8.2,
+      },
+    },
+    residentRoomOption: 'standard',
+    residentRoomOptionReason:
+      'Standard rooms with shared bathrooms are the default supported-living layout. Ensuites raise refurb cost more than the extra rent covers.',
+    residentRoomOptions: {
+      standard: {
+        option: 'standard',
+        netCashFlowAnnual: 18600,
+        estimatedRoi: 9.1,
+      },
+      ensuite: {
+        option: 'ensuite',
+        netCashFlowAnnual: 15100,
+        estimatedRoi: 7.8,
+      },
     },
     riskBadge: 'Provider / regulatory risk: Medium-High',
     planningNote: 'Sleep-in staff may need C2 planning permission.',

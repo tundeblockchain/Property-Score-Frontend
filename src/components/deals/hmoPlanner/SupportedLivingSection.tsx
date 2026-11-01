@@ -1,6 +1,8 @@
-import { Box, Chip, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 import { Fact } from '@/components/deals/common/Fact';
+import { SupportedLivingChoice } from '@/components/deals/hmoPlanner/SupportedLivingChoice';
 import {
+  residentRoomOptionLabel,
   staffRoomOptionLabel,
 } from '@/components/deals/hmoPlanner/labels';
 import { formatCurrency, formatPercent } from '@/lib/format';
@@ -204,68 +206,34 @@ function LeaseRentTable({ extras }: { extras: HmoSupportedLiving }) {
   );
 }
 
-function StaffRoomChoice({ extras }: { extras: HmoSupportedLiving }) {
-  const options: Array<{
-    key: keyof HmoSupportedLiving['staffRoomOptions'];
-    option: typeof extras.staffRoomOption;
-  }> = [
-    { key: 'withEnsuite', option: 'with_ensuite' },
-    { key: 'withoutEnsuite', option: 'without_ensuite' },
-  ];
-
+function LayoutChoices({ extras }: { extras: HmoSupportedLiving }) {
   return (
-    <Stack spacing={1}>
-      <Typography variant="subtitle2">Staff-room choice</Typography>
-      <Typography>
-        Chosen: {staffRoomOptionLabel(extras.staffRoomOption)}
-      </Typography>
-      <Typography variant="body2" color="text.secondary">
-        {extras.staffRoomOptionReason}
-      </Typography>
-      <Stack
-        direction={{ xs: 'column', sm: 'row' }}
-        spacing={2}
-        useFlexGap
-        flexWrap="wrap"
-      >
-        {options.map(({ key, option }) => {
-          const money = extras.staffRoomOptions[key];
-          const chosen = extras.staffRoomOption === option;
-          return (
-            <Stack
-              key={option}
-              spacing={1}
-              sx={{
-                flex: 1,
-                minWidth: 200,
-                borderLeft: 3,
-                borderColor: chosen ? 'success.main' : 'divider',
-                pl: 1.5,
-                py: 0.5,
-              }}
-            >
-              <Stack direction="row" spacing={1} alignItems="center" useFlexGap>
-                <Typography fontWeight={600}>
-                  {staffRoomOptionLabel(option)}
-                </Typography>
-                {chosen ? (
-                  <Chip label="Chosen" size="small" color="success" />
-                ) : null}
-              </Stack>
-              <Stack direction="row" spacing={3} flexWrap="wrap" useFlexGap>
-                <Fact
-                  label="Net cash flow / yr"
-                  value={formatCurrency(money.netCashFlowAnnual)}
-                />
-                <Fact
-                  label="Est. ROI"
-                  value={formatPercent(money.estimatedRoi)}
-                />
-              </Stack>
-            </Stack>
-          );
-        })}
-      </Stack>
+    <Stack
+      direction={{ xs: 'column', md: 'row' }}
+      spacing={3}
+      useFlexGap
+      alignItems="flex-start"
+    >
+      <SupportedLivingChoice
+        title="Resident-room layout"
+        chosen={extras.residentRoomOption}
+        reason={extras.residentRoomOptionReason}
+        options={[
+          extras.residentRoomOptions.standard,
+          extras.residentRoomOptions.ensuite,
+        ]}
+        labelFor={residentRoomOptionLabel}
+      />
+      <SupportedLivingChoice
+        title="Staff-room choice"
+        chosen={extras.staffRoomOption}
+        reason={extras.staffRoomOptionReason}
+        options={[
+          extras.staffRoomOptions.withEnsuite,
+          extras.staffRoomOptions.withoutEnsuite,
+        ]}
+        labelFor={staffRoomOptionLabel}
+      />
     </Stack>
   );
 }
@@ -302,7 +270,7 @@ export function SupportedLivingSection({
 
       <Assumptions extras={extras} scheme={scheme} />
       <LeaseRentTable extras={extras} />
-      <StaffRoomChoice extras={extras} />
+      <LayoutChoices extras={extras} />
     </Stack>
   );
 }

@@ -11,9 +11,9 @@ function isRecord(value: unknown): value is Record<string, unknown> {
  * `SupportedLivingSchemeExtras` / `SupportedLivingLeaseYearRent` names
  * so a rename fails at load time.
  *
- * Regenerate: `node scripts/generate-supported-living-fixture.mjs`
- * (planner formula at e02603b). When Property-Score is available, replace
- * the JSON with the social_care scheme from `buildHmoPlanner` verbatim.
+ * Regenerate: `node scripts/generate-supported-living-fixture.mjs`.
+ * When Property-Score is available, replace the JSON with the social_care
+ * scheme from `buildHmoPlanner` on cursor/resident-room-layout-5262 verbatim.
  */
 export function parseBackendSupportedLivingScheme(
   value: unknown,
@@ -48,6 +48,25 @@ export function parseBackendSupportedLivingScheme(
   }
   if (!isRecord(extras.staffRoomOptions)) {
     throw new Error('Supported living fixture is missing staffRoomOptions');
+  }
+  if (
+    extras.residentRoomOption !== 'standard' &&
+    extras.residentRoomOption !== 'ensuite'
+  ) {
+    throw new Error('Supported living fixture is missing residentRoomOption');
+  }
+  if (!isRecord(extras.residentRoomOptions)) {
+    throw new Error('Supported living fixture is missing residentRoomOptions');
+  }
+  if (
+    !isRecord(extras.residentRoomOptions.standard) ||
+    extras.residentRoomOptions.standard.option !== 'standard' ||
+    !isRecord(extras.residentRoomOptions.ensuite) ||
+    extras.residentRoomOptions.ensuite.option !== 'ensuite'
+  ) {
+    throw new Error(
+      'Supported living fixture residentRoomOptions must include standard and ensuite with option',
+    );
   }
   if (!Array.isArray(extras.leaseRentByYear) || extras.leaseRentByYear.length === 0) {
     throw new Error('Supported living fixture is missing leaseRentByYear');

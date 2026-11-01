@@ -62,6 +62,10 @@ describe('SchemeAccordion', () => {
       screen.queryByText('Provider / regulatory risk: Medium-High'),
     ).not.toBeInTheDocument();
     expect(screen.getByText('Chosen: With ensuite')).toBeInTheDocument();
+    expect(screen.getByText('Resident-room layout')).toBeInTheDocument();
+    expect(
+      screen.getByText('Chosen: Standard (shared bathrooms)'),
+    ).toBeInTheDocument();
     expect(screen.getByText('Rent across the lease')).toBeInTheDocument();
     expect(screen.queryByText('LD1')).not.toBeInTheDocument();
 

@@ -5,6 +5,7 @@ import {
   hmoSchemeSectionTitle,
   hmoUseCaseLabel,
   isSupportedLivingScheme,
+  residentRoomOptionLabel,
   staffRoomOptionLabel,
   supportedLivingRiskBadge,
 } from '@/components/deals/hmoPlanner/labels';
@@ -133,5 +134,14 @@ describe('staffRoomOptionLabel', () => {
   it('labels both staff-room options', () => {
     expect(staffRoomOptionLabel('with_ensuite')).toBe('With ensuite');
     expect(staffRoomOptionLabel('without_ensuite')).toBe('Without ensuite');
+  });
+});
+
+describe('residentRoomOptionLabel', () => {
+  it('labels both resident-room layouts', () => {
+    expect(residentRoomOptionLabel('standard')).toBe(
+      'Standard (shared bathrooms)',
+    );
+    expect(residentRoomOptionLabel('ensuite')).toBe('Ensuites');
   });
 });

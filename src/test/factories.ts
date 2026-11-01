@@ -117,10 +117,11 @@ export function buildSupportedLivingLeaseRent(
   const rows: HmoLeaseRentYear[] = [];
   let weekly = weeklyRentPerRoomGbp;
   for (let year = 1; year <= termYears; year += 1) {
+    const roundedWeekly = Math.round(weekly);
     rows.push({
       year,
-      weeklyRentPerRoomGbp: weekly,
-      annualRentGbp: Math.round(weekly * lettingRooms * 52),
+      weeklyRentPerRoomGbp: roundedWeekly,
+      annualRentGbp: Math.round(roundedWeekly * lettingRooms * 52),
     });
     weekly *= 1 + cpiUpliftPct / 100;
   }
@@ -151,8 +152,31 @@ export function buildSupportedLiving(
     staffRoomOptionReason:
       'Overnight cover needs a staff room; the 7.2 m² rear single is below the letting space standard. An ensuite keeps staff self-contained.',
     staffRoomOptions: {
-      withEnsuite: { netCashFlowAnnual: 18600, estimatedRoi: 9.1 },
-      withoutEnsuite: { netCashFlowAnnual: 14200, estimatedRoi: 8.2 },
+      withEnsuite: {
+        option: 'with_ensuite',
+        netCashFlowAnnual: 18600,
+        estimatedRoi: 9.1,
+      },
+      withoutEnsuite: {
+        option: 'without_ensuite',
+        netCashFlowAnnual: 14200,
+        estimatedRoi: 8.2,
+      },
+    },
+    residentRoomOption: 'standard',
+    residentRoomOptionReason:
+      'Standard rooms with shared bathrooms are the default supported-living layout. Ensuites raise refurb cost more than the extra rent covers.',
+    residentRoomOptions: {
+      standard: {
+        option: 'standard',
+        netCashFlowAnnual: 18600,
+        estimatedRoi: 9.1,
+      },
+      ensuite: {
+        option: 'ensuite',
+        netCashFlowAnnual: 15100,
+        estimatedRoi: 7.8,
+      },
     },
     riskBadge: 'Provider / regulatory risk: Medium-High',
     planningNote: 'Sleep-in staff may need C2 planning permission.',
@@ -165,6 +189,10 @@ export function buildSupportedLiving(
     staffRoomOptions: {
       ...defaults.staffRoomOptions,
       ...overrides.staffRoomOptions,
+    },
+    residentRoomOptions: {
+      ...defaults.residentRoomOptions,
+      ...overrides.residentRoomOptions,
     },
   };
 }

@@ -50,10 +50,21 @@ describe('SchemeOverviewSection', () => {
       screen.getByRole('columnheader', { name: 'Annual rent' }),
     ).toBeInTheDocument();
 
+    expect(screen.getByText('Resident-room layout')).toBeInTheDocument();
+    expect(
+      screen.getByText('Chosen: Standard (shared bathrooms)'),
+    ).toBeInTheDocument();
+    expect(screen.getByText('Ensuites')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Standard rooms with shared bathrooms are the default supported-living layout/,
+      ),
+    ).toBeInTheDocument();
+
     expect(screen.getByText('Staff-room choice')).toBeInTheDocument();
     expect(screen.getByText('Chosen: With ensuite')).toBeInTheDocument();
     expect(screen.getByText('Without ensuite')).toBeInTheDocument();
-    expect(screen.getByText('Chosen')).toBeInTheDocument();
+    expect(screen.getAllByText('Chosen').length).toBeGreaterThan(1);
 
     expect(screen.getByText('Bedroom 1')).toBeInTheDocument();
     expect(screen.getByText('Staff room')).toBeInTheDocument();
@@ -67,6 +78,7 @@ describe('SchemeOverviewSection', () => {
     );
 
     expect(screen.queryByText('Assumptions')).not.toBeInTheDocument();
+    expect(screen.queryByText('Resident-room layout')).not.toBeInTheDocument();
     expect(screen.queryByText('Staff-room choice')).not.toBeInTheDocument();
   });
 });

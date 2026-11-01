@@ -30,7 +30,15 @@ describe('backend supported-living fixture', () => {
     );
     expect(backendSupportedLivingScheme.licensing.useClass).not.toBe('C2');
     expect(extras?.staffRoomOption).toBe('with_ensuite');
-    expect(extras?.staffRoomOptions.withEnsuite.netCashFlowAnnual).toBe(18600);
+    expect(extras?.staffRoomOptions.withEnsuite).toEqual({
+      option: 'with_ensuite',
+      netCashFlowAnnual: 18600,
+      estimatedRoi: 9.1,
+    });
+    expect(extras?.residentRoomOption).toBe('standard');
+    expect(extras?.residentRoomOptions.standard.option).toBe('standard');
+    expect(extras?.residentRoomOptions.ensuite.option).toBe('ensuite');
+    expect(extras?.residentRoomOptionReason).toMatch(/shared bathrooms/);
     expect(extras?.riskBadge).toBe('Provider / regulatory risk: Medium-High');
     expect(backendSupportedLivingScheme.rooms.every((room) => room.id)).toBe(
       true,
@@ -55,6 +63,16 @@ describe('backend supported-living fixture', () => {
         },
       }),
     ).toThrow(/must not have an outputs object/);
+  });
+
+  it('rejects extras that omit the resident-room layout', () => {
+    const { residentRoomOption: _omit, ...rest } = payload.supportedLiving;
+    expect(() =>
+      parseBackendSupportedLivingScheme({
+        ...payload,
+        supportedLiving: rest,
+      }),
+    ).toThrow(/missing residentRoomOption/);
   });
 
   it('rejects lease rows that still use rentGbp', () => {

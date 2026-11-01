@@ -108,23 +108,23 @@
       },
       {
         "year": 2,
-        "weeklyRentPerRoomGbp": 285.6,
-        "annualRentGbp": 59405
+        "weeklyRentPerRoomGbp": 286,
+        "annualRentGbp": 59488
       },
       {
         "year": 3,
-        "weeklyRentPerRoomGbp": 291.312,
-        "annualRentGbp": 60593
+        "weeklyRentPerRoomGbp": 291,
+        "annualRentGbp": 60528
       },
       {
         "year": 4,
-        "weeklyRentPerRoomGbp": 297.13824,
-        "annualRentGbp": 61805
+        "weeklyRentPerRoomGbp": 297,
+        "annualRentGbp": 61776
       },
       {
         "year": 5,
-        "weeklyRentPerRoomGbp": 303.0810048,
-        "annualRentGbp": 63041
+        "weeklyRentPerRoomGbp": 303,
+        "annualRentGbp": 63024
       }
     ],
     "yieldOnVacantPossession": 8.4,
@@ -134,12 +134,28 @@
     "staffRoomOptionReason": "Overnight cover needs a staff room; the 7.2 m² rear single is below the letting space standard. An ensuite keeps staff self-contained and lifts rent enough to cover the wet-room cost.",
     "staffRoomOptions": {
       "withEnsuite": {
+        "option": "with_ensuite",
         "netCashFlowAnnual": 18600,
         "estimatedRoi": 9.1
       },
       "withoutEnsuite": {
+        "option": "without_ensuite",
         "netCashFlowAnnual": 14200,
         "estimatedRoi": 8.2
+      }
+    },
+    "residentRoomOption": "standard",
+    "residentRoomOptionReason": "Standard rooms with shared bathrooms are the default supported-living layout. Ensuites raise refurb cost more than the extra rent covers.",
+    "residentRoomOptions": {
+      "standard": {
+        "option": "standard",
+        "netCashFlowAnnual": 18600,
+        "estimatedRoi": 9.1
+      },
+      "ensuite": {
+        "option": "ensuite",
+        "netCashFlowAnnual": 15100,
+        "estimatedRoi": 7.8
       }
     },
     "riskBadge": "Provider / regulatory risk: Medium-High",
