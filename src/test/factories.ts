@@ -1,6 +1,8 @@
 import type {
   BillingPlansResponse,
   BillingSummaryResponse,
+  Price,
+  PricingResponse,
   DealDetail,
   DealSummary,
   EpcEnrichment,
@@ -336,6 +338,46 @@ export function buildBillingSummary(
       fullAreaInsights: false,
       moneyComparison: false,
     }),
+    ...overrides,
+  };
+}
+
+export function buildPrice(overrides: Partial<Price> = {}): Price {
+  return {
+    priceId: 'price_starter',
+    unitAmount: 3900,
+    currency: 'gbp',
+    interval: 'month',
+    ...overrides,
+  };
+}
+
+export function buildPricing(
+  overrides: Partial<PricingResponse> = {},
+): PricingResponse {
+  return {
+    plans: {
+      starter: buildPrice({
+        priceId: 'price_starter',
+        unitAmount: 3900,
+        interval: 'month',
+      }),
+      pro: buildPrice({
+        priceId: 'price_pro',
+        unitAmount: 9900,
+        interval: 'month',
+      }),
+    },
+    creditPacks: [
+      {
+        credits: 5,
+        price: buildPrice({
+          priceId: 'price_credits_5',
+          unitAmount: 1400,
+          interval: null,
+        }),
+      },
+    ],
     ...overrides,
   };
 }

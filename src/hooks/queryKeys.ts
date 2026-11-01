@@ -1,6 +1,7 @@
 export const queryKeys = {
   billing: ['billing'] as const,
   billingPlans: ['billing', 'plans'] as const,
+  pricing: ['pricing'] as const,
   deals: ['deals'] as const,
   deal: (dealId: string) => ['deals', dealId] as const,
   schemeRender: (dealId: string, schemeId: string) =>

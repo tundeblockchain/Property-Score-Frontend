@@ -1,9 +1,10 @@
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
-import { Box, Button, Chip, Stack, Typography } from '@mui/material';
+import { Box, Button, Chip, Skeleton, Stack, Typography } from '@mui/material';
 import { useState, type ReactNode } from 'react';
 import { ErrorAlert } from '@/components/common/Feedback';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
+import { usePricing } from '@/hooks/usePricing';
 import {
   isPaidPlanSwitch,
   isPaidSubscriptionProduct,
@@ -12,6 +13,11 @@ import {
   subscriptionProductForTier,
   type PlanSummary,
 } from '@/lib/plans';
+import {
+  formatPriceLabel,
+  PRICE_UNAVAILABLE_LABEL,
+  priceForProduct,
+} from '@/lib/pricing';
 import type { CheckoutPlanCatalogItem, CheckoutProduct, UserTier } from '@/models';
 
 interface PlanFeatureListProps {
@@ -60,9 +66,34 @@ export function CurrentPlanButton() {
   );
 }
 
-interface PlanCardShellProps extends PlanSummary {
+interface PlanCardShellProps extends Omit<PlanSummary, 'priceLabel'> {
+  priceLabel: ReactNode;
   /** Call to action rendered at the bottom of the card. */
   action: ReactNode;
+}
+
+function PlanPrice({ product }: { product: CheckoutProduct }) {
+  const pricing = usePricing();
+
+  if (pricing.isPending) {
+    return (
+      <Skeleton
+        variant="text"
+        width="7rem"
+        role="status"
+        aria-label="Loading price"
+      />
+    );
+  }
+
+  if (pricing.isError || !pricing.data) {
+    return PRICE_UNAVAILABLE_LABEL;
+  }
+
+  return (
+    formatPriceLabel(priceForProduct(pricing.data, product)) ??
+    PRICE_UNAVAILABLE_LABEL
+  );
 }
 
 export function PlanCardShell({
@@ -175,7 +206,7 @@ export function PlanCard({
   return (
     <PlanCardShell
       title={plan.title}
-      priceLabel={plan.priceLabel}
+      priceLabel={<PlanPrice product={plan.product} />}
       creditsLabel={plan.creditsLabel}
       description={plan.description}
       comparison={plan.comparison}
