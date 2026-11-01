@@ -1,10 +1,80 @@
 import { Box, Chip, Stack, Typography } from '@mui/material';
+import { Fact } from '@/components/deals/common/Fact';
+import { SupportedLivingSection } from '@/components/deals/hmoPlanner/SupportedLivingSection';
 import { formatCurrency, formatPercent } from '@/lib/format';
 import type { HmoLayoutScheme } from '@/models';
-import { Fact } from '@/components/deals/common/Fact';
 
 interface SchemeOverviewSectionProps {
   scheme: HmoLayoutScheme;
+}
+
+function RoomSchedule({ scheme }: { scheme: HmoLayoutScheme }) {
+  if (scheme.rooms.length === 0) {
+    return null;
+  }
+
+  return (
+    <Stack spacing={1}>
+      <Typography variant="subtitle2">Indicative room schedule</Typography>
+      <Box
+        sx={{
+          display: 'grid',
+          gap: 1,
+          gridTemplateColumns: {
+            xs: '1fr',
+            sm: 'repeat(2, minmax(0, 1fr))',
+          },
+        }}
+      >
+        {scheme.rooms.map((room) => (
+          <Box
+            key={room.id}
+            sx={{
+              borderLeft: 3,
+              borderColor:
+                room.meetsSpaceStandard === false ? 'warning.main' : 'divider',
+              pl: 1.5,
+              py: 0.5,
+            }}
+          >
+            <Stack
+              direction="row"
+              spacing={1}
+              alignItems="center"
+              flexWrap="wrap"
+              useFlexGap
+            >
+              <Typography fontWeight={600}>
+                {room.label}{' '}
+                <Typography
+                  component="span"
+                  variant="body2"
+                  color="text.secondary"
+                >
+                  ({room.type}
+                  {room.estimatedAreaSqM != null
+                    ? ` · ~${room.estimatedAreaSqM} m²`
+                    : ''}
+                  )
+                </Typography>
+              </Typography>
+              {room.meetsSpaceStandard === false ? (
+                <Chip label="Below space std" size="small" color="warning" />
+              ) : null}
+              {room.meetsSpaceStandard === true ? (
+                <Chip label="Space ok" size="small" variant="outlined" />
+              ) : null}
+            </Stack>
+            {room.notes ? (
+              <Typography variant="caption" color="text.secondary">
+                {room.notes}
+              </Typography>
+            ) : null}
+          </Box>
+        ))}
+      </Box>
+    </Stack>
+  );
 }
 
 export function SchemeOverviewSection({ scheme }: SchemeOverviewSectionProps) {
@@ -51,66 +121,14 @@ export function SchemeOverviewSection({ scheme }: SchemeOverviewSectionProps) {
         />
       </Stack>
 
-      <Stack spacing={1}>
-        <Typography variant="subtitle2">Indicative room schedule</Typography>
-        <Box
-          sx={{
-            display: 'grid',
-            gap: 1,
-            gridTemplateColumns: {
-              xs: '1fr',
-              sm: 'repeat(2, minmax(0, 1fr))',
-            },
-          }}
-        >
-          {scheme.rooms.map((room) => (
-            <Box
-              key={room.label}
-              sx={{
-                borderLeft: 3,
-                borderColor:
-                  room.meetsSpaceStandard === false ? 'warning.main' : 'divider',
-                pl: 1.5,
-                py: 0.5,
-              }}
-            >
-              <Stack
-                direction="row"
-                spacing={1}
-                alignItems="center"
-                flexWrap="wrap"
-                useFlexGap
-              >
-                <Typography fontWeight={600}>
-                  {room.label}{' '}
-                  <Typography
-                    component="span"
-                    variant="body2"
-                    color="text.secondary"
-                  >
-                    ({room.type}
-                    {room.estimatedAreaSqM != null
-                      ? ` · ~${room.estimatedAreaSqM} m²`
-                      : ''}
-                    )
-                  </Typography>
-                </Typography>
-                {room.meetsSpaceStandard === false ? (
-                  <Chip label="Below space std" size="small" color="warning" />
-                ) : null}
-                {room.meetsSpaceStandard === true ? (
-                  <Chip label="Space ok" size="small" variant="outlined" />
-                ) : null}
-              </Stack>
-              {room.notes ? (
-                <Typography variant="caption" color="text.secondary">
-                  {room.notes}
-                </Typography>
-              ) : null}
-            </Box>
-          ))}
-        </Box>
-      </Stack>
+      {scheme.supportedLiving ? (
+        <SupportedLivingSection
+          scheme={scheme}
+          extras={scheme.supportedLiving}
+        />
+      ) : null}
+
+      <RoomSchedule scheme={scheme} />
     </Stack>
   );
 }

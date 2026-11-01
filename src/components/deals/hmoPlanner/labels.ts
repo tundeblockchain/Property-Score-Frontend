@@ -2,14 +2,20 @@ import type {
   ConversionAction,
   FireCheckStatus,
   FireRiskBand,
+  HmoLayoutScheme,
   HmoPlannerResult,
   HmoRenderSkipReason,
+  HmoStaffRoomOption,
+  HmoSupportedLiving,
   HmoUseCase,
   LicensingRequirementStatus,
   RefurbBoqCategory,
 } from '@/models';
 
 export const FAMILY_LET_HEADLINE_LABEL = 'Family let (as listed)';
+
+export const SUPPORTED_LIVING_PROVIDER_RISK =
+  'Provider / regulatory risk: Medium-High';
 
 export function hmoUseCaseLabel(useCase: HmoUseCase): string {
   switch (useCase) {
@@ -18,7 +24,51 @@ export function hmoUseCaseLabel(useCase: HmoUseCase): string {
     case 'workers':
       return 'Workers HMO';
     case 'social_care':
-      return 'Social care HMO';
+      return 'Supported living';
+  }
+}
+
+export function isSupportedLivingScheme(
+  scheme: Pick<HmoLayoutScheme, 'id' | 'useCase'>,
+): boolean {
+  return scheme.useCase === 'social_care' || scheme.id === 'social_care';
+}
+
+const SUPPORTED_LIVING_TITLE = /^Supported living · \d+-bed supported living$/;
+
+/**
+ * Prefer the API title. The backend now emits
+ * `Supported living · N-bed supported living` itself; rebuild only for older
+ * stored deals that still use a Social care title.
+ */
+export function hmoSchemeSectionTitle(
+  scheme: Pick<HmoLayoutScheme, 'id' | 'useCase' | 'lettingRooms' | 'title'>,
+): string {
+  if (
+    isSupportedLivingScheme(scheme) &&
+    !SUPPORTED_LIVING_TITLE.test(scheme.title)
+  ) {
+    return `Supported living · ${scheme.lettingRooms}-bed supported living`;
+  }
+  return scheme.title;
+}
+
+/**
+ * Prefer the payload badge. The hard-coded copy is only for older stored
+ * deals that predate `supportedLiving.riskBadge`; it is not the source of truth.
+ */
+export function supportedLivingRiskBadge(
+  extras: Pick<HmoSupportedLiving, 'riskBadge'> | undefined,
+): string {
+  return extras?.riskBadge ?? SUPPORTED_LIVING_PROVIDER_RISK;
+}
+
+export function staffRoomOptionLabel(option: HmoStaffRoomOption): string {
+  switch (option) {
+    case 'with_ensuite':
+      return 'With ensuite';
+    case 'without_ensuite':
+      return 'Without ensuite';
   }
 }
 
@@ -143,5 +193,7 @@ export function refurbCategoryLabel(category: RefurbBoqCategory): string {
       return 'Care adaptations';
     case 'contingency':
       return 'Contingency';
+    case 'override':
+      return 'Override';
   }
 }

@@ -29,7 +29,7 @@ export function ConversionPlanSection({ plan }: ConversionPlanSectionProps) {
       <Stack spacing={1}>
         {activeSteps.map((step) => (
           <Box
-            key={`${step.sourceLabel}-${step.action}`}
+            key={step.id}
             sx={{
               borderLeft: 3,
               borderColor:

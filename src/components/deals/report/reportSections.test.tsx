@@ -14,6 +14,7 @@ import {
   buildScoreBreakdown,
   buildSoldPricesEnrichment,
   buildTierAccess,
+  buildSupportedLivingScheme,
   buildTransportEnrichment,
 } from '@/test/factories';
 import { renderWithProviders } from '@/test/renderWithProviders';
@@ -196,6 +197,43 @@ describe('buildReportSections', () => {
       'hmo-scheme-students',
       'hmo-scheme-care',
     ]);
+  });
+
+  it('titles supported living like Students and Workers and badges provider risk', () => {
+    const sections = buildReportSections(
+      buildDealDetail({
+        status: 'PROCESSING',
+        hmoPlanner: buildHmoPlanner({
+          schemes: [
+            buildSupportedLivingScheme({
+              lettingRooms: 4,
+              recommended: false,
+            }),
+            buildHmoScheme({
+              id: 'students',
+              useCase: 'students',
+              title: 'Students · 3-bed student HMO',
+              recommended: true,
+            }),
+          ],
+        }),
+      }),
+    );
+
+    const supportedLiving = sections.find(
+      (section) => section.id === 'hmo-scheme-social_care',
+    );
+
+    expect(supportedLiving?.title).toBe(
+      'Supported living · 4-bed supported living',
+    );
+    expect(supportedLiving?.badge).toBeDefined();
+    expect(supportedLiving?.defaultExpanded).toBe(false);
+
+    renderWithProviders(<>{supportedLiving?.badge}</>);
+    expect(
+      screen.getByText('Provider / regulatory risk: Medium-High'),
+    ).toBeInTheDocument();
   });
 
   it('badges the recommended scheme instead of renaming it', () => {

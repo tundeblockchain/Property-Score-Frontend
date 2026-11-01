@@ -1,5 +1,5 @@
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import { Box, Stack, Tooltip, Typography } from '@mui/material';
+import { Box, Chip, Stack, Tooltip, Typography } from '@mui/material';
 
 interface FactProps {
   label: string;
@@ -13,6 +13,8 @@ interface FactProps {
    * meaning, such as an EPC band, rather than for decoration.
    */
   valueColor?: string;
+  /** Marks a default that the backend flagged as an estimate. */
+  estimate?: boolean;
 }
 
 export function Fact({
@@ -21,15 +23,19 @@ export function Fact({
   info,
   emphasis = 'normal',
   valueColor,
+  estimate = false,
 }: FactProps) {
   const isStrong = emphasis === 'strong';
 
   return (
     <Stack spacing={0.25} sx={{ minWidth: 140 }}>
-      <Stack direction="row" spacing={0.5} alignItems="center">
+      <Stack direction="row" spacing={0.5} alignItems="center" flexWrap="wrap" useFlexGap>
         <Typography variant="body2" color="text.secondary">
           {label}
         </Typography>
+        {estimate ? (
+          <Chip label="Estimate" size="small" variant="outlined" />
+        ) : null}
         {info ? (
           <Tooltip title={info} arrow enterTouchDelay={0}>
             <Box

@@ -17,6 +17,8 @@ import type {
   HmoPlannerResult,
   HmoUseCase,
   HmoSchemeRendering,
+  HmoLeaseRentYear,
+  HmoSupportedLiving,
   LicensingCheck,
   PropertyListingSummary,
   PublicTestimonial,
@@ -74,7 +76,9 @@ function buildLicensingCheck(): LicensingCheck {
   return { status: 'check_with_la', reason: 'Confirm with the local authority.' };
 }
 
-function buildLicensingPath(): HmoLicensingPath {
+function buildLicensingPath(
+  overrides: Partial<HmoLicensingPath> = {},
+): HmoLicensingPath {
   return {
     useClass: 'C4',
     occupancyBand: 'small_hmo',
@@ -85,6 +89,7 @@ function buildLicensingPath(): HmoLicensingPath {
     actionItems: [],
     confidence: 'medium',
     disclaimer: 'Indicative only.',
+    ...overrides,
   };
 }
 
@@ -99,6 +104,68 @@ export function buildConversionPlan(
     retainedCommunal: ['Kitchen'],
     blocked: [],
     ...overrides,
+  };
+}
+
+/** Property-Score planner: annualRentGbp = round(weekly * lettingRooms * 52). */
+export function buildSupportedLivingLeaseRent(
+  weeklyRentPerRoomGbp: number,
+  lettingRooms: number,
+  termYears: number,
+  cpiUpliftPct: number,
+): HmoLeaseRentYear[] {
+  const rows: HmoLeaseRentYear[] = [];
+  let weekly = weeklyRentPerRoomGbp;
+  for (let year = 1; year <= termYears; year += 1) {
+    rows.push({
+      year,
+      weeklyRentPerRoomGbp: weekly,
+      annualRentGbp: Math.round(weekly * lettingRooms * 52),
+    });
+    weekly *= 1 + cpiUpliftPct / 100;
+  }
+  return rows;
+}
+
+export function buildSupportedLiving(
+  overrides: Partial<HmoSupportedLiving> = {},
+): HmoSupportedLiving {
+  const defaults: HmoSupportedLiving = {
+    inputs: {
+      rentPerRoomWeekly: { value: 280, isEstimate: true },
+      leaseTermYears: { value: 5, isEstimate: true },
+      breakYear: { value: 3, isEstimate: true },
+      cpiUpliftPct: { value: 2, isEstimate: true },
+      fri: { value: true, isEstimate: false },
+      vacantPossessionValueGbp: { value: 275000, isEstimate: true },
+      refurbLowGbp: { value: 40000, isEstimate: true },
+      refurbHighGbp: { value: 65000, isEstimate: true },
+      complianceLumpSumGbp: { value: 12000, isEstimate: true },
+      staffEnsuiteRentPremiumWeekly: { value: 25, isEstimate: true },
+    },
+    leaseRentByYear: buildSupportedLivingLeaseRent(280, 4, 5, 2),
+    yieldOnVacantPossession: 8.4,
+    premiumOverNormalLetAnnualGbp: 18600,
+    providerFailureNetCashFlowAnnual: -4200,
+    staffRoomOption: 'with_ensuite',
+    staffRoomOptionReason:
+      'Overnight cover needs a staff room; the 7.2 m² rear single is below the letting space standard. An ensuite keeps staff self-contained.',
+    staffRoomOptions: {
+      withEnsuite: { netCashFlowAnnual: 18600, estimatedRoi: 9.1 },
+      withoutEnsuite: { netCashFlowAnnual: 14200, estimatedRoi: 8.2 },
+    },
+    riskBadge: 'Provider / regulatory risk: Medium-High',
+    planningNote: 'Sleep-in staff may need C2 planning permission.',
+  };
+
+  return {
+    ...defaults,
+    ...overrides,
+    inputs: { ...defaults.inputs, ...overrides.inputs },
+    staffRoomOptions: {
+      ...defaults.staffRoomOptions,
+      ...overrides.staffRoomOptions,
+    },
   };
 }
 
@@ -139,6 +206,25 @@ export function buildHmoScheme(
     recommended: true,
     ...overrides,
   };
+}
+
+export function buildSupportedLivingScheme(
+  overrides: Partial<HmoLayoutScheme> = {},
+): HmoLayoutScheme {
+  return buildHmoScheme({
+    id: 'social_care',
+    useCase: 'social_care',
+    title: 'Supported living · 4-bed supported living',
+    summary: 'Four supported-living rooms on a leased FRI contract.',
+    lettingRooms: 4,
+    recommended: false,
+    licensing: buildLicensingPath({
+      useClass: 'unclear',
+      occupancyBand: 'care_model',
+    }),
+    supportedLiving: buildSupportedLiving(),
+    ...overrides,
+  });
 }
 
 export function buildHmoMoneySnapshot(

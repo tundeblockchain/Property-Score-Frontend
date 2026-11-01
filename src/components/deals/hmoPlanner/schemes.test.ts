@@ -114,4 +114,30 @@ describe('orderedHmoSchemes', () => {
       ).map((scheme) => scheme.id),
     ).toEqual(['students', 'care']);
   });
+
+  it('appends leftover schemes instead of dropping them', () => {
+    expect(
+      orderedHmoSchemes(
+        buildHmoPlanner({
+          schemes: [
+            buildHmoScheme({
+              id: 'students',
+              useCase: 'students',
+              recommended: true,
+            }),
+            buildHmoScheme({
+              id: 'workers',
+              useCase: 'workers',
+              recommended: false,
+            }),
+            buildHmoScheme({
+              id: 'workers-b',
+              useCase: 'workers',
+              recommended: false,
+            }),
+          ],
+        }),
+      ).map((scheme) => scheme.id),
+    ).toEqual(['students', 'workers', 'workers-b']);
+  });
 });
