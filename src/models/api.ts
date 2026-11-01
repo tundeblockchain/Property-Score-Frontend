@@ -111,6 +111,8 @@ export type HmoRoomType =
   | 'staff';
 
 export interface HmoLayoutRoom {
+  /** Stable room id from the planner. Never match rooms on `label`. */
+  id: string;
   label: string;
   type: HmoRoomType;
   estimatedAreaSqM?: number;
@@ -125,41 +127,53 @@ export interface HmoSchemeFinancials extends FinancialModel {
 }
 
 /** A modelled assumption the investor can override; defaults may be estimates. */
-export interface HmoEditableInput<T> {
+export interface HmoEstimatedInput<T> {
   value: T;
-  estimated?: boolean;
+  isEstimate: boolean;
 }
 
 export interface HmoSupportedLivingInputs {
-  rentPerRoomPerWeek: HmoEditableInput<number>;
-  leaseTermYears: HmoEditableInput<number>;
-  breakYear: HmoEditableInput<number | null>;
-  cpiUpliftPct: HmoEditableInput<number>;
-  fri: HmoEditableInput<boolean>;
-  vacantPossessionValueGbp: HmoEditableInput<number>;
-  refurbLowGbp: HmoEditableInput<number>;
-  refurbHighGbp: HmoEditableInput<number>;
-  complianceLumpSumGbp: HmoEditableInput<number>;
+  rentPerRoomWeekly: HmoEstimatedInput<number>;
+  leaseTermYears: HmoEstimatedInput<number>;
+  breakYear: HmoEstimatedInput<number>;
+  cpiUpliftPct: HmoEstimatedInput<number>;
+  fri: HmoEstimatedInput<boolean>;
+  vacantPossessionValueGbp: HmoEstimatedInput<number>;
+  refurbLowGbp: HmoEstimatedInput<number>;
+  refurbHighGbp: HmoEstimatedInput<number>;
+  complianceLumpSumGbp: HmoEstimatedInput<number>;
+  staffEnsuiteRentPremiumWeekly: HmoEstimatedInput<number>;
 }
 
-export interface HmoSupportedLivingOutputs {
-  rentAcrossLeaseGbp: number;
-  yieldOnVacantPossession: number;
-  premiumOverNormalLetGbp: number;
-  providerFailureNetCashFlowGbp: number;
+export interface HmoLeaseRentYear {
+  year: number;
+  rentGbp: number;
 }
 
-export interface HmoStaffRoomChoice {
-  option: string;
-  reason: string;
+export type HmoStaffRoomOption = 'with_ensuite' | 'without_ensuite';
+
+export interface HmoStaffRoomOptionMoney {
+  netCashFlowAnnual: number;
+  estimatedRoi: number;
 }
 
+export interface HmoStaffRoomOptions {
+  withEnsuite: HmoStaffRoomOptionMoney;
+  withoutEnsuite: HmoStaffRoomOptionMoney;
+}
+
+/** Mirrors Property-Score `SupportedLivingSchemeExtras` (e02603b). */
 export interface HmoSupportedLiving {
   inputs: HmoSupportedLivingInputs;
-  outputs: HmoSupportedLivingOutputs;
-  staffRoom?: HmoStaffRoomChoice;
-  providerRegulatoryRisk?: string;
-  planningNote?: string;
+  leaseRentByYear: HmoLeaseRentYear[];
+  yieldOnVacantPossession: number;
+  premiumOverNormalLetAnnualGbp: number;
+  providerFailureNetCashFlowAnnual: number;
+  staffRoomOption: HmoStaffRoomOption;
+  staffRoomOptionReason: string;
+  staffRoomOptions: HmoStaffRoomOptions;
+  riskBadge: string;
+  planningNote: string;
 }
 
 export type LicensingRequirementStatus =
@@ -225,6 +239,8 @@ export type ConversionAction =
   | 'staff_room';
 
 export interface ConversionStep {
+  /** Stable step id from the planner. Never match steps on `sourceLabel`. */
+  id: string;
   sourceLabel: string;
   sourceKind: FloorPlanRoomKind;
   action: ConversionAction;
@@ -301,13 +317,15 @@ export type RefurbBoqCategory =
   | 'bathroom'
   | 'fire_compliance'
   | 'care_adaptations'
-  | 'contingency';
+  | 'contingency'
+  | 'override';
 
 export type RefurbBoqLineSource =
   | 'base_allowance'
   | 'conversion_step'
   | 'fire_checklist'
-  | 'use_case';
+  | 'use_case'
+  | 'override';
 
 export interface RefurbBoqLineItem {
   id: string;
@@ -347,6 +365,8 @@ export type FireStoreySource =
   | 'listing_heuristic'
   | 'loft_adjusted';
 
+export type HmoAlarmGrade = 'LD1' | 'Grade A';
+
 export interface FireChecklistItem {
   id: string;
   title: string;
@@ -358,6 +378,7 @@ export interface HmoFireEscapeAssessment {
   estimatedStoreys: number;
   storeySource: FireStoreySource;
   riskBand: FireRiskBand;
+  alarmGrade?: HmoAlarmGrade;
   items: FireChecklistItem[];
   actionItems: string[];
   visionNotes?: string;

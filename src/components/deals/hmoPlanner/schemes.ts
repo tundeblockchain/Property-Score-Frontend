@@ -3,7 +3,6 @@ import type {
   HmoLayoutScheme,
   HmoPlannerResult,
   HmoSchemeRendering,
-  HmoStaffRoomChoice,
   HmoUseCase,
 } from '@/models';
 
@@ -56,24 +55,6 @@ export function orderedHmoSchemes(
   }
 
   return ordered;
-}
-
-export function staffRoomChoice(
-  scheme: Pick<HmoLayoutScheme, 'supportedLiving' | 'conversionPlan'>,
-): HmoStaffRoomChoice | undefined {
-  if (scheme.supportedLiving?.staffRoom) {
-    return scheme.supportedLiving.staffRoom;
-  }
-  const step = scheme.conversionPlan?.steps.find(
-    (item) => item.action === 'staff_room',
-  );
-  if (!step) {
-    return undefined;
-  }
-  return {
-    option: step.sourceLabel,
-    reason: step.rationale,
-  };
 }
 
 export function proposedFloorPlanRendering(

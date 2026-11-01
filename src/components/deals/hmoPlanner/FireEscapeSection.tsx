@@ -50,6 +50,13 @@ export function FireEscapeSection({ fireEscape }: FireEscapeSectionProps) {
           label="Storey source"
           value={storeySourceLabel(fireEscape.storeySource)}
         />
+        {fireEscape.alarmGrade ? (
+          <Fact
+            label="Alarm grade"
+            value={fireEscape.alarmGrade}
+            info="Fire-alarm grade modelled for this occupancy. Supported living typically needs LD1 / Grade A coverage."
+          />
+        ) : null}
       </Stack>
 
       <Stack spacing={1}>

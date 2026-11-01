@@ -5,6 +5,8 @@ import type {
   HmoLayoutScheme,
   HmoPlannerResult,
   HmoRenderSkipReason,
+  HmoStaffRoomOption,
+  HmoSupportedLiving,
   HmoUseCase,
   LicensingRequirementStatus,
   RefurbBoqCategory,
@@ -35,13 +37,38 @@ export function isSupportedLivingScheme(
   return scheme.useCase === 'social_care' || scheme.id === 'social_care';
 }
 
+const SUPPORTED_LIVING_TITLE = /^Supported living · \d+-bed supported living$/;
+
+/**
+ * Prefer the API title. The backend now emits
+ * `Supported living · N-bed supported living` itself; rebuild only for older
+ * stored deals that still use a Social care title.
+ */
 export function hmoSchemeSectionTitle(
   scheme: Pick<HmoLayoutScheme, 'id' | 'useCase' | 'lettingRooms' | 'title'>,
 ): string {
-  if (isSupportedLivingScheme(scheme)) {
+  if (
+    isSupportedLivingScheme(scheme) &&
+    !SUPPORTED_LIVING_TITLE.test(scheme.title)
+  ) {
     return `Supported living · ${scheme.lettingRooms}-bed supported living`;
   }
   return scheme.title;
+}
+
+export function supportedLivingRiskBadge(
+  extras: Pick<HmoSupportedLiving, 'riskBadge'> | undefined,
+): string {
+  return extras?.riskBadge ?? SUPPORTED_LIVING_PROVIDER_RISK;
+}
+
+export function staffRoomOptionLabel(option: HmoStaffRoomOption): string {
+  switch (option) {
+    case 'with_ensuite':
+      return 'With ensuite';
+    case 'without_ensuite':
+      return 'Without ensuite';
+  }
 }
 
 export function conversionActionLabel(action: ConversionAction): string {
@@ -165,5 +192,7 @@ export function refurbCategoryLabel(category: RefurbBoqCategory): string {
       return 'Care adaptations';
     case 'contingency':
       return 'Contingency';
+    case 'override':
+      return 'Override';
   }
 }

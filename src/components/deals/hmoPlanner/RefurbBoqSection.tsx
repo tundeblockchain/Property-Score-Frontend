@@ -15,6 +15,15 @@ function lineRange(item: RefurbBoqLineItem): string {
   return `${formatCurrency(low)} – ${formatCurrency(high)}`;
 }
 
+function isNegativeOverride(item: RefurbBoqLineItem): boolean {
+  return (
+    item.category === 'override' ||
+    item.source === 'override' ||
+    item.lowGbp < 0 ||
+    item.highGbp < 0
+  );
+}
+
 export function RefurbBoqSection({ boq }: RefurbBoqSectionProps) {
   return (
     <Stack spacing={1.5}>
@@ -41,8 +50,9 @@ export function RefurbBoqSection({ boq }: RefurbBoqSectionProps) {
             sx={{
               borderLeft: 3,
               // Only fire compliance is a flag; the rest are plain line items.
-              borderColor:
-                item.category === 'fire_compliance'
+              borderColor: isNegativeOverride(item)
+                ? 'error.main'
+                : item.category === 'fire_compliance'
                   ? 'warning.main'
                   : 'divider',
               pl: 1.5,
@@ -71,7 +81,10 @@ export function RefurbBoqSection({ boq }: RefurbBoqSectionProps) {
               <Typography
                 variant="body2"
                 fontWeight={600}
-                sx={{ fontVariantNumeric: 'tabular-nums' }}
+                sx={{
+                  fontVariantNumeric: 'tabular-nums',
+                  color: isNegativeOverride(item) ? 'error.dark' : undefined,
+                }}
               >
                 {lineRange(item)}
               </Typography>

@@ -111,28 +111,33 @@ export function buildSupportedLiving(
 ): HmoSupportedLiving {
   const defaults: HmoSupportedLiving = {
     inputs: {
-      rentPerRoomPerWeek: { value: 280, estimated: true },
-      leaseTermYears: { value: 20, estimated: true },
-      breakYear: { value: 10, estimated: true },
-      cpiUpliftPct: { value: 2.5, estimated: true },
-      fri: { value: true, estimated: false },
-      vacantPossessionValueGbp: { value: 275000, estimated: true },
-      refurbLowGbp: { value: 40000, estimated: true },
-      refurbHighGbp: { value: 65000, estimated: true },
-      complianceLumpSumGbp: { value: 12000, estimated: true },
+      rentPerRoomWeekly: { value: 280, isEstimate: true },
+      leaseTermYears: { value: 20, isEstimate: true },
+      breakYear: { value: 10, isEstimate: true },
+      cpiUpliftPct: { value: 2.5, isEstimate: true },
+      fri: { value: true, isEstimate: false },
+      vacantPossessionValueGbp: { value: 275000, isEstimate: true },
+      refurbLowGbp: { value: 40000, isEstimate: true },
+      refurbHighGbp: { value: 65000, isEstimate: true },
+      complianceLumpSumGbp: { value: 12000, isEstimate: true },
+      staffEnsuiteRentPremiumWeekly: { value: 25, isEstimate: true },
     },
-    outputs: {
-      rentAcrossLeaseGbp: 1_450_000,
-      yieldOnVacantPossession: 8.4,
-      premiumOverNormalLetGbp: 18600,
-      providerFailureNetCashFlowGbp: -4200,
+    leaseRentByYear: [
+      { year: 1, rentGbp: 58240 },
+      { year: 2, rentGbp: 59696 },
+      { year: 3, rentGbp: 61188 },
+    ],
+    yieldOnVacantPossession: 8.4,
+    premiumOverNormalLetAnnualGbp: 18600,
+    providerFailureNetCashFlowAnnual: -4200,
+    staffRoomOption: 'with_ensuite',
+    staffRoomOptionReason:
+      'Overnight cover needs a staff room; the 7.2 m² rear single is below the letting space standard. An ensuite keeps staff self-contained.',
+    staffRoomOptions: {
+      withEnsuite: { netCashFlowAnnual: 18600, estimatedRoi: 9.1 },
+      withoutEnsuite: { netCashFlowAnnual: 14200, estimatedRoi: 8.2 },
     },
-    staffRoom: {
-      option: 'Keep the smallest rear bedroom as staff',
-      reason:
-        'Overnight cover needs a staff room; the 7.2 m² rear single is below the letting space standard and sits next to the bathroom.',
-    },
-    providerRegulatoryRisk: 'Provider / regulatory risk: Medium-High',
+    riskBadge: 'Provider / regulatory risk: Medium-High',
     planningNote:
       'C2 planning: modelled as a residential institution (supported living), not a C3/C4 dwellinghouse HMO. Confirm the use class with the local authority before purchase.',
   };
@@ -141,11 +146,10 @@ export function buildSupportedLiving(
     ...defaults,
     ...overrides,
     inputs: { ...defaults.inputs, ...overrides.inputs },
-    outputs: { ...defaults.outputs, ...overrides.outputs },
-    staffRoom:
-      overrides.staffRoom === undefined
-        ? defaults.staffRoom
-        : { ...defaults.staffRoom, ...overrides.staffRoom },
+    staffRoomOptions: {
+      ...defaults.staffRoomOptions,
+      ...overrides.staffRoomOptions,
+    },
   };
 }
 
@@ -194,7 +198,7 @@ export function buildSupportedLivingScheme(
   return buildHmoScheme({
     id: 'social_care',
     useCase: 'social_care',
-    title: 'Supported living',
+    title: 'Supported living · 4-bed supported living',
     summary: 'Four supported-living rooms on a leased FRI contract.',
     lettingRooms: 4,
     recommended: false,

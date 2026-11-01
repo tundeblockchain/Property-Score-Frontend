@@ -5,9 +5,10 @@ import { SchemeAccordion } from '@/components/deals/hmoPlanner/SchemeAccordion';
 import {
   buildConversionPlan,
   buildHmoScheme,
-  buildSupportedLivingScheme,
   buildTierAccess,
 } from '@/test/factories';
+import { backendSupportedLivingScheme } from '@/test/fixtures/supportedLivingScheme';
+import { formatCurrency } from '@/lib/format';
 import { renderWithProviders } from '@/test/renderWithProviders';
 
 describe('SchemeAccordion', () => {
@@ -51,23 +52,34 @@ describe('SchemeAccordion', () => {
     );
   });
 
-  it('shows the provider-risk badge on a supported living scheme', () => {
+  it('renders the backend supported-living payload, including a negative override BoQ line', async () => {
+    const user = userEvent.setup();
     renderWithProviders(
-      <SchemeAccordion scheme={buildSupportedLivingScheme()} />,
+      <SchemeAccordion scheme={backendSupportedLivingScheme} />,
     );
-
-    expect(
-      screen.getByText('Provider / regulatory risk: Medium-High'),
-    ).toBeInTheDocument();
-    expect(screen.getByText('Staff-room choice')).toBeInTheDocument();
-    expect(screen.getByText('Rent across the lease')).toBeInTheDocument();
-  });
-
-  it('does not show the provider-risk badge on a student scheme', () => {
-    renderWithProviders(<SchemeAccordion scheme={buildHmoScheme()} />);
 
     expect(
       screen.queryByText('Provider / regulatory risk: Medium-High'),
     ).not.toBeInTheDocument();
+    expect(screen.getByText('Chosen: With ensuite')).toBeInTheDocument();
+    expect(screen.getByText('Rent across the lease')).toBeInTheDocument();
+    expect(screen.queryByText('LD1')).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Refurb BoQ' }));
+
+    expect(
+      await screen.findByText('Staff ensuite already present — omit wet room'),
+    ).toBeInTheDocument();
+    expect(screen.getByText('Override')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        `${formatCurrency(-6500)} – ${formatCurrency(-6500)}`,
+      ),
+    ).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Fire / escape' }));
+
+    expect(await screen.findByText('Alarm grade')).toBeInTheDocument();
+    expect(screen.getByText('LD1')).toBeInTheDocument();
   });
 });

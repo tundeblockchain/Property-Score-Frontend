@@ -1,9 +1,5 @@
-import { Chip, Stack } from '@mui/material';
+import { Stack } from '@mui/material';
 import { TierUpgradePrompt } from '@/components/billing/TierUpgradePrompt';
-import {
-  SUPPORTED_LIVING_PROVIDER_RISK,
-  isSupportedLivingScheme,
-} from '@/components/deals/hmoPlanner/labels';
 import { ReportSection } from '@/components/deals/report/ReportSection';
 import type { HmoLayoutScheme, TierAccess } from '@/models';
 import { ConversionPlanSection } from './ConversionPlanSection';
@@ -20,22 +16,9 @@ interface SchemeAccordionProps {
 
 export function SchemeAccordion({ scheme, tierAccess }: SchemeAccordionProps) {
   const plannerLocked = tierAccess?.fullHmoPlanner === false;
-  const supportedLiving = isSupportedLivingScheme(scheme);
-  const riskLabel =
-    scheme.supportedLiving?.providerRegulatoryRisk ??
-    SUPPORTED_LIVING_PROVIDER_RISK;
 
   return (
     <Stack spacing={1.5}>
-      {supportedLiving ? (
-        <Chip
-          label={riskLabel}
-          color="warning"
-          size="small"
-          sx={{ alignSelf: 'flex-start' }}
-        />
-      ) : null}
-
       <ReportSection title="Overview & rooms" headingLevel="h3" defaultExpanded>
         <SchemeOverviewSection scheme={scheme} />
       </ReportSection>

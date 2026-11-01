@@ -26,9 +26,9 @@ import {
   schemesWithReadyProposedLayout,
 } from '@/components/deals/hmoPlanner';
 import {
-  SUPPORTED_LIVING_PROVIDER_RISK,
   hmoSchemeSectionTitle,
   isSupportedLivingScheme,
+  supportedLivingRiskBadge,
 } from '@/components/deals/hmoPlanner/labels';
 import { ActionPlanList } from '@/components/deals/panels/ActionPlanList';
 import { AreaInsightsPanel } from '@/components/deals/panels/AreaInsightsPanel';
@@ -350,10 +350,7 @@ export function buildReportSections(deal: DealDetail): ReportSectionSpec[] {
         const recommended = scheme.recommended ? recommendedBadge() : undefined;
         const supportedLivingRisk = isSupportedLivingScheme(scheme) ? (
           <Chip
-            label={
-              scheme.supportedLiving?.providerRegulatoryRisk ??
-              SUPPORTED_LIVING_PROVIDER_RISK
-            }
+            label={supportedLivingRiskBadge(scheme.supportedLiving)}
             color="warning"
             size="small"
           />
